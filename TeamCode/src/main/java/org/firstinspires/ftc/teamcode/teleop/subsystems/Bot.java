@@ -21,7 +21,7 @@ public class Bot {
     private MecanumDrive drive;
 
     // Define subsystem objects
-    public FlyWheels flywheels;
+    public Gripper gripper;
     public Slides slides;
     public Hinge hinge;
     public TapeMeasure tapeMeasure;
@@ -55,7 +55,7 @@ public class Bot {
 
         drive = new MecanumDrive(fl, fr, bl, br);
 
-        flywheels = new FlyWheels(opMode);
+        gripper = new Gripper(opMode);
         slides = new Slides(opMode);
         hinge = new Hinge(opMode);
         tapeMeasure = new TapeMeasure(opMode);

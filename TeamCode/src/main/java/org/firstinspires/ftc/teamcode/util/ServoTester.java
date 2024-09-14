@@ -74,10 +74,10 @@ public class ServoTester extends OpMode {
                     .addData("Direction", servo.getDirection().name())
                     .addData("Position", "%.4f", servo.getPosition());
         } else {
-            telemetry.addLine("FlyWheels Left Data")
+            telemetry.addLine("Gripper Left Data")
                     .addData("Direction", servo.getDirection().name())
                     .addData("Position", "%.4f", servo.getPosition());
-            telemetry.addLine("FlyWheels Right Data")
+            telemetry.addLine("Gripper Right Data")
                     .addData("Direction", servo2.getDirection().name())
                     .addData("Position", "%.4f", servo2.getPosition());
             telemetry.addLine("Wrist Data")
