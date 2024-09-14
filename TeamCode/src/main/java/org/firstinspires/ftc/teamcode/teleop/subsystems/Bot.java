@@ -23,7 +23,7 @@ public class Bot {
     // Define subsystem objects
     public Gripper gripper;
     public Slides slides;
-    public Hinge hinge;
+    public Pivot pivot;
     public TapeMeasure tapeMeasure;
     public Arm arm;
 
@@ -57,7 +57,7 @@ public class Bot {
 
         gripper = new Gripper(opMode);
         slides = new Slides(opMode);
-        hinge = new Hinge(opMode);
+        pivot = new Pivot(opMode);
         tapeMeasure = new TapeMeasure(opMode);
         arm = new Arm(opMode);
     }
