@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class Gripper {
     public OpMode opMode;
+    // yes you need to use axon encoders no absolute servos turn 360 degrees
     private AnalogInput encoderLeftDiff, encoderRightDiff;
     private ServoEx leftDiff, rightDiff;
     private CRServo leftWheel, rightWheel;
@@ -24,11 +25,11 @@ public class Gripper {
 
     ;
 
-    public void rotSpecimenLeft() {
+    public void rotSpecimenL() {
         //insert some sort of code that uses encoder positions to turn specimen left
     }
 
-    public void rotSpecimenRight() {
+    public void rotSpecimenR() {
         //insert some sort of code that uses encoder positions to turn specimen right
     }
 }

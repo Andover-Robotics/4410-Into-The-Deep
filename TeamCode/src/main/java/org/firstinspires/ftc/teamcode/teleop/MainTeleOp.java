@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
-@Config
+
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode {
 
@@ -24,8 +24,12 @@ public class MainTeleOp extends LinearOpMode {
 
         bot.driveRobotCentric(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-        if gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) {
+        if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 1) {
+            bot.gripper.rotSpecimenR();
+        }
 
+        if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 1) {
+            bot.gripper.rotSpecimenL();
         }
     }
 }
