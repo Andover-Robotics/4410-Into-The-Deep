@@ -18,8 +18,7 @@ public class Slides {
     public final MotorEx motorLeft;
     public final MotorEx motorRight;
     private PIDFController controller;
-
-    public double heightConstant;
+    private Pivot pivot;
 
     public enum Position {
         // HIGH, MID, LOW, BOTTOM - Position on lines on backboard
@@ -30,7 +29,8 @@ public class Slides {
     }
 
     public Position position = Position.BOTTOM;
-    public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.25;
+    public static double p = 0.015, i = 0, d = 0, f = 0, gComp = 0.25;
+    public static double staticF = 0.25;
     private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
 
@@ -61,6 +61,16 @@ public class Slides {
         this.opMode = opMode;
     }
 
+    private void adjustStaticF() {
+        if (pivot != null) {
+            // Get the current pivot angle in degrees from the Pivot class
+            double pivotAngleRadians = pivot.getPivotAngleRadians();
+
+            // Adjust staticF based on the pivot angle (example formula)
+            staticF = gComp * Math.sin(pivotAngleRadians);
+        }
+    }
+
     public void runTo(double pos) {
         motorLeft.setRunMode(Motor.RunMode.RawPower);
         motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -78,26 +88,6 @@ public class Slides {
         target = pos;
     }
 
-    public void runToTop() {
-        runTo(high);
-        position = Position.HIGH;
-    }
-
-    public void runToMiddle() {
-        runTo(mid);
-        position = Position.MID;
-    }
-
-    public void runToLow() {
-        runTo(low);
-        position = Position.LOW;
-    }
-
-    public void runToBottom() {
-        runTo(bottom);
-        position = Position.BOTTOM;
-    }
-
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
             manualPower = manual;
@@ -111,10 +101,15 @@ public class Slides {
         motorRight.resetEncoder();
     }
 
+    public void setPivot(Pivot pivot) {
+        this.pivot = pivot;
+    }
+
     public void periodic() {
         motorRight.setInverted(false);
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
+        adjustStaticF();
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
@@ -147,6 +142,10 @@ public class Slides {
 
     public int getPosition() {
         return motorLeft.getCurrentPosition();
+    }
+
+    public double getmmPosition() {
+        return Math.toRadians(getPosition() / 537.7) * 20;
     }
 
     public void resetProfiler() {
