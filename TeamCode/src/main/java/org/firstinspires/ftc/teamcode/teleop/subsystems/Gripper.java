@@ -12,9 +12,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Gripper {
     public OpMode opMode;
     // yes you need to use axon encoders no absolute servos turn 360 degrees
-    private AnalogInput encoderLeftDiff, encoderRightDiff;
     private ServoEx leftDiff, rightDiff;
+    private AnalogInput encoderLeftWheel, encoderRightWheel;
     private CRServo leftWheel, rightWheel;
+
+    private static final float wheelIncrement = 30;
 
     public Gripper(OpMode opMode) {
         leftWheel = new CRServo(opMode.hardwareMap, "leftWheel");
@@ -23,13 +25,45 @@ public class Gripper {
         rightDiff = new SimpleServo(opMode.hardwareMap, "rightDiff", 0, 1);
     }
 
-    ;
-
     public void rotSpecimenL() {
-        //insert some sort of code that uses encoder positions to turn specimen left
+        double leftPos = getAngle(encoderLeftWheel.getVoltage());
+        double rightPos = getAngle(encoderRightWheel.getVoltage());
+
+
     }
 
     public void rotSpecimenR() {
         //insert some sort of code that uses encoder positions to turn specimen right
+        double leftPos = getAngle(encoderLeftWheel.getVoltage());
+        double rightPos = getAngle(encoderRightWheel.getVoltage());
+
+
+    }
+
+    //change these names as necessary thru testing
+    public void intake() {
+        leftWheel.set(1);
+        rightWheel.set(-1);
+    }
+
+    public void outtake() {
+        leftWheel.set(1);
+        rightWheel.set(-1);
+    }
+
+    private double getAngle(double encoderValue) {
+        return encoderValue/3.3*360;
+    }
+
+    private void CrMove(double angle, CRServo crServo, AnalogInput encoder) {
+        double currentAngle = getAngle(encoder.getVoltage()), targetAngle;
+
+        if (angle < 0) {
+            targetAngle = currentAngle + angle/360;
+            crServo.set(-1);
+            
+        } else {
+            crServo.set(1);
+        }
     }
 }
