@@ -140,7 +140,6 @@ public class Slides {
         }
     }
 
-
     public double getCurrent() {
         return motorLeft.motorEx.getCurrent(CurrentUnit.MILLIAMPS) + motorRight.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }

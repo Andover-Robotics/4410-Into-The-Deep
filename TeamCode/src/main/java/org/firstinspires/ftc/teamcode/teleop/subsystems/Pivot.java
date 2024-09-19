@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,10 +13,9 @@ import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 @Config
 public class Pivot {
 
-    private PIDFController controller;
+    private PIDController controller;
     public final MotorEx pivotMotor;
-
-    public double heightConstant;
+    public Slides slides;
 
     public enum Position {
         HB, //high bucket
@@ -28,96 +28,70 @@ public class Pivot {
     }
 
     public Pivot.Position position = Pivot.Position.IN;
-    public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.25;
-    private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
-    private double manualPower = 0;
+    private final OpMode opMode;
+
+    public static double p = 0, i = 0, d = 0;
+
+    public static double target = 0;
+    private final double ticksPerDegree = 5281.1 / 360.0;
 
     public double power;
-    public static int high = -2500, mid = -1500, low = -700, bottom = 0;
-    private final OpMode opMode;
-    private double target = 0;
-    private boolean goingDown = false;
-    private double profile_init_time = 0;
-    private MotionProfiler profiler = new MotionProfiler(30000, 20000);
+
+    // Constants for gravity compensation
+    public static final double ARM_MASS = 2; // kg, mass of the non extendo pivoting arm
+    public static final double EXTENSION_MASS = 2; // kg, mass of the extending part
+    public static final double GRAVITY = 9.81; // NEED TO TUNE THIS FIRST WITH FULLY IN ARM - acts as static f constant for gravity
+    public static final double ARM_LENGTH = 0.4; // m, length of the non extendo pivoting arm
+    public static final double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
 
     public Pivot(OpMode opMode) {
         pivotMotor = new MotorEx(opMode.hardwareMap, "pivot", Motor.GoBILDA.RPM_30);
-        controller = new PIDFController(p, i, d, f);
-        controller.setTolerance(tolerance);
-        controller.setSetPoint(0);
-
+        controller = new PIDController(p, i, d);
         this.opMode = opMode;
     }
 
-    public void runTo(double pos) {
-        pivotMotor.setRunMode(Motor.RunMode.RawPower);
-        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-
-        controller = new PIDFController(p, i, d, f);
-        controller.setTolerance(tolerance);
-        resetProfiler();
-        profiler.init_new_profile(pivotMotor.getCurrentPosition(), pos);
-        profile_init_time = opMode.time;
-
-        goingDown = pos > target;
-        target = pos;
-    }
-
-    public void runToIn() {
-        runTo(bottom);
-        position = Pivot.Position.IN;
-    }
-
-    public void runManual(double manual) {
-        if (manual > powerMin || manual < -powerMin) {
-            manualPower = manual;
-        } else {
-            manualPower = 0;
-        }
-    }
-
-    public void resetEncoder() {
-        pivotMotor.resetEncoder();
-    }
-
     public void periodic() {
-        pivotMotor.setInverted(false);
-        controller.setPIDF(p, i, d, f);
-        double dt = opMode.time - profile_init_time;
-        if (!profiler.isOver()) {
-            controller.setSetPoint(profiler.motion_profile_pos(dt));
-            power = powerUp * controller.calculate(pivotMotor.getCurrentPosition());
-            if (goingDown) {
-                power = powerDown * controller.calculate(pivotMotor.getCurrentPosition());
-            }
-            pivotMotor.set(power);
-        } else {
-            if (profiler.isDone()) {
-                profiler = new MotionProfiler(30000, 20000);
-            }
-            if (manualPower != 0) {
-                controller.setSetPoint(pivotMotor.getCurrentPosition());
-                pivotMotor.set(manualPower / manualDivide);
-            } else {
-                power = staticF * controller.calculate(pivotMotor.getCurrentPosition());
-                pivotMotor.set(power);
-            }
-        }
+        controller.setPID(p, i, d);
+        int pivotPos = getPosition();
+
+
+        double pid = controller.calculate(pivotPos, target);
+        double ff = calculateFeedForward(pivotPos, target);
+
+        //Total power is the sum of the PID control and the feedforward compensation
+        power = pid + ff;
+
+        //Set motor power
+        pivotMotor.set(power);
     }
 
+    public double calculateFeedForward(double pos, double setpoint) {
+        //convert from encoder ticks to degrees
+        double angleInDegrees = pos / ticksPerDegree;
+        double angleInRadians = Math.toRadians(angleInDegrees);
 
-    public double getCurrent() {
-        return pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
+        // Effective length of the extension (add this dynamically based on your extension)
+        double effectiveExtensionLength = EXTENSION_OFFSET + (Math.toRadians(slides.getPosition() / 537.7) * 20); // calculates ext length
+
+        // Torque from the static (non extending) arm mass (assumed as a uniform rod, the mass is centered at length/3 due to motors being closer to pivot point)
+        double armGravityTorque = ARM_MASS * GRAVITY * (ARM_LENGTH / 2.0) * Math.sin(angleInRadians);
+
+        // Torque from the extending arm
+        double extensionGravityTorque = EXTENSION_MASS * GRAVITY * (effectiveExtensionLength / 2.0) * Math.sin(angleInRadians);
+
+        // Total gravity compensation torque
+        double totalFeedforwardPower = armGravityTorque + extensionGravityTorque;
+
+        return totalFeedforwardPower;
     }
-
 
     public int getPosition() {
+        // Get the current motor encoder position
         return pivotMotor.getCurrentPosition();
     }
 
-    public void resetProfiler() {
-        profiler = new MotionProfiler(30000, 20000);
+    public double getCurrent() {
+        return pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
     public Pivot.Position getState() {
