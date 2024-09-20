@@ -61,14 +61,9 @@ public class Slides {
         this.opMode = opMode;
     }
 
-    private void adjustStaticF() {
-        if (pivot != null) {
-            // Get the current pivot angle in degrees from the Pivot class
-            double pivotAngleRadians = pivot.getPivotAngleRadians();
-
-            // Adjust staticF based on the pivot angle (example formula)
-            staticF = gComp * Math.sin(pivotAngleRadians);
-        }
+    private void adjustStaticF(double pivotAngleRadians) {
+        // Adjust staticF based on the pivot angle
+        staticF = gComp * Math.sin(pivotAngleRadians);
     }
 
     public void runTo(double pos) {
@@ -101,15 +96,11 @@ public class Slides {
         motorRight.resetEncoder();
     }
 
-    public void setPivot(Pivot pivot) {
-        this.pivot = pivot;
-    }
-
-    public void periodic() {
+    public void periodic(double pivotAngleRadians) {
         motorRight.setInverted(false);
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
-        adjustStaticF();
+        adjustStaticF(pivotAngleRadians);
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));

@@ -56,9 +56,6 @@ public class Pivot {
         // Initialize the slides object
         slides = new Slides(opMode);
 
-        // Set the reference to this Pivot object in the Slides class
-        slides.setPivot(this);
-
         this.opMode = opMode;
     }
 
@@ -90,6 +87,7 @@ public class Pivot {
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
         pivotMotor.set(power);
+        slides.periodic(getPivotAngleRadians());
     }
 
     public void runManual(double manual) {
