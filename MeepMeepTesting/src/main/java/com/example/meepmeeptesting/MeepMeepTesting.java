@@ -19,11 +19,18 @@ public class MeepMeepTesting {
                 .build();
 
         blueBig.runAction(blueBig.getDrive().actionBuilder(new Pose2d(-58, 58, Math.toRadians(-90)))
+
+                //-23, 46
+                .strafeToLinearHeading(new Vector2d(-23, 46), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-6,33),Math.toRadians(0))
+                        .waitSeconds(1)
+
+
                 //-55 40
-                .strafeToLinearHeading(new Vector2d(-55,40), Math.toRadians(-130))
+                .strafeToLinearHeading(new Vector2d(-23.5,36), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-36,36), Math.toRadians(-145))
                 .waitSeconds(1)
-//                .strafeToLinearHeading(new Vector2d(-56,47),Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(120))
+                .strafeToLinearHeading(new Vector2d(-42,54),Math.toRadians(120))
                 .waitSeconds(1)
 
                 .strafeToLinearHeading(new Vector2d(-58,40), Math.toRadians(-90))
@@ -31,16 +38,13 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(120))
                 .waitSeconds(1)
 
-                .strafeToLinearHeading(new Vector2d(-48,40), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-55,25), Math.toRadians(-180))
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(-42,54),Math.toRadians(120))
+//                .strafeToLinearHeading(new Vector2d(-56,47),Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(120))
                 .waitSeconds(1)
 
-                //-23, 46
-                .strafeToLinearHeading(new Vector2d(-23, 46), Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(-6,33),Math.toRadians(0))
-                        .waitSeconds(1)
-                .strafeTo(new Vector2d(-24,33))
+                .strafeToLinearHeading(new Vector2d(-36,35), Math.toRadians(60))
                 .splineToLinearHeading(new Pose2d(-24,13, Math.toRadians(0)),Math.toRadians(0))
                 .build());
 
@@ -52,29 +56,32 @@ public class MeepMeepTesting {
                 .build();
 
         redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(58, -58, Math.toRadians(90)))
-                //-55 40
-                .strafeToLinearHeading(new Vector2d(55,-40), Math.toRadians(50))
+                //-23, 46
+                .strafeToLinearHeading(new Vector2d(23, -46), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(6,-33),Math.toRadians(90))
                 .waitSeconds(1)
-//                .strafeToLinearHeading(new Vector2d(-56,47),Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(44,-54),Math.toRadians(-30))
+
+
+                //-55 40
+                .strafeToLinearHeading(new Vector2d(23.5,-36), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(36,-36), Math.toRadians(35))
+                .waitSeconds(1)
+                .strafeToLinearHeading(new Vector2d(42,-54),Math.toRadians(-60))
                 .waitSeconds(1)
 
                 .strafeToLinearHeading(new Vector2d(58,-40), Math.toRadians(90))
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(44,-54),Math.toRadians(-30))
+                .strafeToLinearHeading(new Vector2d(44,-54),Math.toRadians(-60))
                 .waitSeconds(1)
 
-                .strafeToLinearHeading(new Vector2d(48,-40), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(55,-25), Math.toRadians(0))
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(42,-54),Math.toRadians(-30))
+//                .strafeToLinearHeading(new Vector2d(-56,47),Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(44,-54),Math.toRadians(-60))
                 .waitSeconds(1)
 
-                //-23, 46
-                .strafeToLinearHeading(new Vector2d(23, -46), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(6,-33))
-                .waitSeconds(1)
-                .strafeTo(new Vector2d(24,-33))
-                .splineToLinearHeading(new Pose2d(24,-13, Math.toRadians(180)),Math.toRadians(-180))
+                .strafeToLinearHeading(new Vector2d(36,-35), Math.toRadians(-120))
+                .splineToLinearHeading(new Pose2d(24,-13, Math.toRadians(180)),Math.toRadians(180))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
