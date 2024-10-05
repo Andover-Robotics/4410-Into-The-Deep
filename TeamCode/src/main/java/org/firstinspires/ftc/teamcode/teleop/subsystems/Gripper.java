@@ -14,6 +14,7 @@ public class Gripper {
     private CRServo leftWheel, rightWheel;
 
     private static final float maxWheelIncrement = 30;
+    private static final double TURN_TIME = 0.1;
 
     public Gripper(OpMode opMode) {
         leftWheel = new CRServo(opMode.hardwareMap, "leftWheel");
@@ -31,5 +32,25 @@ public class Gripper {
     public void outtake() {
         leftWheel.set(1);
         rightWheel.set(-1);
+    }
+
+    public void left() {
+        long startTime = System.currentTimeMillis();
+        while (startTime - System.currentTimeMillis() <= TURN_TIME) {
+            leftWheel.set(-1);
+            rightWheel.set(-1);
+        }
+        leftWheel.set(0);
+        rightWheel.set(0);
+    }
+
+    public void right() {
+        long startTime = System.currentTimeMillis();
+        while (startTime - System.currentTimeMillis() <= TURN_TIME) {
+            leftWheel.set(1);
+            rightWheel.set(1);
+        }
+        leftWheel.set(0);
+        rightWheel.set(0);
     }
 }
