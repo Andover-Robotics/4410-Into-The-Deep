@@ -45,11 +45,11 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 41 * inches2mm, lowBucketHeight = 24 * inches2mm, highChamberHeight = 34 * inches2mm, lowChamberHeight = 20 * inches2mm, frontIntakeHeight = -0.5 * inches2mm;
+    public double highBucketHeight = 41 * inches2mm, lowBucketHeight = 24 * inches2mm, highChamberHeight = 34 * inches2mm, lowChamberHeight = 20 * inches2mm, frontIntakeHeight = 1 * inches2mm;
     // distances forward from pivot for positions
-    public double bucketX = -14 * inches2mm, chamberX = 14 * inches2mm, frontIntakeX = 12.3 * inches2mm, rearIntake = -12.3 * inches2mm;
+    public double bucketX = -14 * inches2mm, chamberX = 14 * inches2mm, frontIntakeX = 11 * inches2mm, rearIntakeX = -11 * inches2mm;
     // static (non-IK) positions
-    public double storageX = 6 * inches2mm, storageY = Math.sqrt((310.59*310.59) - (storageX*storageX));
+    public double storageX = 6 * inches2mm, storageZ = 4 * inches2mm;
 
     public Pivot(OpMode opMode) {
         pivotMotor = new MotorEx(opMode.hardwareMap, "pivot", Motor.GoBILDA.RPM_84);
@@ -67,54 +67,11 @@ public class Pivot {
         this.opMode = opMode;
     }
 
-//    public void manualIK(double joystickInput) {
-//        if (state == Bot.BotState.HIGH_BUCKET) {
-//            targetZ = highBucketHeight;
-//            targetX = bucketX;
-//            IK = true;
-//        } else if (state == Bot.BotState.LOW_BUCKET) {
-//            targetZ = lowBucketHeight;
-//            targetX = bucketX;
-//            IK = true;
-//        } else if (state == Bot.BotState.HIGH_CHAMBER) {
-//            targetZ = highChamberHeight;
-//            targetX = chamberX;
-//            IK = true;
-//        } else if (state == Bot.BotState.LOW_CHAMBER) {
-//            targetZ = lowChamberHeight;
-//            targetX = chamberX;
-//            IK = true;
-//        } else if (state == Bot.BotState.FRONT_INTAKE) {
-//            targetZ = frontIntakeHeight;
-//            targetX = frontIntakeX;
-//            IK = true;
-//        } else if (state == Bot.BotState.STORAGE) {
-//            targetZ =
-//        }
-//    }
-
-    public double calculateDegXZ(double x, double z) {
-        return Math.toDegrees(Math.atan2(z, x));
-    }
-
-    public void runToTicks(double pos) {
-        pivotMotor.setRunMode(Motor.RunMode.RawPower);
-        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        controller.setTolerance(tolerance);
-        goingDown = pos > target;
-        target = pos;
-    }
-
-    public void runToDeg(double angle) {
-        pivotMotor.setRunMode(Motor.RunMode.RawPower);
-        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        int pos = degreestoTicks(angle);
-
-        controller.setTolerance(tolerance);
-        goingDown = pos > target;
-        target = pos;
+    public void runIK (double joystickValue) {
+        if (Math.abs(joystickValue) > 0.05) {
+            runManual(joystickValue * 0.5);
+            targetX = (1 / Math.tan(getPivotAngleRadians())) * targetZ; //updates the x value so that slides can adjust in the periodic cycler
+        }
     }
 
     public void periodic(Bot.BotState state) {
@@ -150,6 +107,65 @@ public class Pivot {
 //            slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
 //            slides.runToMM(slidesTarget);
 //        }
+    }
+
+    public void setHighBucket() {
+        targetZ = highBucketHeight;
+        targetX = bucketX;
+    }
+
+    public void setLowBucket() {
+        targetZ = lowBucketHeight;
+        targetX = bucketX;
+    }
+
+    public void setHighChamber() {
+        targetZ = highChamberHeight;
+        targetX = chamberX;
+    }
+
+    public void setLowChamber() {
+        targetZ = lowChamberHeight;
+        targetX = chamberX;
+    }
+
+    public void setRearIntake() {
+        targetZ = frontIntakeHeight;
+        targetX = rearIntakeX;
+    }
+
+    public void setFrontIntake() {
+        targetZ = frontIntakeHeight;
+        targetX = frontIntakeX;
+    }
+
+    public void setStorage() {
+        targetZ = storageZ;
+        targetX = storageX;
+    }
+
+    public double calculateDegXZ(double x, double z) {
+        return Math.toDegrees(Math.atan2(z, x));
+    }
+
+    public void runToTicks(double pos) {
+        pivotMotor.setRunMode(Motor.RunMode.RawPower);
+        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        controller.setTolerance(tolerance);
+        goingDown = pos > target;
+        target = pos;
+    }
+
+    public void runToDeg(double angle) {
+        pivotMotor.setRunMode(Motor.RunMode.RawPower);
+        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        int pos = degreestoTicks(angle);
+
+        controller.setTolerance(tolerance);
+        goingDown = pos > target;
+        target = pos;
     }
 
     public void runManual(double manual) {
