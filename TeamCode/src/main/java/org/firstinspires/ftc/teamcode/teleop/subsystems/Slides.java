@@ -61,14 +61,9 @@ public class Slides {
         this.opMode = opMode;
     }
 
-    private void adjustStaticF() {
-        if (pivot != null) {
-            // Get the current pivot angle in degrees from the Pivot class
-            double pivotAngleRadians = pivot.getPivotAngleRadians();
-
-            // Adjust staticF based on the pivot angle (example formula)
-            staticF = gComp * Math.sin(pivotAngleRadians);
-        }
+    private void adjustStaticF(double pivotAngleRadians) {
+        // Adjust staticF based on the pivot angle
+        staticF = gComp * Math.sin(pivotAngleRadians);
     }
 
     public void runTo(double pos) {
@@ -88,6 +83,17 @@ public class Slides {
         target = pos;
     }
 
+    public void runRelativeMM(double mm) {
+        runToMM(getmmPosition() + mm);
+    }
+
+    public void runToMM(double posMM) {
+        posMM -= 280; //length difference from pivot to diffy arm joint
+        posMM = Math.max(posMM, 0);
+        posMM = Math.min(posMM, 720);
+        runTo(convert2Ticks(posMM));
+    }
+
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
             manualPower = manual;
@@ -101,15 +107,11 @@ public class Slides {
         motorRight.resetEncoder();
     }
 
-    public void setPivot(Pivot pivot) {
-        this.pivot = pivot;
-    }
-
-    public void periodic() {
+    public void periodic(double pivotAngleRadians) {
         motorRight.setInverted(false);
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
-        adjustStaticF();
+        adjustStaticF(pivotAngleRadians);
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
@@ -140,12 +142,20 @@ public class Slides {
     }
 
 
-    public int getPosition() {
+    public double getPosition() {
         return motorLeft.getCurrentPosition();
     }
 
     public double getmmPosition() {
-        return Math.toRadians(getPosition() / 537.7) * 20;
+        return Math.toRadians(getPosition() * 360 / 537.7) * 20;
+    }
+
+    public double convert2MM(double ticks) {
+        return Math.toRadians(ticks * 360 / 537.7) * 20;
+    }
+
+    public double convert2Ticks(double mm) {
+        return Math.toDegrees(mm/20) * 537.7 / 360;
     }
 
     public void resetProfiler() {

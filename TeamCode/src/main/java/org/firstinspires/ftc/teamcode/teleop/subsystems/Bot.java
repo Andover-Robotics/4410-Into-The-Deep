@@ -10,11 +10,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Bot {
     public enum BotState {
-        // need to find what this is
+        HIGH_BUCKET, //high bucket
+        LOW_BUCKET, //low bucket
+        HIGH_CHAMBER, //high chamber
+        LOW_CHAMBER, //low chamber
+        REAR_INTAKE, //rear intake
+        FRONT_INTAKE, //front intake
+        STORAGE, //starting config (18x18x18)
     }
 
     public static Bot instance;
-    public BotState state; // Default bot state
+    public BotState state = BotState.STORAGE; // Default bot state
     private final MotorEx fl, fr, bl, br;
     public OpMode opMode;
     public double heading = 0.0;
@@ -22,10 +28,7 @@ public class Bot {
 
     // Define subsystem objects
     public Gripper gripper;
-    public Slides slides;
     public Pivot pivot;
-    public TapeMeasure tapeMeasure;
-    public Arm arm;
 
     public double wristUpPos = 0.0;
 
@@ -56,10 +59,7 @@ public class Bot {
         drive = new MecanumDrive(fl, fr, bl, br);
 
         gripper = new Gripper(opMode);
-        slides = new Slides(opMode);
         pivot = new Pivot(opMode);
-        tapeMeasure = new TapeMeasure(opMode);
-        arm = new Arm(opMode);
     }
 
     // MOTORS
