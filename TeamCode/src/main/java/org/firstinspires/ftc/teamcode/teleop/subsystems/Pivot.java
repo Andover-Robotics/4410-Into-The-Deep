@@ -14,25 +14,16 @@ public class Pivot {
     private PIDController controller;
     public final MotorEx pivotMotor;
     public Slides slides;
+    public Arm arm;
 
-    public enum Position {
-        HB, //high bucket
-        LB, //low bucket
-        HC, //high chamber
-        LC, //low chamber
-        RIN, //rear intake
-        FIN, //front intake
-        IN, //all the way in
-    }
-
-    public Pivot.Position position = Pivot.Position.IN;
     private final OpMode opMode;
 
     public static double p = 0, i = 0, d = 0, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
     public static double manualSpeed = 0.7; // need to tune
 
     public static double target = 0, tolerance = 20;
-    private final double ticksPerDegree = 5281.1 / 360.0;
+    private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
+    private final double startingAngleOffset = 14; //offset from rest position to horizontal front
     private boolean goingDown;
 
     public double power, manualPower;
@@ -44,8 +35,13 @@ public class Pivot {
     public static final double ARM_LENGTH = 0.4; // m, length of the non extendo pivoting arm
     public static final double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
 
+    public double inches2mm = 25.4;
+
+    // Heights for outtake positions millimeters higher than pivot point
+    public double highBucketHeight = 41 * inches2mm, lowBucketHeight = 24 * inches2mm, highChamberHeight = 34 * inches2mm, lowChamberHeight = 20 * inches2mm, frontIntakeHeight = -0.5 * inches2mm;
+
     public Pivot(OpMode opMode) {
-        pivotMotor = new MotorEx(opMode.hardwareMap, "pivot", Motor.GoBILDA.RPM_30);
+        pivotMotor = new MotorEx(opMode.hardwareMap, "pivot", Motor.GoBILDA.RPM_84);
         controller = new PIDController(p, i, d);
         controller.setTolerance(tolerance);
         controller.setSetPoint(target);
@@ -55,6 +51,7 @@ public class Pivot {
 
         // Initialize the slides object
         slides = new Slides(opMode);
+        arm = new Arm(opMode);
 
         this.opMode = opMode;
     }
@@ -70,8 +67,8 @@ public class Pivot {
 
     public void periodic() {
         controller.setPID(p, i, d);
-        int pivotPos = getPosition();
 
+        int pivotPos = getPosition();
         double ff = calculateFeedForward(pivotPos, target);  // Calculate gravity compensation
 
         // Check if manual control is active
@@ -125,12 +122,12 @@ public class Pivot {
 
     public double getPivotAngleDegrees() {
         // Convert the current position in encoder ticks to degrees
-        return getPosition() / ticksPerDegree;
+        return getPosition() / ticksPerDegree + startingAngleOffset;
     }
 
     public double getPivotAngleRadians() {
         // Convert the current position in encoder ticks to degrees
-        return Math.toRadians((getPosition() / ticksPerDegree));
+        return Math.toRadians((getPosition() / ticksPerDegree + startingAngleOffset));
     }
 
     public double getCurrent() {
@@ -140,10 +137,6 @@ public class Pivot {
     public void resetEncoder() {
         pivotMotor.resetEncoder();
         slides.resetEncoder();
-    }
-
-    public Pivot.Position getState() {
-        return position;
     }
 
 }

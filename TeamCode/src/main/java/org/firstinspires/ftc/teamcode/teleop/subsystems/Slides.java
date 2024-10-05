@@ -83,6 +83,14 @@ public class Slides {
         target = pos;
     }
 
+    public void runRelativeMM(double mm) {
+        runToMM(getmmPosition() + mm);
+    }
+
+    public void runToMM(double posMM) {
+        runTo(convert2Ticks(posMM));
+    }
+
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
             manualPower = manual;
@@ -131,12 +139,20 @@ public class Slides {
     }
 
 
-    public int getPosition() {
+    public double getPosition() {
         return motorLeft.getCurrentPosition();
     }
 
     public double getmmPosition() {
-        return Math.toRadians(getPosition() / 537.7) * 20;
+        return Math.toRadians(getPosition() * 360 / 537.7) * 20;
+    }
+
+    public double convert2MM(double ticks) {
+        return Math.toRadians(ticks * 360 / 537.7) * 20;
+    }
+
+    public double convert2Ticks(double mm) {
+        return Math.toDegrees(mm/20) * 537.7 / 360;
     }
 
     public void resetProfiler() {
