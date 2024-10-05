@@ -88,6 +88,9 @@ public class Slides {
     }
 
     public void runToMM(double posMM) {
+        posMM -= 310.59; //distance from pivot to diffy arm joint
+        posMM = Math.max(posMM, 0);
+        posMM = Math.min(posMM, 720);
         runTo(convert2Ticks(posMM));
     }
 

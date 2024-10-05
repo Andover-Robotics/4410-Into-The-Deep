@@ -16,12 +16,11 @@ public class Bot {
         LOW_CHAMBER, //low chamber
         REAR_INTAKE, //rear intake
         FRONT_INTAKE, //front intake
-        IN, //all the way in
-        START, //starting config (18x18x18)
+        STORAGE, //starting config (18x18x18)
     }
 
     public static Bot instance;
-    public static BotState state = BotState.IN; // Default bot state
+    public BotState state = BotState.STORAGE; // Default bot state
     private final MotorEx fl, fr, bl, br;
     public OpMode opMode;
     public double heading = 0.0;

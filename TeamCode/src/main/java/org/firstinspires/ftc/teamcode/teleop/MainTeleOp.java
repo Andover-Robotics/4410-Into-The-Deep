@@ -35,7 +35,7 @@ public class MainTeleOp extends LinearOpMode {
 
         // Initialize bot
         bot.stopMotors();
-        bot.state = Bot.BotState.START;
+        bot.state = Bot.BotState.STORAGE;
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
@@ -57,7 +57,7 @@ public class MainTeleOp extends LinearOpMode {
             // TELEMETRY
             telemetry.addData("Bot State",bot.state);
             telemetry.update();
-            bot.pivot.periodic();
+            bot.pivot.periodic(bot.state);
         }
     }
 

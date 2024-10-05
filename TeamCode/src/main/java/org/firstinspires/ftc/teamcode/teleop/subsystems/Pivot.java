@@ -16,17 +16,23 @@ public class Pivot {
     public Slides slides;
     public Arm arm;
 
+    public Bot.BotState state;
+
     private final OpMode opMode;
 
     public static double p = 0, i = 0, d = 0, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
     public static double manualSpeed = 0.7; // need to tune
 
-    public static double target = 0, tolerance = 20;
+    public static double target = 0, tolerance = 30;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
-    private final double startingAngleOffset = 14; //offset from rest position to horizontal front
-    private boolean goingDown;
+    private final double startingAngleOffsetDegrees = -2; //offset from rest position to horizontal front
+    private boolean goingDown, IK;
+
+    public double targetX, targetZ, slidesTarget;
 
     public double power, manualPower;
+
+    public int slidesCycler;
 
     // Constants for gravity compensation
     public static final double ARM_MASS = 2; // kg, mass of the non extendo pivoting arm
@@ -36,9 +42,14 @@ public class Pivot {
     public static final double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
 
     public double inches2mm = 25.4;
+    //BTW angle of 0 degrees is front horizontal - not reachable physically
 
-    // Heights for outtake positions millimeters higher than pivot point
+    // Heights for positions millimeters higher than pivot point
     public double highBucketHeight = 41 * inches2mm, lowBucketHeight = 24 * inches2mm, highChamberHeight = 34 * inches2mm, lowChamberHeight = 20 * inches2mm, frontIntakeHeight = -0.5 * inches2mm;
+    // distances forward from pivot for positions
+    public double bucketX = -14 * inches2mm, chamberX = 14 * inches2mm, frontIntakeX = 12.3 * inches2mm, rearIntake = -12.3 * inches2mm;
+    // static (non-IK) positions
+    public double storageX = 6 * inches2mm, storageY = Math.sqrt((310.59*310.59) - (storageX*storageX));
 
     public Pivot(OpMode opMode) {
         pivotMotor = new MotorEx(opMode.hardwareMap, "pivot", Motor.GoBILDA.RPM_84);
@@ -56,7 +67,37 @@ public class Pivot {
         this.opMode = opMode;
     }
 
-    public void runTo(double pos) {
+//    public void manualIK(double joystickInput) {
+//        if (state == Bot.BotState.HIGH_BUCKET) {
+//            targetZ = highBucketHeight;
+//            targetX = bucketX;
+//            IK = true;
+//        } else if (state == Bot.BotState.LOW_BUCKET) {
+//            targetZ = lowBucketHeight;
+//            targetX = bucketX;
+//            IK = true;
+//        } else if (state == Bot.BotState.HIGH_CHAMBER) {
+//            targetZ = highChamberHeight;
+//            targetX = chamberX;
+//            IK = true;
+//        } else if (state == Bot.BotState.LOW_CHAMBER) {
+//            targetZ = lowChamberHeight;
+//            targetX = chamberX;
+//            IK = true;
+//        } else if (state == Bot.BotState.FRONT_INTAKE) {
+//            targetZ = frontIntakeHeight;
+//            targetX = frontIntakeX;
+//            IK = true;
+//        } else if (state == Bot.BotState.STORAGE) {
+//            targetZ =
+//        }
+//    }
+
+    public double calculateDegXZ(double x, double z) {
+        return Math.toDegrees(Math.atan2(z, x));
+    }
+
+    public void runToTicks(double pos) {
         pivotMotor.setRunMode(Motor.RunMode.RawPower);
         pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
@@ -65,11 +106,26 @@ public class Pivot {
         target = pos;
     }
 
-    public void periodic() {
+    public void runToDeg(double angle) {
+        pivotMotor.setRunMode(Motor.RunMode.RawPower);
+        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        int pos = degreestoTicks(angle);
+
+        controller.setTolerance(tolerance);
+        goingDown = pos > target;
+        target = pos;
+    }
+
+    public void periodic(Bot.BotState state) {
+        this.state = state;
+
+        runToDeg(calculateDegXZ(targetX, targetZ));
+
         controller.setPID(p, i, d);
 
         int pivotPos = getPosition();
-        double ff = calculateFeedForward(pivotPos, target);  // Calculate gravity compensation
+        double ff = calculateFeedForward(pivotPos);  // Calculate gravity compensation
 
         // Check if manual control is active
         if (manualPower != 0) {
@@ -85,6 +141,15 @@ public class Pivot {
         power = Math.max(Math.min(power, 1.0), -1.0);
         pivotMotor.set(power);
         slides.periodic(getPivotAngleRadians());
+
+        //TODO below code is commented out just to make testing the pivot easier - comment it in to use the slides with IK
+//        if (slidesCycler != 2) {  //these conditions cause the slides to only be set every 3rd cycle - allowing time for the slides PID to work
+//            slidesCycler++;
+//        } else {
+//            slidesCycler = 0;
+//            slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
+//            slides.runToMM(slidesTarget);
+//        }
     }
 
     public void runManual(double manual) {
@@ -95,7 +160,7 @@ public class Pivot {
         }
     }
 
-    public double calculateFeedForward(double pos, double setpoint) {
+    public double calculateFeedForward(double pos) {
         //convert from encoder ticks to degrees
         double angleInDegrees = pos / ticksPerDegree;
         double angleInRadians = Math.toRadians(angleInDegrees);
@@ -104,13 +169,14 @@ public class Pivot {
         double effectiveExtensionLength = EXTENSION_OFFSET + slides.getmmPosition(); // calculates ext length
 
         // torque from the static (non extending) arm mass (assumed as a uniform rod, the mass is centered at length/3 due to motors being closer to pivot point)
-        double armGravityTorque = ARM_MASS * GRAVITY * (ARM_LENGTH / 2.0);
+        double armGravityTorque = ARM_MASS * GRAVITY * (ARM_LENGTH / 3.0);
 
         // torque from the extending arm
         double extensionGravityTorque = EXTENSION_MASS * GRAVITY * (effectiveExtensionLength / 2.0);
 
         // total ff gravity compensation power
-        double totalFeedforwardPower = (armGravityTorque + extensionGravityTorque) * Math.sin(angleInRadians);
+        double totalFeedforwardPower;
+        totalFeedforwardPower = (armGravityTorque + extensionGravityTorque) * Math.sin(angleInRadians);
 
         return totalFeedforwardPower;
     }
@@ -122,12 +188,16 @@ public class Pivot {
 
     public double getPivotAngleDegrees() {
         // Convert the current position in encoder ticks to degrees
-        return getPosition() / ticksPerDegree + startingAngleOffset;
+        return getPosition() / ticksPerDegree - startingAngleOffsetDegrees;
     }
 
     public double getPivotAngleRadians() {
         // Convert the current position in encoder ticks to degrees
-        return Math.toRadians((getPosition() / ticksPerDegree + startingAngleOffset));
+        return Math.toRadians((getPosition() / ticksPerDegree - startingAngleOffsetDegrees));
+    }
+
+    public int degreestoTicks(double degrees) {
+        return (int) (Math.round((degrees + startingAngleOffsetDegrees) * ticksPerDegree));
     }
 
     public double getCurrent() {
