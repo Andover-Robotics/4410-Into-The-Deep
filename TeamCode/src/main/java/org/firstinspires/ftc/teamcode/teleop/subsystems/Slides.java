@@ -35,7 +35,6 @@ public class Slides {
     private double manualPower = 0;
 
     public double power;
-    public static int high = -2500, mid = -1500, low = -700, bottom = 0;
     private final OpMode opMode;
     private double target = 0;
     private boolean goingDown = false;

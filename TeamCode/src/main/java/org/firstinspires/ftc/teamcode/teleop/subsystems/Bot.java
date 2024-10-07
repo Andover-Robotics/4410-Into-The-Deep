@@ -16,6 +16,7 @@ public class Bot {
         LOW_CHAMBER, //low chamber
         REAR_INTAKE, //rear intake
         FRONT_INTAKE, //front intake
+        WALL_INTAKE,
         STORAGE, //starting config (18x18x18)
     }
 
@@ -60,6 +61,112 @@ public class Bot {
 
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
+    }
+
+    public void storage() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.storage();
+                Thread.sleep(25);
+                pivot.arm.storage();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void lowBucket() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.lowBucket();
+                Thread.sleep(25);
+                pivot.arm.bucket();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void lowChamber() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.lowChamber();
+                Thread.sleep(25);
+                pivot.arm.outtakeUp();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void highChamber() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.highChamber();
+                Thread.sleep(25);
+                pivot.arm.outtakeUp();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void clip() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.arm.outtakeDown();
+                Thread.sleep(100);
+                gripper.outtake();
+                Thread.sleep(100);
+                storage();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void frontIntakeToStorage() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.changeHeight(4);
+                Thread.sleep(200);
+                pivot.frontIntakeStorage();
+                Thread.sleep(400);
+                pivot.storage();
+                Thread.sleep(150);
+                pivot.arm.storage();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void toFrontIntake() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.arm.horizontal();
+                Thread.sleep(100);
+                pivot.frontIntakeStorage();
+                Thread.sleep(200);
+                pivot.frontIntake();
+                Thread.sleep(200);
+                pivot.arm.pickup();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void pickDown() {
+        pivot.changeHeight(-1.5);
+    }
+
+    public void toRearIntake() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.rearIntake();
+                Thread.sleep(200);
+                pivot.arm.pickup();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void wallIntake() {
+
     }
 
     // MOTORS

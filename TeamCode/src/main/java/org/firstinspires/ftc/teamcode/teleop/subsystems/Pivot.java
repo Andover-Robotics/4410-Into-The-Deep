@@ -45,10 +45,21 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 41 * inches2mm, lowBucketHeight = 24 * inches2mm, highChamberHeight = 34 * inches2mm, lowChamberHeight = 20 * inches2mm, frontIntakeHeight = 1 * inches2mm;
+    public double highBucketHeight = 41 * inches2mm,
+            lowBucketHeight = 24 * inches2mm,
+            highChamberHeight = 34 * inches2mm,
+            lowChamberHeight = 20 * inches2mm,
+            frontIntakeHeight = 1 * inches2mm,
+            wallIntakeHeight = 12 * inches2mm;
+
     // distances forward from pivot for positions
-    public double bucketX = -14 * inches2mm, chamberX = 14 * inches2mm, frontIntakeX = 11 * inches2mm, rearIntakeX = -11 * inches2mm;
-    // static (non-IK) positions
+    public double bucketX = -14 * inches2mm,
+            chamberX = 14 * inches2mm,
+            frontIntakeX = 11 * inches2mm,
+            rearIntakeX = -11 * inches2mm,
+            wallIntakeX = -11 * inches2mm;
+
+    // static positions
     public double storageX = 6 * inches2mm, storageZ = 4 * inches2mm;
 
     public Pivot(OpMode opMode) {
@@ -69,7 +80,7 @@ public class Pivot {
 
     public void runIK (double joystickValue) {
         if (Math.abs(joystickValue) > 0.05) {
-            runManual(joystickValue * 0.5);
+            targetZ += joystickValue * 0.2; //increments joystick
             targetX = (1 / Math.tan(getPivotAngleRadians())) * targetZ; //updates the x value so that slides can adjust in the periodic cycler
         }
     }
@@ -97,51 +108,62 @@ public class Pivot {
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
         pivotMotor.set(power);
-        slides.periodic(getPivotAngleRadians());
 
         //TODO below code is commented out just to make testing the pivot easier - comment it in to use the slides with IK
-//        if (slidesCycler != 2) {  //these conditions cause the slides to only be set every 3rd cycle - allowing time for the slides PID to work
-//            slidesCycler++;
-//        } else {
-//            slidesCycler = 0;
-//            slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
-//            slides.runToMM(slidesTarget);
-//        }
+//        slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
+//        slides.runToMM(slidesTarget);
+
+        slides.periodic(getPivotTargetAngleRadians());
+        arm.periodic(getPivotTargetAngleDegrees());
     }
 
-    public void setHighBucket() {
+    public void highBucket() {
         targetZ = highBucketHeight;
         targetX = bucketX;
     }
 
-    public void setLowBucket() {
+    public void lowBucket() {
         targetZ = lowBucketHeight;
         targetX = bucketX;
     }
 
-    public void setHighChamber() {
+    public void highChamber() {
         targetZ = highChamberHeight;
         targetX = chamberX;
     }
 
-    public void setLowChamber() {
+    public void lowChamber() {
         targetZ = lowChamberHeight;
         targetX = chamberX;
     }
 
-    public void setRearIntake() {
+    public void rearIntake() {
         targetZ = frontIntakeHeight;
         targetX = rearIntakeX;
     }
 
-    public void setFrontIntake() {
+    public void frontIntake() {
         targetZ = frontIntakeHeight;
         targetX = frontIntakeX;
     }
 
-    public void setStorage() {
+    public void storage() {
         targetZ = storageZ;
         targetX = storageX;
+    }
+
+    public void wallIntake() {
+        targetZ = wallIntakeHeight;
+        targetX = wallIntakeX;
+    }
+
+    public void changeHeight(double inches) {
+        targetZ += inches * inches2mm;
+    }
+
+    public void frontIntakeStorage() {
+        targetZ = frontIntakeHeight + 3 * inches2mm;
+        targetX = 8 * inches2mm;
     }
 
     public double calculateDegXZ(double x, double z) {
@@ -210,6 +232,14 @@ public class Pivot {
     public double getPivotAngleRadians() {
         // Convert the current position in encoder ticks to degrees
         return Math.toRadians((getPosition() / ticksPerDegree - startingAngleOffsetDegrees));
+    }
+
+    public double getPivotTargetAngleDegrees() {
+        return target / ticksPerDegree - startingAngleOffsetDegrees;
+    }
+
+    public double getPivotTargetAngleRadians() {
+        return Math.toRadians((target / ticksPerDegree - startingAngleOffsetDegrees));
     }
 
     public int degreestoTicks(double degrees) {
