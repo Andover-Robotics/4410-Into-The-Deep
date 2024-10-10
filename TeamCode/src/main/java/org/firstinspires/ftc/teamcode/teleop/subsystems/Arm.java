@@ -84,8 +84,8 @@ public class Arm {
         // differential kinematics here: https://docs.google.com/spreadsheets/d/1JkhiQhE-VoVGqtl1_H_pUl7kZgCqxzRvsZEbwqYRP3o/edit?usp=sharing
 
         // Set servos to the calculated angles
-        armLeft.turnToAngle(leftAngle);
-        armRight.turnToAngle(rightAngle);
+//        armLeft.turnToAngle(leftAngle);
+//        armRight.turnToAngle(rightAngle);
 
         // Update the current roll and pitch values
         currentRoll = roll;
@@ -102,8 +102,8 @@ public class Arm {
         double rightAngle = currentPitch + (ROLL_MID - (roll / 2));
 
         // Set the servo angles for roll
-        armLeft.turnToAngle(leftAngle);
-        armRight.turnToAngle(rightAngle);
+//        armLeft.turnToAngle(leftAngle);
+//        armRight.turnToAngle(rightAngle);
 
         // Update the current roll value
         currentRoll = roll;
@@ -121,8 +121,8 @@ public class Arm {
         double rightAngle = pitch + (ROLL_MID - (currentRoll / 2));
 
         // Set the servo angles for pitch
-        armLeft.turnToAngle(leftAngle);
-        armRight.turnToAngle(rightAngle);
+//        armLeft.turnToAngle(leftAngle);
+//        armRight.turnToAngle(rightAngle);
 
         // Update the current pitch value
         currentPitch = pitch;

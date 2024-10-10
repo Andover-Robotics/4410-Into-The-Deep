@@ -42,6 +42,8 @@ public class Pivot {
     public static final double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
 
     public double inches2mm = 25.4;
+
+    public boolean testing;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
@@ -78,6 +80,10 @@ public class Pivot {
         this.opMode = opMode;
     }
 
+    public void setTesting(boolean testing) {
+        this.testing = testing;
+    }
+
     public void runIK (double joystickValue) {
         if (Math.abs(joystickValue) > 0.05) {
             targetZ += joystickValue * 0.2; //increments joystick
@@ -85,15 +91,11 @@ public class Pivot {
         }
     }
 
-    public void periodic(Bot.BotState state) {
-        this.state = state;
-
-        runToDeg(calculateDegXZ(targetX, targetZ));
-
+    public void periodic() {
         controller.setPID(p, i, d);
 
         int pivotPos = getPosition();
-        double ff = calculateFeedForward(pivotPos);  // Calculate gravity compensation
+        double ff = calculateFeedForward();  // Calculate gravity compensation
 
         // Check if manual control is active
         if (manualPower != 0) {
@@ -107,14 +109,16 @@ public class Pivot {
 
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
-        pivotMotor.set(power);
 
+        if (testing) {
+            pivotMotor.set(power);
+        }
         //TODO below code is commented out just to make testing the pivot easier - comment it in to use the slides with IK
 //        slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
 //        slides.runToMM(slidesTarget);
 
         slides.periodic(getPivotTargetAngleRadians());
-        arm.periodic(getPivotTargetAngleDegrees());
+        //arm.periodic(getPivotTargetAngleDegrees());
     }
 
     public void highBucket() {
@@ -198,10 +202,9 @@ public class Pivot {
         }
     }
 
-    public double calculateFeedForward(double pos) {
+    public double calculateFeedForward() {
         //convert from encoder ticks to degrees
-        double angleInDegrees = pos / ticksPerDegree;
-        double angleInRadians = Math.toRadians(angleInDegrees);
+        double angleInRadians = getPivotAngleRadians();
 
         // Effective length of the extension (changes dynamically based on extension)
         double effectiveExtensionLength = EXTENSION_OFFSET + slides.getmmPosition(); // calculates ext length
