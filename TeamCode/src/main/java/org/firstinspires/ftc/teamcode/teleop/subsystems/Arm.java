@@ -17,14 +17,14 @@ public class Arm {
 
     // Define the range for roll and pitch
     public final double ROLL_MIN = 0;       // Minimum roll value
-    public final double ROLL_MAX = 230;     // Maximum roll value
-    public final double ROLL_MID = 115;     // Midpoint for straight roll angle
+    public final double ROLL_MAX = 360;     // Maximum roll value
+    public final double ROLL_MID = 180;     // Midpoint for straight roll angle
     public final double PITCH_MIN = 0;      // Minimum pitch value (front)
-    public final double PITCH_MAX = 240;    // Maximum pitch value (back)
+    public final double PITCH_MAX = 270;    // Maximum pitch value (back)
     public final double PITCH_MID = 135;    // Midpoint for vertical pitch angle - straight up through the slides
 
     public double pitchPickup = -90, pitchStorage = 90, pitchOuttakeUp = 25, pitchOuttakeDown = 0, pitchBucket = 170;
-    public double rollVertical = ROLL_MID, rollLeft = ROLL_MID - 90, rollRight = ROLL_MID + 90, rollBottomLeft = ROLL_MIN, rollBottomRight = ROLL_MAX;
+    public double rollVertical = ROLL_MID, rollLeft = ROLL_MID - 90, rollRight = ROLL_MID + 90, rollBottomLeft = ROLL_MID - 135, rollBottomRight = ROLL_MID + 135;
 
     // Track the current angles for pitch and roll
     public double currentPitch = 0;
@@ -62,6 +62,10 @@ public class Arm {
         setPitch(0);
     }
 
+    public void horizontalRear() {
+        setPitch(180);
+    }
+
     public void periodic(double pivotAngleDegrees) {
         this.pivotAngleDegrees = pivotAngleDegrees;
     }
@@ -75,8 +79,9 @@ public class Arm {
         pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
 
         // Calculate servo angles for combined roll and pitch
-        double leftAngle = pitch + roll;
-        double rightAngle = pitch - roll;
+        double leftAngle = pitch + (roll / 2);
+        double rightAngle = pitch + (ROLL_MID - (roll / 2));
+        // differential kinematics here: https://docs.google.com/spreadsheets/d/1JkhiQhE-VoVGqtl1_H_pUl7kZgCqxzRvsZEbwqYRP3o/edit?usp=sharing
 
         // Set servos to the calculated angles
         armLeft.turnToAngle(leftAngle);
@@ -93,8 +98,8 @@ public class Arm {
         roll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, roll));
 
         // Maintain the current pitch while setting roll
-        double leftAngle = currentPitch + roll;
-        double rightAngle = currentPitch - roll;
+        double leftAngle = currentPitch + (roll / 2);
+        double rightAngle = currentPitch + (ROLL_MID - (roll / 2));
 
         // Set the servo angles for roll
         armLeft.turnToAngle(leftAngle);
@@ -112,8 +117,8 @@ public class Arm {
         pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
 
         // Maintain the current roll while setting pitch
-        double leftAngle = pitch + currentRoll;
-        double rightAngle = pitch - currentRoll;
+        double leftAngle = pitch + (currentRoll / 2);
+        double rightAngle = pitch + (ROLL_MID - (currentRoll / 2));
 
         // Set the servo angles for pitch
         armLeft.turnToAngle(leftAngle);

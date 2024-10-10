@@ -166,7 +166,14 @@ public class Bot {
     }
 
     public void wallIntake() {
-
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.wallIntake();
+                Thread.sleep(200);
+                pivot.arm.horizontalRear();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
     }
 
     // MOTORS
