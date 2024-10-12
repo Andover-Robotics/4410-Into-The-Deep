@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.util.Size;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -11,11 +10,14 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
+import org.opencv.core.RotatedRect;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.core.MatOfPoint2f;
 
 
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Vector;
 
 public class SampleOrientation implements VisionProcessor {
     private Mat Frame = new Mat();
@@ -24,17 +26,36 @@ public class SampleOrientation implements VisionProcessor {
     private Mat BlueMask = new Mat();
     private Mat YellowMask = new Mat();
 
-    private List<MatOfPoint> RedContours = new ArrayList<>();
-    private List<MatOfPoint> BlueContours = new ArrayList<>();
-    private List<MatOfPoint> YellowContours = new ArrayList<>();
+    private RotatedRect RedRect = new RotatedRect();
+    private RotatedRect BlueRect = new RotatedRect();
+    private RotatedRect YellowRect = new RotatedRect();
 
-    private final Scalar redHSV = new Scalar(0,175,127);
-    private final Scalar blueHSV = new Scalar(231/2,125,127);
-    private final Scalar yellowHSV = new Scalar(49.5/2,175,127);
+    private List<MatOfPoint> RedContours = new Vector<>();
+    private List<MatOfPoint> BlueContours = new Vector<>();
+    private List<MatOfPoint> YellowContours = new Vector<>();
 
-    private final Scalar redRange = new Scalar(5,79,127);
-    private final Scalar blueRange = new Scalar(10,80,127);
-    private final Scalar yellowRange = new Scalar(5,79,127);
+    private final static Scalar RED_HSV = new Scalar(0,175,127);
+    private final static Scalar BLUE_HSV = new Scalar(231/2,125,127);
+    private final static Scalar YELLOW_HSV = new Scalar(49.5/2,175,127);
+
+    private final static Scalar RED_RANGE = new Scalar(5,79,127);
+    private final static Scalar BLUE_RANGE = new Scalar(10,80,127);
+    private final static Scalar YELLOW_RANGE = new Scalar(5,79,127);
+
+    private enum Alliance {
+        ALLIANCE_BLUE,
+        ALLIANCE_RED
+    }
+
+    private Alliance alliance;
+
+    public void setBlueAlliance() {
+        alliance = Alliance.ALLIANCE_BLUE;
+    }
+
+    public void setRedAlliance() {
+        alliance = Alliance.ALLIANCE_RED;
+    }
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
@@ -42,16 +63,41 @@ public class SampleOrientation implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
-        Frame = frame;
+        if (alliance == Alliance.ALLIANCE_RED) {
+            // red alliance detection system
+            Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
+            Frame = frame;
 
-        Core.inRange(HsvMat,range(redHSV, redRange, false),range(redHSV, redRange, true),RedMask);
-        Core.inRange(HsvMat,range(blueHSV, blueRange, false),range(blueHSV, blueRange, true),BlueMask);
-        Core.inRange(HsvMat,range(yellowHSV, yellowRange, false),range(yellowHSV, yellowRange, true),YellowMask);
+            Core.inRange(HsvMat, range(RED_HSV, RED_RANGE, false), range(RED_HSV, RED_RANGE, true), RedMask);
+            Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
 
-        Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.findContours(BlueMask, BlueContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            MatOfPoint2f RedMat = new MatOfPoint2f; RedMat.fromList(largestContour(RedContours));
+            MatOfPoint2f YellowMat = new MatOfPoint2f; YellowMat.fromList(largestContour(YellowContours));
+
+            RedRect = Imgproc.minAreaRect(RedMat);
+            YellowRect = Imgproc.minAreaRect(YellowMat);
+
+        } else {
+            // blue alliance detection system
+            Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
+            Frame = frame;
+
+            Core.inRange(HsvMat, range(BLUE_HSV, BLUE_RANGE, false), range(BLUE_HSV, BLUE_RANGE, true), BlueMask);
+            Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
+
+            Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            MatOfPoint2f BlueMat = new MatOfPoint2f; BlueMat.fromList(largestContour(RedContours));
+            MatOfPoint2f YellowMat = new MatOfPoint2f; YellowMat.fromList(largestContour(YellowContours));
+
+            BlueRect = Imgproc.minAreaRect(BlueMat);
+            YellowRect = Imgproc.minAreaRect(YellowMat);
+
+        }
         return null;
     }
 
@@ -72,7 +118,6 @@ public class SampleOrientation implements VisionProcessor {
         canvas.drawBitmap(bitmap, 0, 0, null);
     }
 
-
     // helper function for ranges because i'm a lazy ass
     private Scalar range(Scalar input, Scalar range, boolean retUpper) {
         Scalar ret = new Scalar(0,0,0);
@@ -90,5 +135,18 @@ public class SampleOrientation implements VisionProcessor {
             );
         }
         return ret;
+    }
+
+    private List<Point> largestContour(List<MatOfPoint> contours) {
+        double area = -69420;
+        MatOfPoint largest = null;
+        for (MatOfPoint contour : contours) {
+            if (Imgproc.contourArea(contour) > area) {
+                area = (Imgproc.contourArea(contour));
+                largest = contour;
+            }
+        }
+        assert largest != null;
+        return largest.toList();
     }
 }
