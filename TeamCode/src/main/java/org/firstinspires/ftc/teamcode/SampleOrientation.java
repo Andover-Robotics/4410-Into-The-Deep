@@ -53,7 +53,7 @@ public class SampleOrientation implements VisionProcessor {
         Mat matCanvas = new Mat(onscreenHeight, onscreenWidth, CvType.CV_8UC3);
         matCanvas.setTo(new Scalar(0, 0, 0));
 
-        Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(0,0,255), 5;
+        Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(0,0,255), 5);
         Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(255,0,0), 5);
         Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(0,240,240), 5);
     }
