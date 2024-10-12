@@ -29,7 +29,7 @@ public class Slides {
     }
 
     public Position position = Position.BOTTOM;
-    public static double p = 0.015, i = 0, d = 0, f = 0, gComp = 0.25;
+    public static double p = 0.016, i = 0, d = 0, f = 0, gComp = 0.25;
     public double staticF = 0.25;
     private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
@@ -97,6 +97,7 @@ public class Slides {
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
             manualPower = manual;
+            //runTo(target + manual * 5);
         } else {
             manualPower = 0;
         }
@@ -156,6 +157,10 @@ public class Slides {
 
     public double convert2Ticks(double mm) {
         return Math.toDegrees(mm/20) * -537.7 / 360;
+    }
+
+    public double getTarget() {
+        return target;
     }
 
     public void resetProfiler() {

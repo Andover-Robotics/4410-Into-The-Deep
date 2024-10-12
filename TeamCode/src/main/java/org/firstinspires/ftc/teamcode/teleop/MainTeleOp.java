@@ -75,7 +75,11 @@ public class MainTeleOp extends LinearOpMode {
                 pivotAngle -= 2.5;
             }
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT) && bot.pivot.testing) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                bot.pivot.runToDeg(pivotAngle);
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT) && bot.pivot.testing) {
                 bot.pivot.setTesting(false);
             } else if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 bot.pivot.setTesting(true);
@@ -91,15 +95,15 @@ public class MainTeleOp extends LinearOpMode {
             //drive();
 
             // TELEMETRY
-            telemetry.addData("Pivot Ticks", bot.pivot.getPosition());
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
-            telemetry.addData("Pivot Radians", bot.pivot.getPivotAngleRadians());
             telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Target Angle", pivotAngle);
             telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.addData("Pivot Feedforward", bot.pivot.calculateFeedForward());
+            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+            telemetry.addData("Pivot Power", bot.pivot.power);
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
-            telemetry.addData("Slides Static F", bot.pivot.slides.staticF);
+            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());
             telemetry.update();
             bot.pivot.periodic();
         }

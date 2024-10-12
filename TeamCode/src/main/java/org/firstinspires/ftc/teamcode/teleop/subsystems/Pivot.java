@@ -20,7 +20,7 @@ public class Pivot {
 
     private final OpMode opMode;
 
-    public static double p = 0, i = 0, d = 0, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
+    public static double p = 0.0054, i = 0, d = 0.00025, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
     public static double manualSpeed = 0.7; // need to tune
 
     public static double target = 0, tolerance = 30;
@@ -113,6 +113,8 @@ public class Pivot {
 
         if (testing) {
             pivotMotor.set(power);
+        } else {
+            pivotMotor.set(0);
         }
         //TODO below code is commented out just to make testing the pivot easier - comment it in to use the slides with IK
 //        slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
