@@ -24,6 +24,7 @@ public class MainTeleOp extends LinearOpMode {
     private boolean fieldCentric = false;
     private Thread thread;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -42,22 +43,52 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
+
             gp1.readButtons();
             gp2.readButtons();
 
-            if (gp1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.START)) {
+                bot.pivot.arm.setRollPitch(bot.pivot.arm.ROLL_MID, bot.pivot.arm.pitchOuttakeDown);
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+                bot.pivot.arm.setRoll(bot.pivot.arm.ROLL_MAX);
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
+                bot.pivot.arm.setRoll(bot.pivot.arm.ROLL_MIN);
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
+                bot.pivot.arm.setPitch(bot.pivot.arm.pitchPickup);
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+                bot.pivot.arm.setPitch(bot.pivot.arm.pitchOuttakeDown);
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 pivotAngle += 2.5;
             }
 
-            if (gp1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 pivotAngle -= 2.5;
             }
 
-            if (gp1.wasJustReleased(GamepadKeys.Button.A) && bot.pivot.testing) {
-                bot.pivot.setTesting(true);
-            } else if (gp1.wasJustReleased(GamepadKeys.Button.A)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT) && bot.pivot.testing) {
                 bot.pivot.setTesting(false);
+            } else if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                bot.pivot.setTesting(true);
             }
+
+            bot.pivot.slides.runManual(-gp1.getLeftY());
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                bot.pivot.slides.runTo(1000);
+            }
+
+            // DRIVE
+            //drive();
 
             // TELEMETRY
             telemetry.addData("Pivot Ticks", bot.pivot.getPosition());
@@ -65,7 +96,10 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Pivot Radians", bot.pivot.getPivotAngleRadians());
             telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Target Angle", pivotAngle);
-            telemetry.addData("Pivot Motor Power", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Pivot Feedforward", bot.pivot.calculateFeedForward());
+            telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
+            telemetry.addData("Slides Static F", bot.pivot.slides.staticF);
             telemetry.update();
             bot.pivot.periodic();
         }

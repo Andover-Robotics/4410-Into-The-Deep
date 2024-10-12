@@ -25,7 +25,7 @@ public class Pivot {
 
     public static double target = 0, tolerance = 30;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
-    private final double startingAngleOffsetDegrees = -180; //offset from rest position to horizontal front
+    private final double startingAngleOffsetDegrees = 177; //offset from rest position to horizontal front
     private boolean goingDown, IK;
 
     public double targetX, targetZ, slidesTarget;
@@ -35,15 +35,15 @@ public class Pivot {
     public int slidesCycler;
 
     // Constants for gravity compensation
-    public static final double ARM_MASS = 2; // kg, mass of the non extendo pivoting arm
-    public static final double EXTENSION_MASS = 2; // kg, mass of the extending part
-    public static final double GRAVITY = 9.81; // gravity :)
-    public static final double ARM_LENGTH = 0.4; // m, length of the non extendo pivoting arm
-    public static final double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
+    public static double STATIC_FF = 0.23; // main ff constant of the non-extending part
+    public static double EXTENSION_FF = 0; // main ff constant of the extending part
+    public static double GRAVITY = 9.81; // gravity :)
+    public static double ARM_LENGTH = 0.3; // m, length of the non extendo pivoting arm
+    public static double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
 
     public double inches2mm = 25.4;
 
-    public boolean testing;
+    public boolean testing = false;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
@@ -65,13 +65,14 @@ public class Pivot {
     public double storageX = 6 * inches2mm, storageZ = 4 * inches2mm;
 
     public Pivot(OpMode opMode) {
-        pivotMotor = new MotorEx(opMode.hardwareMap, "pivot", Motor.GoBILDA.RPM_84);
+        pivotMotor = new MotorEx(opMode.hardwareMap, "pivotMotor", Motor.GoBILDA.RPM_84);
         controller = new PIDController(p, i, d);
         controller.setTolerance(tolerance);
         controller.setSetPoint(target);
 
         pivotMotor.setRunMode(Motor.RunMode.RawPower);
         pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        pivotMotor.setInverted(false);
 
         // Initialize the slides object
         slides = new Slides(opMode);
@@ -119,6 +120,26 @@ public class Pivot {
 
         slides.periodic(getPivotTargetAngleRadians());
         //arm.periodic(getPivotTargetAngleDegrees());
+    }
+
+    public double calculateFeedForward() {
+        //convert from encoder ticks to degrees
+        double angleInRadians = getPivotAngleRadians();
+
+        // Effective length of the extension (changes dynamically based on extension)
+        double effectiveExtensionLength = EXTENSION_OFFSET + slides.getmmPosition(); // calculates ext length
+
+        // torque from the static (non extending) arm mass (assumed as a uniform rod, the mass is centered at length/3 due to motors being closer to pivot point)
+        double armGravityTorque = STATIC_FF * GRAVITY * (ARM_LENGTH / 3.0);
+
+        // torque from the extending arm
+        double extensionGravityTorque = EXTENSION_FF * GRAVITY * (effectiveExtensionLength / 2.0);
+
+        // total ff gravity compensation power
+        double totalFeedforwardPower;
+        totalFeedforwardPower = (armGravityTorque + extensionGravityTorque) * -(Math.cos(angleInRadians));
+
+        return totalFeedforwardPower;
     }
 
     public void highBucket() {
@@ -202,26 +223,6 @@ public class Pivot {
         }
     }
 
-    public double calculateFeedForward() {
-        //convert from encoder ticks to degrees
-        double angleInRadians = getPivotAngleRadians();
-
-        // Effective length of the extension (changes dynamically based on extension)
-        double effectiveExtensionLength = EXTENSION_OFFSET + slides.getmmPosition(); // calculates ext length
-
-        // torque from the static (non extending) arm mass (assumed as a uniform rod, the mass is centered at length/3 due to motors being closer to pivot point)
-        double armGravityTorque = ARM_MASS * GRAVITY * (ARM_LENGTH / 3.0);
-
-        // torque from the extending arm
-        double extensionGravityTorque = EXTENSION_MASS * GRAVITY * (effectiveExtensionLength / 2.0);
-
-        // total ff gravity compensation power
-        double totalFeedforwardPower;
-        totalFeedforwardPower = (armGravityTorque + extensionGravityTorque) * Math.sin(angleInRadians);
-
-        return totalFeedforwardPower;
-    }
-
     public int getPosition() {
         // Get the current motor encoder position
         return pivotMotor.getCurrentPosition();
@@ -229,24 +230,24 @@ public class Pivot {
 
     public double getPivotAngleDegrees() {
         // Convert the current position in encoder ticks to degrees
-        return getPosition() / ticksPerDegree - startingAngleOffsetDegrees;
+        return startingAngleOffsetDegrees - getPosition() / ticksPerDegree;
     }
 
     public double getPivotAngleRadians() {
         // Convert the current position in encoder ticks to degrees
-        return Math.toRadians((getPosition() / ticksPerDegree - startingAngleOffsetDegrees));
+        return Math.toRadians((startingAngleOffsetDegrees - getPosition() / ticksPerDegree));
     }
 
     public double getPivotTargetAngleDegrees() {
-        return target / ticksPerDegree - startingAngleOffsetDegrees;
+        return startingAngleOffsetDegrees - target / ticksPerDegree;
     }
 
     public double getPivotTargetAngleRadians() {
-        return Math.toRadians((target / ticksPerDegree - startingAngleOffsetDegrees));
+        return Math.toRadians((startingAngleOffsetDegrees - target / ticksPerDegree));
     }
 
     public int degreestoTicks(double degrees) {
-        return (int) (Math.round((degrees + startingAngleOffsetDegrees) * ticksPerDegree));
+        return (int) (Math.round((startingAngleOffsetDegrees - degrees) * ticksPerDegree));
     }
 
     public double getCurrent() {

@@ -17,8 +17,8 @@ public class Gripper {
     private static final double TURN_TIME = 0.1;
 
     public Gripper(OpMode opMode) {
-        leftWheel = new CRServo(opMode.hardwareMap, "leftWheel");
-        rightWheel = new CRServo(opMode.hardwareMap, "rightWheel");
+        leftWheel = new CRServo(opMode.hardwareMap, "gripperLeft");
+        rightWheel = new CRServo(opMode.hardwareMap, "gripperRight");
     }
 
     public void rotSpecimen(boolean clockwise) {}
@@ -32,6 +32,11 @@ public class Gripper {
     public void outtake() {
         leftWheel.set(1);
         rightWheel.set(-1);
+    }
+
+    public void stop() {
+        leftWheel.set(0);
+        rightWheel.set(0);
     }
 
     public void left() {
