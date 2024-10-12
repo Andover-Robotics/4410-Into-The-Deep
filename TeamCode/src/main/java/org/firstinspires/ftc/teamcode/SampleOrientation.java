@@ -26,6 +26,10 @@ public class SampleOrientation implements VisionProcessor {
     private Mat BlueMask = new Mat();
     private Mat YellowMask = new Mat();
 
+    private MatOfPoint2f LargestRed = new MatOfPoint2f();
+    private MatOfPoint2f LargestYellow = new MatOfPoint2f();
+    private MatOfPoint2f LargestBlue = new MatOfPoint2f()
+
     private RotatedRect RedRect = new RotatedRect();
     private RotatedRect BlueRect = new RotatedRect();
     private RotatedRect YellowRect = new RotatedRect();
@@ -74,11 +78,19 @@ public class SampleOrientation implements VisionProcessor {
             Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
             Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            MatOfPoint2f RedMat = new MatOfPoint2f; RedMat.fromList(largestContour(RedContours));
-            MatOfPoint2f YellowMat = new MatOfPoint2f; YellowMat.fromList(largestContour(YellowContours));
+            boolean contoursDetected = true;
 
-            RedRect = Imgproc.minAreaRect(RedMat);
-            YellowRect = Imgproc.minAreaRect(YellowMat);
+            try {
+                LargestRed.fromList(largestContour(RedContours));
+                LargestYellow.fromList(largestContour(YellowContours));
+            } finally {
+                contoursDetected = false;
+            };
+
+            if (contoursDetected) {
+                RedRect = Imgproc.minAreaRect(LargestRed);
+                YellowRect = Imgproc.minAreaRect(LargestYellow);
+            }
 
         } else {
             // blue alliance detection system
@@ -91,12 +103,14 @@ public class SampleOrientation implements VisionProcessor {
             Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
             Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            MatOfPoint2f BlueMat = new MatOfPoint2f; BlueMat.fromList(largestContour(RedContours));
-            MatOfPoint2f YellowMat = new MatOfPoint2f; YellowMat.fromList(largestContour(YellowContours));
+            try {
+                LargestBlue.fromList(largestContour(RedContours));
+                LargestYellow.fromList(largestContour(YellowContours));
 
-            BlueRect = Imgproc.minAreaRect(BlueMat);
-            YellowRect = Imgproc.minAreaRect(YellowMat);
-
+                BlueRect = Imgproc.minAreaRect(LargestBlue);
+                YellowRect = Imgproc.minAreaRect(LargestYellow);
+            } finally {
+            };
         }
         return null;
     }
@@ -146,7 +160,10 @@ public class SampleOrientation implements VisionProcessor {
                 largest = contour;
             }
         }
-        assert largest != null;
-        return largest.toList();
+        if (largest != null) {
+            return largest.toList();
+        } else {
+            return java.util.Collections.emptyList();
+        }
     }
 }
