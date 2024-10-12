@@ -28,7 +28,7 @@ public class SampleOrientation implements VisionProcessor {
 
     private MatOfPoint2f LargestRed = new MatOfPoint2f();
     private MatOfPoint2f LargestYellow = new MatOfPoint2f();
-    private MatOfPoint2f LargestBlue = new MatOfPoint2f()
+    private MatOfPoint2f LargestBlue = new MatOfPoint2f();
 
     private RotatedRect RedRect = new RotatedRect();
     private RotatedRect BlueRect = new RotatedRect();
@@ -67,6 +67,7 @@ public class SampleOrientation implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+        RedContours.clear(); BlueContours.clear(); YellowContours.clear();
         if (alliance == Alliance.ALLIANCE_RED) {
             // red alliance detection system
             Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
@@ -122,8 +123,6 @@ public class SampleOrientation implements VisionProcessor {
         Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(255,0,0), 5);
         Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(0,0,255), 5);
         Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(240,240,0), 5);
-
-        RedContours.clear(); BlueContours.clear(); YellowContours.clear();
 
         // Convert Mat to Bitmap
         Bitmap bitmap = Bitmap.createBitmap(matCanvas.cols(), matCanvas.rows(), Bitmap.Config.ARGB_8888);
