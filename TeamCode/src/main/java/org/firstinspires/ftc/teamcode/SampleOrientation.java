@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -11,6 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Point;
 import org.opencv.core.CvType;
 import org.opencv.imgproc.Imgproc;
+
 
 import java.util.List;
 import java.util.ArrayList;
@@ -56,7 +59,14 @@ public class SampleOrientation implements VisionProcessor {
         Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(0,0,255), 5);
         Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(255,0,0), 5);
         Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(0,240,240), 5);
+
+        // Convert Mat to Bitmap
+        Bitmap bitmap = Bitmap.createBitmap(matCanvas.cols(), matCanvas.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(matCanvas, bitmap);
+
+        canvas.drawBitmap(bitmap, 0, 0, null);
     }
+
 
     // helper function for ranges because i'm a lazy ass
     private Scalar range(Scalar input, Scalar range, boolean retUpper) {
