@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -91,27 +95,18 @@ public class SampleOrientation implements VisionProcessor {
             if (contoursDetected) {
                 RedRect = Imgproc.minAreaRect(LargestRed);
                 YellowRect = Imgproc.minAreaRect(LargestYellow);
+
+                Point[] RedRectPoints = new Point[4]; RedRect.points(RedRectPoints);
+                telemetry.addData("a1", getAngle(RedRectPoints[0],RedRectPoints[1]));
+                telemetry.addData("a2", getAngle(RedRectPoints[1],RedRectPoints[2]));
+                telemetry.addData("a3", getAngle(RedRectPoints[2],RedRectPoints[3]));
+                telemetry.addData("a4", getAngle(RedRectPoints[3],RedRectPoints[4]));
+                telemetry.update();
             }
 
         } else {
             // blue alliance detection system
-            Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
-            Frame = frame;
 
-            Core.inRange(HsvMat, range(BLUE_HSV, BLUE_RANGE, false), range(BLUE_HSV, BLUE_RANGE, true), BlueMask);
-            Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
-
-            Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-            Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            try {
-                LargestBlue.fromList(largestContour(RedContours));
-                LargestYellow.fromList(largestContour(YellowContours));
-
-                BlueRect = Imgproc.minAreaRect(LargestBlue);
-                YellowRect = Imgproc.minAreaRect(LargestYellow);
-            } finally {
-            };
         }
         return null;
     }
@@ -164,5 +159,9 @@ public class SampleOrientation implements VisionProcessor {
         } else {
             return java.util.Collections.emptyList();
         }
+    }
+
+    private double getAngle (Point p1, Point p2) {
+        return Math.atan2(Math.abs(p1.y-p1.y),Math.abs(p1.x-p1.x));
     }
 }
