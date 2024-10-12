@@ -35,11 +35,11 @@ public class Pivot {
     public int slidesCycler;
 
     // Constants for gravity compensation
-    public static double STATIC_FF = 0.23; // main ff constant of the non-extending part
-    public static double EXTENSION_FF = 0; // main ff constant of the extending part
+    public static double STATIC_FF = 0.21; // main ff constant of the non-extending part
+    public static double EXTENSION_FF = 0.00012; // main ff constant of the extending part
     public static double GRAVITY = 9.81; // gravity :)
     public static double ARM_LENGTH = 0.3; // m, length of the non extendo pivoting arm
-    public static double EXTENSION_OFFSET = 0.15; // Extension starts from 0.15m
+    public static double EXTENSION_OFFSET = 0.05; // Extension starts from 0.15m
 
     public double inches2mm = 25.4;
 
