@@ -68,11 +68,11 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                pivotAngle += 2.5;
+                pivotAngle += 5;
             }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                pivotAngle -= 2.5;
+                pivotAngle -= 5;
             }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
@@ -85,10 +85,22 @@ public class MainTeleOp extends LinearOpMode {
                 bot.pivot.setTesting(true);
             }
 
-            bot.pivot.slides.runManual(-gp1.getLeftY());
+            bot.pivot.slides.runManual(-gp2.getLeftY());
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                bot.pivot.slides.runTo(1000);
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                bot.pivot.slides.runToMM(480);
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                bot.pivot.slides.runToMM(710);
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                bot.pivot.slides.runToMM(0);
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                bot.pivot.slides.runToMM(240);
             }
 
             // DRIVE
@@ -99,11 +111,12 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Target Angle", pivotAngle);
             telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("Pivot Feedforward", bot.pivot.calculateFeedForward());
             telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
             telemetry.addData("Pivot Power", bot.pivot.power);
+            telemetry.addData("Pivot Setpoint", bot.pivot.getProfilerTarget());
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
             telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());
+            telemetry.addData("Slides Profiler", bot.pivot.slides.getProfilerTarget());
             telemetry.update();
             bot.pivot.periodic();
         }

@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 @Config
 public class Pivot {
@@ -23,10 +24,16 @@ public class Pivot {
     public static double p = 0.0054, i = 0, d = 0.00025, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
     public static double manualSpeed = 0.7; // need to tune
 
-    public static double target = 0, tolerance = 30;
+    public static double target = 0, tolerance = 5;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
     private final double startingAngleOffsetDegrees = 177; //offset from rest position to horizontal front
     private boolean goingDown, IK;
+
+    public static double maxVelo = 30000, maxAccel = 20000;
+    private double profilerTarget;
+    private double profile_init_time = 0;
+    private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
+
 
     public double targetX, targetZ, slidesTarget;
 
@@ -94,24 +101,34 @@ public class Pivot {
 
     public void periodic() {
         controller.setPID(p, i, d);
-
         int pivotPos = getPosition();
         double ff = calculateFeedForward();  // Calculate gravity compensation
+        double dt = opMode.time - profile_init_time;
 
-        // Check if manual control is active
-        if (manualPower != 0) {
-            // Use joystick input directly, but add feedforward to hold the arm up against gravity
-            power = manualPower + ff;
+        if (!profiler.isOver()) {
+            profilerTarget = profiler.motion_profile_pos(dt);
+            double pid = controller.calculate(pivotPos, profilerTarget);  // PID calculation
+            power = pid;
         } else {
-            // Use PID + feedforward control
-            double pid = controller.calculate(pivotPos, target);  // PID calculation
-            power = pid + ff;
+            if (profiler.isDone()) {
+                resetProfiler();
+            }
+            // Check if manual control is active
+            if (manualPower != 0) {
+                // Use joystick input directly
+                power = manualPower;
+            } else {
+                double pid = controller.calculate(pivotPos, profilerTarget);  // hold position
+                power = pid;
+            }
         }
 
+        // Add feedforward
+        power += ff;
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
 
-        if (testing) {
+        if (testing) { //TODO remove for master code
             pivotMotor.set(power);
         } else {
             pivotMotor.set(0);
@@ -252,8 +269,16 @@ public class Pivot {
         return (int) (Math.round((startingAngleOffsetDegrees - degrees) * ticksPerDegree));
     }
 
+    public double getProfilerTarget() {
+        return controller.getSetPoint();
+    }
+
     public double getCurrent() {
         return pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
+    }
+
+    public void resetProfiler() {
+        profiler = new MotionProfiler(maxVelo, maxAccel);
     }
 
     public void resetEncoder() {
