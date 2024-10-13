@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -16,7 +13,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.MatOfPoint2f;
 
@@ -53,19 +49,25 @@ public class SampleOrientation implements VisionProcessor {
 
     private double a1, a2, a3, a4;
 
+    private boolean detectYellow;
+
     private enum Alliance {
-        ALLIANCE_BLUE,
-        ALLIANCE_RED
+        BLUE,
+        RED
     }
 
     private Alliance alliance;
 
     public void setBlueAlliance() {
-        alliance = Alliance.ALLIANCE_BLUE;
+        alliance = Alliance.BLUE;
     }
 
     public void setRedAlliance() {
-        alliance = Alliance.ALLIANCE_RED;
+        alliance = Alliance.RED;
+    }
+
+    public void detectYellow(boolean set) {
+        detectYellow = set;
     }
 
     @Override
@@ -75,27 +77,24 @@ public class SampleOrientation implements VisionProcessor {
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         RedContours.clear(); BlueContours.clear(); YellowContours.clear();
-        if (alliance == Alliance.ALLIANCE_RED) {
+
+        Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.medianBlur(HsvMat, HsvMat, 5);
+        Imgproc.cvtColor(HsvMat, Frame, Imgproc.COLOR_HSV2RGB);
+
+        if (alliance == Alliance.RED) {
             // red alliance detection system
-            Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
-            Imgproc.medianBlur(HsvMat, HsvMat, 5); // remove salt and pepper noise;
-            //Imgproc.GaussianBlur(HsvMat,HsvMat, new Size(7,7),0);//remove gaussian noise
-            Imgproc.cvtColor(HsvMat, Frame, Imgproc.COLOR_HSV2RGB);
 
             Core.inRange(HsvMat, range(RED_HSV, RED_RANGE, false), range(RED_HSV, RED_RANGE, true), RedMask);
-            Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
 
             Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-            Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
             boolean contoursDetected = true;
 
             LargestRed.fromList(largestContour(RedContours));
-            LargestYellow.fromList(largestContour(YellowContours));
 
             try {
                 RedRect = Imgproc.minAreaRect(LargestRed);
-                YellowRect = Imgproc.minAreaRect(LargestYellow);
 
                 Point[] RedRectPoints = new Point[4]; RedRect.points(RedRectPoints);
                 a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
@@ -109,6 +108,24 @@ public class SampleOrientation implements VisionProcessor {
             // blue alliance detection system
 
         }
+
+        if (detectYellow) {
+            Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
+            Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            LargestYellow.fromList(largestContour(YellowContours));
+
+            try {
+                YellowRect = Imgproc.minAreaRect(LargestYellow);
+
+                Point[] RedRectPoints = new Point[4]; YellowRect.points(RedRectPoints);
+                a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
+                a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
+                a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
+                a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
+            } finally {
+            }
+        }
         return null;
     }
 
@@ -120,12 +137,26 @@ public class SampleOrientation implements VisionProcessor {
         Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(0,0,255), 5);
         Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(240,240,0), 5);
 
-        try {
-            Point[] RedCorners = new Point[4]; RedRect.points(RedCorners);
-            for (int i = 0; i < 4; i++) {
-                Imgproc.line(matCanvas, RedCorners[i], RedCorners[(i + 1) % 4], new Scalar(255,0,0), 5);
+        if (alliance == Alliance.RED) {
+            try {
+                Point[] RedCorners = new Point[4];
+                RedRect.points(RedCorners);
+                for (int i = 0; i < 4; i++) {
+                    Imgproc.line(matCanvas, RedCorners[i], RedCorners[(i + 1) % 4], new Scalar(255, 0, 0), 5);
+                }
+            } finally {
             }
-        } finally {
+        }
+
+        if (detectYellow) {
+            try {
+                Point[] RedCorners = new Point[4];
+                YellowRect.points(RedCorners);
+                for (int i = 0; i < 4; i++) {
+                    Imgproc.line(matCanvas, RedCorners[i], RedCorners[(i + 1) % 4], new Scalar(255, 0, 0), 5);
+                }
+            } finally {
+            }
         }
 
         // Convert Mat to Bitmap
