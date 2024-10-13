@@ -16,6 +16,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.MatOfPoint2f;
 
@@ -42,13 +43,15 @@ public class SampleOrientation implements VisionProcessor {
     private List<MatOfPoint> BlueContours = new Vector<>();
     private List<MatOfPoint> YellowContours = new Vector<>();
 
-    private final static Scalar RED_HSV = new Scalar(0,175,127);
-    private final static Scalar BLUE_HSV = new Scalar(231/2,125,127);
-    private final static Scalar YELLOW_HSV = new Scalar(49.5/2,175,127);
+    private final static Scalar RED_HSV = new Scalar(0,190,168);
+    private final static Scalar BLUE_HSV = new Scalar(231/2,190,168);
+    private final static Scalar YELLOW_HSV = new Scalar(25,190,127);
 
-    private final static Scalar RED_RANGE = new Scalar(5,79,127);
+    private final static Scalar RED_RANGE = new Scalar(5,63,85);
     private final static Scalar BLUE_RANGE = new Scalar(10,80,127);
-    private final static Scalar YELLOW_RANGE = new Scalar(5,79,127);
+    private final static Scalar YELLOW_RANGE = new Scalar(10,63,85);
+
+    private double a1, a2, a3, a4;
 
     private enum Alliance {
         ALLIANCE_BLUE,
@@ -75,7 +78,9 @@ public class SampleOrientation implements VisionProcessor {
         if (alliance == Alliance.ALLIANCE_RED) {
             // red alliance detection system
             Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
-            Frame = frame;
+            Imgproc.medianBlur(HsvMat, HsvMat, 5); // remove salt and pepper noise;
+            //Imgproc.GaussianBlur(HsvMat,HsvMat, new Size(7,7),0);//remove gaussian noise
+            Imgproc.cvtColor(HsvMat, Frame, Imgproc.COLOR_HSV2RGB);
 
             Core.inRange(HsvMat, range(RED_HSV, RED_RANGE, false), range(RED_HSV, RED_RANGE, true), RedMask);
             Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
@@ -85,23 +90,19 @@ public class SampleOrientation implements VisionProcessor {
 
             boolean contoursDetected = true;
 
-            try {
-                LargestRed.fromList(largestContour(RedContours));
-                LargestYellow.fromList(largestContour(YellowContours));
-            } finally {
-                contoursDetected = false;
-            };
+            LargestRed.fromList(largestContour(RedContours));
+            LargestYellow.fromList(largestContour(YellowContours));
 
-            if (contoursDetected) {
+            try {
                 RedRect = Imgproc.minAreaRect(LargestRed);
                 YellowRect = Imgproc.minAreaRect(LargestYellow);
 
                 Point[] RedRectPoints = new Point[4]; RedRect.points(RedRectPoints);
-                telemetry.addData("a1", getAngle(RedRectPoints[0],RedRectPoints[1]));
-                telemetry.addData("a2", getAngle(RedRectPoints[1],RedRectPoints[2]));
-                telemetry.addData("a3", getAngle(RedRectPoints[2],RedRectPoints[3]));
-                telemetry.addData("a4", getAngle(RedRectPoints[3],RedRectPoints[4]));
-                telemetry.update();
+                a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
+                a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
+                a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
+                a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
+            } finally {
             }
 
         } else {
@@ -118,6 +119,14 @@ public class SampleOrientation implements VisionProcessor {
         Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(255,0,0), 5);
         Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(0,0,255), 5);
         Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(240,240,0), 5);
+
+        try {
+            Point[] RedCorners = new Point[4]; RedRect.points(RedCorners);
+            for (int i = 0; i < 4; i++) {
+                Imgproc.line(matCanvas, RedCorners[i], RedCorners[(i + 1) % 4], new Scalar(255,0,0), 5);
+            }
+        } finally {
+        }
 
         // Convert Mat to Bitmap
         Bitmap bitmap = Bitmap.createBitmap(matCanvas.cols(), matCanvas.rows(), Bitmap.Config.ARGB_8888);
@@ -157,11 +166,25 @@ public class SampleOrientation implements VisionProcessor {
         if (largest != null) {
             return largest.toList();
         } else {
-            return java.util.Collections.emptyList();
+            return null;
         }
     }
 
     private double getAngle (Point p1, Point p2) {
         return Math.atan2(Math.abs(p1.y-p1.y),Math.abs(p1.x-p1.x));
+    }
+
+    public double getAngle(int input){
+        switch(input) {
+            case 1:
+                return a1;
+            case 2:
+                return a2;
+            case 3:
+                return a3;
+            case 4:
+                return a4;
+        }
+        return 0;
     }
 }
