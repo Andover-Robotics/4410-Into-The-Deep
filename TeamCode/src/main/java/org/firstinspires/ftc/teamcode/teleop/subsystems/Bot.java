@@ -123,7 +123,7 @@ public class Bot {
     public void frontIntakeToStorage() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.changeHeight(4);
+                pivot.changeZ(4);
                 Thread.sleep(200);
                 pivot.frontIntakeStorage();
                 Thread.sleep(400);
@@ -151,7 +151,7 @@ public class Bot {
     }
 
     public void pickDown() {
-        pivot.changeHeight(-1.5);
+        pivot.changeZ(-1.5);
     }
 
     public void toRearIntake() {

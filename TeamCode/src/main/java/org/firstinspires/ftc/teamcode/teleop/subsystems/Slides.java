@@ -29,12 +29,13 @@ public class Slides {
     }
 
     public Position position = Position.BOTTOM;
-    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.16, gComp = 0.27-staticFOffset;
+    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
     public static double staticF = 0;
-    private final double tolerance = 15;
+    public static double ikMMoffset = 280;
+    private final double tolerance = 10;
     private final double powerUp = 0.1;
     private double powerDown = 0.05;
-    private final double manualDivide = 1;
+    private final double manualDivide = 2;
     private final double powerMin = 0.1;
     private double manualPower = 0;
 
@@ -95,7 +96,7 @@ public class Slides {
 
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
-            manualPower = manual;
+            manualPower = -manual;
             //runRelativeMM(manual * 5);
         } else {
             manualPower = 0;
@@ -143,8 +144,7 @@ public class Slides {
             }
             if (manualPower != 0) {
                 controller.setSetPoint(motorLeft.getCurrentPosition());
-                motorLeft.set(manualPower / manualDivide);
-                motorRight.set(manualPower / manualDivide);
+                power = manualPower / manualDivide;
             } else {
                 power = staticF * controller.calculate(motorLeft.getCurrentPosition());
             }
@@ -157,8 +157,12 @@ public class Slides {
         runToMM(getmmPosition() + mm);
     }
 
+    public void runToIKMM(double posMM) {
+        posMM -= ikMMoffset; //length difference from pivot to diffy arm joint TODO: uncomment for IK
+        runToMM(posMM);
+    }
+
     public void runToMM(double posMM) {
-        //posMM -= 280; //length difference from pivot to diffy arm joint TODO: uncomment for IK
         posMM = Math.max(posMM, 0);
         posMM = Math.min(posMM, 720);
         runTo(convert2Ticks(posMM));
@@ -175,6 +179,10 @@ public class Slides {
 
     public double getmmPosition() {
         return Math.toRadians(getPosition() * 360 / -537.7) * 20;
+    }
+
+    public double getIKmmPosition() {
+        return Math.toRadians(getPosition() * 360 / -537.7) * 20 + ikMMoffset;
     }
 
     public double convert2MM(double ticks) {

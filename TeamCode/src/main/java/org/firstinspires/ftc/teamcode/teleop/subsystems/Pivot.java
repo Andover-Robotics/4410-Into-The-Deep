@@ -22,14 +22,14 @@ public class Pivot {
     private final OpMode opMode;
 
     public static double p = 0.0054, i = 0, d = 0.00025, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
-    public static double manualSpeed = 0.7; // need to tune
+    public static double manualSpeed = 0.3; // need to tune
 
-    public static double target = 0, tolerance = 5;
+    public static double target = 0, tolerance = 5, powerUp = -0.13;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
     private final double startingAngleOffsetDegrees = 177; //offset from rest position to horizontal front
     private boolean goingDown, IK;
 
-    public static double maxVelo = 30000, maxAccel = 20000;
+    public static double maxVelo = 1000, maxAccel = 60000;
     private double profilerTarget;
     private double profile_init_time = 0;
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
@@ -37,7 +37,7 @@ public class Pivot {
 
     public double targetX, targetZ, slidesTarget;
 
-    public double power, manualPower;
+    public double power, manualPower, manualPowerUp;
 
     public int slidesCycler;
 
@@ -50,7 +50,7 @@ public class Pivot {
 
     public double inches2mm = 25.4;
 
-    public boolean testing = false;
+    public boolean testing = false, manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
@@ -58,15 +58,15 @@ public class Pivot {
             lowBucketHeight = 24 * inches2mm,
             highChamberHeight = 34 * inches2mm,
             lowChamberHeight = 20 * inches2mm,
-            frontIntakeHeight = 1 * inches2mm,
+            frontIntakeHeight = 2 * inches2mm,
             wallIntakeHeight = 12 * inches2mm;
 
     // distances forward from pivot for positions
-    public double bucketX = -14 * inches2mm,
-            chamberX = 14 * inches2mm,
-            frontIntakeX = 11 * inches2mm,
-            rearIntakeX = -11 * inches2mm,
-            wallIntakeX = -11 * inches2mm;
+    public double bucketX = -3 * inches2mm,
+            chamberX = 9 * inches2mm,
+            frontIntakeX = 4 * inches2mm,
+            rearIntakeX = -4 * inches2mm,
+            wallIntakeX = -4 * inches2mm;
 
     // static positions
     public double storageX = 6 * inches2mm, storageZ = 4 * inches2mm;
@@ -92,11 +92,32 @@ public class Pivot {
         this.testing = testing;
     }
 
-    public void runIK (double joystickValue) {
-        if (Math.abs(joystickValue) > 0.05) {
-            targetZ += joystickValue * 0.2; //increments joystick
-            targetX = (1 / Math.tan(getPivotAngleRadians())) * targetZ; //updates the x value so that slides can adjust in the periodic cycler
+    public void runManualIK(double joystick) {
+        if (Math.abs(joystick) > 0.05) {
+            slides.runManual(joystick);
+            adjustTargetX();
+            updatePivotManualIK();
         }
+    }
+
+    public void adjustTargetX() {
+        targetX = (1 / Math.cos(getPivotAngleRadians())) * slides.getIKmmPosition(); //updates the x value so that pivot can adjust
+    }
+
+    public void updatePivotManualIK() {
+        double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
+        manualRunToDeg(pivotIKTargetDegrees);
+    }
+
+    public void runIKSlides() {
+        slidesTarget = Math.sqrt(targetX * targetX + targetZ * targetZ);
+        slides.runToIKMM(slidesTarget);
+    }
+
+    public void runToIKPosition() {
+        double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
+        runToDeg(pivotIKTargetDegrees);
+        runIKSlides();
     }
 
     public void periodic() {
@@ -104,23 +125,25 @@ public class Pivot {
         int pivotPos = getPosition();
         double ff = calculateFeedForward();  // Calculate gravity compensation
         double dt = opMode.time - profile_init_time;
-
-        if (!profiler.isOver()) {
-            profilerTarget = profiler.motion_profile_pos(dt);
-            double pid = controller.calculate(pivotPos, profilerTarget);  // PID calculation
-            power = pid;
-        } else {
-            if (profiler.isDone()) {
-                resetProfiler();
-            }
-            // Check if manual control is active
-            if (manualPower != 0) {
-                // Use joystick input directly
-                power = manualPower;
+        if (!manualIK) {
+            if (!profiler.isOver()) {
+                profilerTarget = profiler.motion_profile_pos(dt);
+                double pid = controller.calculate(pivotPos, profilerTarget);  // PID calculation
+                power = pid;
             } else {
-                double pid = controller.calculate(pivotPos, profilerTarget);  // hold position
+                if (profiler.isDone()) {
+                    resetProfiler();
+                }
+                double pid = controller.calculate(pivotPos);  // hold position
                 power = pid;
             }
+        } else {
+            double pid = controller.calculate(pivotPos, target);  // move PID manually
+            power = pid;
+            if (!goingDown) {
+                manualPowerUp = Math.cos(getPivotTargetAngleRadians()) * powerUp;
+            } else { manualPowerUp = 0; }
+            power += manualPowerUp;
         }
 
         // Add feedforward
@@ -133,12 +156,9 @@ public class Pivot {
         } else {
             pivotMotor.set(0);
         }
-        //TODO below code is commented out just to make testing the pivot easier - comment it in to use the slides with IK
-//        slidesTarget = Math.sqrt(targetX*targetX + targetZ*targetZ);
-//        slides.runToMM(slidesTarget);
 
         slides.periodic(getPivotTargetAngleRadians());
-        //arm.periodic(getPivotTargetAngleDegrees());
+        //arm.periodic(getPivotTargetAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
     }
 
     public double calculateFeedForward() {
@@ -161,83 +181,119 @@ public class Pivot {
         return totalFeedforwardPower;
     }
 
+    public void runToDeg(double angle) {
+        int pos = degreestoTicks(angle);
+        runTo(pos);
+    }
+
+    public void runTo(double pos) {
+        if (target != pos) {
+            pivotMotor.setRunMode(Motor.RunMode.RawPower);
+            pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            controller.setTolerance(tolerance);
+            resetProfiler();
+            profiler.init_new_profile(getPosition(), pos);
+            profile_init_time = opMode.time;
+
+            target = pos;
+            manualIK = false;
+
+            goingDown = Math.sin(getPivotAngleRadians()) > Math.sin(getPivotTargetAngleRadians());
+        }
+    }
+
+    public void manualRunTo(double pos) {
+        if (target != pos) {
+            pivotMotor.setRunMode(Motor.RunMode.RawPower);
+            pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            controller.setTolerance(tolerance);
+
+            target = pos;
+            manualIK = true;
+
+            goingDown = Math.sin(getPivotAngleRadians()) > Math.sin(getPivotTargetAngleRadians());
+        }
+    }
+
+    public void manualRunToDeg(double angle) {
+        manualRunTo(degreestoTicks(angle));
+    }
+
+//    public void runManual(double manual) {
+//        if (manual > 0.1 || manual < -0.1) {
+//            manualPower = manual * manualSpeed;
+//        } else {
+//            manualPower = 0;
+//        }
+//        this.manualIK = false; //turning manualIK PID off
+//    }
+
     public void highBucket() {
         targetZ = highBucketHeight;
         targetX = bucketX;
+        runToIKPosition();
     }
 
     public void lowBucket() {
         targetZ = lowBucketHeight;
         targetX = bucketX;
+        runToIKPosition();
     }
 
     public void highChamber() {
         targetZ = highChamberHeight;
         targetX = chamberX;
+        runToIKPosition();
     }
 
     public void lowChamber() {
         targetZ = lowChamberHeight;
         targetX = chamberX;
+        runToIKPosition();
     }
 
     public void rearIntake() {
         targetZ = frontIntakeHeight;
         targetX = rearIntakeX;
+        runToIKPosition();
     }
 
     public void frontIntake() {
         targetZ = frontIntakeHeight;
         targetX = frontIntakeX;
+        runToIKPosition();
     }
 
     public void storage() {
         targetZ = storageZ;
         targetX = storageX;
+        runToIKPosition();
     }
 
     public void wallIntake() {
         targetZ = wallIntakeHeight;
         targetX = wallIntakeX;
+        runToIKPosition();
     }
 
-    public void changeHeight(double inches) {
+    public void changeZ(double inches) {
         targetZ += inches * inches2mm;
+        runToIKPosition();
+    }
+
+    public void changeX(double inches) {
+        targetX += inches * inches2mm;
+        runToIKPosition();
     }
 
     public void frontIntakeStorage() {
         targetZ = frontIntakeHeight + 3 * inches2mm;
         targetX = 8 * inches2mm;
+        runToIKPosition();
     }
 
     public double calculateDegXZ(double x, double z) {
         return Math.toDegrees(Math.atan2(z, x));
-    }
-
-    public void runTo(double pos) {
-        pivotMotor.setRunMode(Motor.RunMode.RawPower);
-        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        controller.setTolerance(tolerance);
-        resetProfiler();
-        profiler.init_new_profile(getPosition(), pos);
-        profile_init_time = opMode.time;
-
-        goingDown = pos > target;
-        target = pos;
-    }
-
-    public void runToDeg(double angle) {
-        int pos = degreestoTicks(angle);
-
-        runTo(pos);
-    }
-
-    public void runManual(double manual) {
-        if (manual > 0.1 || manual < -0.1) {
-            manualPower = manual * manualSpeed;
-        } else {
-            manualPower = 0;
-        }
     }
 
     public int getPosition() {
@@ -286,6 +342,14 @@ public class Pivot {
     public void resetEncoder() {
         pivotMotor.resetEncoder();
         slides.resetEncoder();
+    }
+
+    public double getDTerm() {
+        return power - controller.getPositionError() * p - calculateFeedForward();
+    }
+
+    public double getPTerm() {
+        return controller.getPositionError() * p;
     }
 
 }
