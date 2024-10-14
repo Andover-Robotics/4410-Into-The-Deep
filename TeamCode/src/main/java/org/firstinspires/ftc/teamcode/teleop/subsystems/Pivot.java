@@ -59,11 +59,11 @@ public class Pivot {
             highChamberHeight = 34 * inches2mm,
             lowChamberHeight = 20 * inches2mm,
             frontIntakeHeight = 2 * inches2mm,
-            wallIntakeHeight = 12 * inches2mm;
+            wallIntakeHeight = 8 * inches2mm;
 
     // distances forward from pivot for positions
-    public double bucketX = -3 * inches2mm,
-            chamberX = 9 * inches2mm,
+    public double bucketX = -2.5 * inches2mm,
+            chamberX = 8 * inches2mm,
             frontIntakeX = 4 * inches2mm,
             rearIntakeX = -4 * inches2mm,
             wallIntakeX = -4 * inches2mm;
