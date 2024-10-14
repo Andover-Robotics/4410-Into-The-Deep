@@ -214,24 +214,22 @@ public class Pivot {
         return Math.toDegrees(Math.atan2(z, x));
     }
 
-    public void runToTicks(double pos) {
+    public void runTo(double pos) {
         pivotMotor.setRunMode(Motor.RunMode.RawPower);
         pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
         controller.setTolerance(tolerance);
+        resetProfiler();
+        profiler.init_new_profile(getPosition(), pos);
+        profile_init_time = opMode.time;
+
         goingDown = pos > target;
         target = pos;
     }
 
     public void runToDeg(double angle) {
-        pivotMotor.setRunMode(Motor.RunMode.RawPower);
-        pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
         int pos = degreestoTicks(angle);
 
-        controller.setTolerance(tolerance);
-        goingDown = pos > target;
-        target = pos;
+        runTo(pos);
     }
 
     public void runManual(double manual) {
@@ -267,6 +265,10 @@ public class Pivot {
 
     public int degreestoTicks(double degrees) {
         return (int) (Math.round((startingAngleOffsetDegrees - degrees) * ticksPerDegree));
+    }
+
+    public double getTarget() {
+        return target;
     }
 
     public double getProfilerTarget() {

@@ -85,7 +85,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.pivot.setTesting(true);
             }
 
-            bot.pivot.slides.runManual(-gp2.getLeftY());
+            bot.pivot.slides.runManual(gp2.getLeftY());
 
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 bot.pivot.slides.runToMM(480);
@@ -107,16 +107,18 @@ public class MainTeleOp extends LinearOpMode {
             //drive();
 
             // TELEMETRY
-            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot Active", bot.pivot.testing);
+            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot Target Angle", pivotAngle);
             telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+            telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
+            telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
             telemetry.addData("Pivot Power", bot.pivot.power);
-            telemetry.addData("Pivot Setpoint", bot.pivot.getProfilerTarget());
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
             telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());
             telemetry.addData("Slides Profiler", bot.pivot.slides.getProfilerTarget());
+            telemetry.addData("Slides Power", bot.pivot.slides.power);
             telemetry.update();
             bot.pivot.periodic();
         }

@@ -46,6 +46,7 @@ public class Slides {
 
     public static double maxVelo = 30000, maxAccel = 20000;
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
+    public boolean profiling;
 
     public Slides(OpMode opMode) {
         motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_312);
@@ -85,10 +86,71 @@ public class Slides {
                 resetProfiler();
                 profiler.init_new_profile(motorLeft.getCurrentPosition(), pos);
                 profile_init_time = opMode.time;
+                profiling = true;
             }
             goingDown = pos > target;
             target = pos;
         }
+    }
+
+    public void runManual(double manual) {
+        if (manual > powerMin || manual < -powerMin) {
+            manualPower = manual;
+            //runRelativeMM(manual * 5);
+        } else {
+            manualPower = 0;
+        }
+    }
+
+    public void periodic(double pivotAngleRadians) {
+        motorRight.setInverted(false);
+        motorLeft.setInverted(true);
+        controller.setPIDF(p, i, d, f);
+        adjustStaticF(pivotAngleRadians);
+
+//        if (manualPower == 0) {
+//            double dt = opMode.time - profile_init_time;
+//            if (!profiler.isOver()) {
+//                controller.setSetPoint(profiler.motion_profile_pos(dt));
+//                power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+//                if (goingDown) {
+//                    powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
+//                    power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
+//                }
+//            } else {
+//                if (profiler.isDone()) {
+//                    resetProfiler();
+//                    profiling = false;
+//                }
+//                power = staticF * controller.calculate(motorLeft.getCurrentPosition());
+//            }
+//        } else {
+//            power = controller.calculate(motorLeft.getCurrentPosition(), target);
+//        }
+
+        double dt = opMode.time - profile_init_time;
+        if (!profiler.isOver()) {
+            controller.setSetPoint(profiler.motion_profile_pos(dt));
+            power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+            if (goingDown) {
+                powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
+                power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
+            }
+        } else {
+            if (profiler.isDone()) {
+                resetProfiler();
+                profiling = false;
+            }
+            if (manualPower != 0) {
+                controller.setSetPoint(motorLeft.getCurrentPosition());
+                motorLeft.set(manualPower / manualDivide);
+                motorRight.set(manualPower / manualDivide);
+            } else {
+                power = staticF * controller.calculate(motorLeft.getCurrentPosition());
+            }
+        }
+        motorLeft.set(power);
+        motorRight.set(power);
     }
 
     public void runRelativeMM(double mm) {
@@ -100,48 +162,6 @@ public class Slides {
         posMM = Math.max(posMM, 0);
         posMM = Math.min(posMM, 720);
         runTo(convert2Ticks(posMM));
-    }
-
-    public void runManual(double manual) {
-        if (manual > powerMin || manual < -powerMin) {
-            manualPower = manual;
-            runRelativeMM(manual * 5);
-        } else {
-            manualPower = 0;
-        }
-    }
-
-    public void resetEncoder() {
-        motorLeft.resetEncoder();
-        motorRight.resetEncoder();
-    }
-
-    public void periodic(double pivotAngleRadians) {
-        motorRight.setInverted(false);
-        motorLeft.setInverted(true);
-        controller.setPIDF(p, i, d, f);
-        adjustStaticF(pivotAngleRadians);
-
-        if (manualPower == 0) {
-            double dt = opMode.time - profile_init_time;
-            if (!profiler.isOver()) {
-                controller.setSetPoint(profiler.motion_profile_pos(dt));
-                power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
-                if (goingDown) {
-                    powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
-                    power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
-                }
-            } else {
-                if (profiler.isDone()) {
-                    resetProfiler();
-                }
-                power = staticF * controller.calculate(motorLeft.getCurrentPosition());
-            }
-        } else {
-            power = controller.calculate(motorLeft.getCurrentPosition(), target);
-        }
-        motorLeft.set(power);
-        motorRight.set(power);
     }
 
     public double getCurrent() {
@@ -179,6 +199,11 @@ public class Slides {
 
     public void resetProfiler() {
         profiler = new MotionProfiler(maxVelo, maxAccel);
+    }
+
+    public void resetEncoder() {
+        motorLeft.resetEncoder();
+        motorRight.resetEncoder();
     }
 
     public Position getState() {
