@@ -132,14 +132,16 @@ public class MainTeleOp extends LinearOpMode {
             // TELEMETRY
             telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
-            telemetry.addData("Pivot Target Angle", pivotAngle);
-            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
-            telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
-            telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
-            telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
+            telemetry.addData("Pivot Teleop Target Angle", pivotAngle);
+            telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
+            //telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+            //telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+            //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
+            //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
+            //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
             telemetry.addData("Pivot Power", bot.pivot.power);
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
+            telemetry.addData("Slides IK Position (mm)", bot.pivot.slides.getIKmmPosition());
             telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());
             telemetry.addData("Slides Profiler", bot.pivot.slides.getProfilerTarget());
             telemetry.addData("Slides Power", bot.pivot.slides.power);

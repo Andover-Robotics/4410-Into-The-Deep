@@ -35,7 +35,7 @@ public class Pivot {
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
 
 
-    public double targetX, targetZ, slidesTarget;
+    public double targetX, targetZ, slidesTarget, pivotIKTargetDegrees;
 
     public double power, manualPower, manualPowerUp;
 
@@ -58,18 +58,19 @@ public class Pivot {
             lowBucketHeight = 24 * inches2mm,
             highChamberHeight = 34 * inches2mm,
             lowChamberHeight = 20 * inches2mm,
-            frontIntakeHeight = 2 * inches2mm,
+            frontIntakeHeight = 6.5 * inches2mm,
             wallIntakeHeight = 8 * inches2mm;
 
     // distances forward from pivot for positions
     public double bucketX = -2.5 * inches2mm,
             chamberX = 8 * inches2mm,
-            frontIntakeX = 4 * inches2mm,
-            rearIntakeX = -4 * inches2mm,
-            wallIntakeX = -4 * inches2mm;
+            frontIntakeX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((frontIntakeHeight/inches2mm), 2)) * inches2mm * inches2mm,
+            rearIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((frontIntakeHeight/inches2mm), 2)) * inches2mm,
+            wallIntakeX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm;
+    //STORAGE
+    public double storageX = 6 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
 
-    // static positions
-    public double storageX = 6 * inches2mm, storageZ = 4 * inches2mm;
+    //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 
     public Pivot(OpMode opMode) {
         pivotMotor = new MotorEx(opMode.hardwareMap, "pivotMotor", Motor.GoBILDA.RPM_84);
@@ -101,11 +102,15 @@ public class Pivot {
     }
 
     public void adjustTargetX() {
-        targetX = (1 / Math.cos(getPivotAngleRadians())) * slides.getIKmmPosition(); //updates the x value so that pivot can adjust
+        if (targetX < 0) {
+            targetX = -Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
+        } else if (targetX > 0) {
+            targetX = Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
+        }
     }
 
     public void updatePivotManualIK() {
-        double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
+        pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
         manualRunToDeg(pivotIKTargetDegrees);
     }
 
@@ -117,6 +122,15 @@ public class Pivot {
     public void runToIKPosition() {
         double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
         runToDeg(pivotIKTargetDegrees);
+        runIKSlides();
+    }
+
+    public void runPivotToIKPosition() {
+        double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
+        runToDeg(pivotIKTargetDegrees);
+    }
+
+    public void runSlidesToIKPosition() {
         runIKSlides();
     }
 
@@ -187,7 +201,7 @@ public class Pivot {
     }
 
     public void runTo(double pos) {
-        if (target != pos) {
+        if (target != pos && !Double.isNaN(pos)) {
             pivotMotor.setRunMode(Motor.RunMode.RawPower);
             pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             controller.setTolerance(tolerance);
@@ -203,7 +217,7 @@ public class Pivot {
     }
 
     public void manualRunTo(double pos) {
-        if (target != pos) {
+        if (target != pos && !Double.isNaN(pos)) {
             pivotMotor.setRunMode(Motor.RunMode.RawPower);
             pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             controller.setTolerance(tolerance);
@@ -308,7 +322,7 @@ public class Pivot {
 
     public double getPivotAngleRadians() {
         // Convert the current position in encoder ticks to degrees
-        return Math.toRadians((startingAngleOffsetDegrees - getPosition() / ticksPerDegree));
+        return Math.toRadians(getPivotAngleDegrees());
     }
 
     public double getPivotTargetAngleDegrees() {
@@ -316,7 +330,7 @@ public class Pivot {
     }
 
     public double getPivotTargetAngleRadians() {
-        return Math.toRadians((startingAngleOffsetDegrees - target / ticksPerDegree));
+        return Math.toRadians(getPivotTargetAngleDegrees());
     }
 
     public int degreestoTicks(double degrees) {
