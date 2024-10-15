@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Arm {
 
-    public final ServoEx armLeft, armRight;
+    public ServoEx armLeft, armRight;
     public final double MIN_ANGLE = 0, MAX_ANGLE = 473.33;
 
     // Define the range for roll and pitch
@@ -23,23 +23,39 @@ public class Arm {
     public final double PITCH_MAX = 270;    // Maximum pitch value (back)
     public final double PITCH_MID = 135;    // Midpoint for vertical pitch angle - straight up through the slides
 
-    public double pitchPickup = -90, pitchStorage = 90, pitchOuttakeUp = 25, pitchOuttakeDown = 0, pitchBucket = 170;
-    public double rollVertical = ROLL_MID, rollLeft = ROLL_MID - 90, rollRight = ROLL_MID + 90, rollTopLeft = ROLL_MID - 45, rollTopRight = ROLL_MID + 45;
+    public double pitchGroundPickup = -90, pitchWallPickup = 180, pitchFrontPickupToStorage = -45, pitchRearPickupToStorage = -135, pitchStorage = -90, pitchOuttakeUp = 25, pitchOuttakeDown = 0, pitchBucket = 135;
+    public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopLeft = ROLL_MID - 45, rollFlipped = ROLL_MIN;
 
-    // Track the current angles for pitch and roll
+    // Track the current angles for pitch and roll (accounts for pivot angle) (is the output sent to servos)
     public double currentPitch = 0;
     public double currentRoll = 0;
+
+    // Track setpoints for pitch and roll (irrelevant of pivot angle)
+    public double pitchSetpoint = 0;
+    public double rollSetpoint = 0;
 
     public double pivotAngleDegrees = 0;
 
     public Arm(OpMode opMode) {
-        armLeft = new SimpleServo(hardwareMap, "armLeft", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
-        armRight = new SimpleServo(hardwareMap, "armRight", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
-        armRight.setInverted(true);  // Invert one servo for simpler controls :)
+        armLeft = new SimpleServo(opMode.hardwareMap, "armLeft", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
+        armRight = new SimpleServo(opMode.hardwareMap, "armRight", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
+        armLeft.setInverted(true);  // Invert one servo for simpler controls :)
+    }
+
+    public void vertical() {
+        setRollPitch(rollVertical, 90);
     }
 
     public void storage() {
         setRollPitch(rollVertical, pitchStorage);
+    }
+
+    public void frontPickupToStorage() {
+        setRollPitch(rollVertical, pitchFrontPickupToStorage);
+    }
+
+    public void rearPickupToStorage() {
+        setRollPitch(rollVertical, pitchRearPickupToStorage);
     }
 
     public void outtakeUp() {
@@ -54,25 +70,29 @@ public class Arm {
         setRollPitch(rollLeft, pitchBucket);
     }
 
-    public void pickup() {
-        setRollPitch(rollRight, pitchPickup);
+    public void wallPickup() {
+        setRollPitch(rollFlipped, pitchWallPickup);
     }
 
-    public void horizontal() {
-        setPitch(0);
+    public void frontPickup() {
+        setRollPitch(rollVertical, pitchGroundPickup);
     }
 
-    public void horizontalRear() {
-        setPitch(180);
+    public void rearPickup() {
+        setRollPitch(rollFlipped, pitchGroundPickup);
     }
 
-    public void periodic(double pivotAngleDegrees) {
+    public void periodic(double pivotAngleDegrees, boolean liveIK) {
         this.pivotAngleDegrees = pivotAngleDegrees;
+        if (liveIK) setRollPitch(rollSetpoint, pitchSetpoint); //TODO: uncomment to TEST LIVE UPDATING ARM IK
     }
 
     // set both roll and pitch at the same time
     public void setRollPitch(double roll, double pitch) {
-        pitch = pitch + PITCH_MID - pivotAngleDegrees; // account for angle of pivot and slides to go to absolute angle - angle of 0 is horizontal forwards
+        pitchSetpoint = pitch;
+        rollSetpoint = roll;
+        pitch = (pitch % 360) + PITCH_MID - pivotAngleDegrees;
+        pitch = pitch % 360;
 
         // Clamp roll and pitch to their respective ranges
         roll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, roll));
@@ -94,6 +114,7 @@ public class Arm {
 
     // set roll only
     public void setRoll(double roll) {
+        rollSetpoint = roll;
         // Clamp roll to its range
         roll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, roll));
 
@@ -111,8 +132,8 @@ public class Arm {
 
     // set pitch only
     public void setPitch(double pitch) {
-        pitch = pitch + PITCH_MID - pivotAngleDegrees; // account for angle of pivot and slides to go to absolute angle - angle of 0 is horizontal forwards
-
+        pitchSetpoint = pitch;
+        pitch = pitch + PITCH_MID - pivotAngleDegrees;
         // Clamp pitch to its range
         pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
 

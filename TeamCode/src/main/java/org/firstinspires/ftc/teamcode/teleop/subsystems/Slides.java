@@ -29,9 +29,14 @@ public class Slides {
     }
 
     public Position position = Position.BOTTOM;
-    public static double p = 0.015, i = 0, d = 0, f = 0, gComp = 0.25;
-    public static double staticF = 0.25;
-    private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
+    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
+    public static double staticF = 0;
+    public static double ikMMoffset = 305;
+    private final double tolerance = 10;
+    private final double powerUp = 0.1;
+    private double powerDown = 0.05;
+    private final double manualDivide = 2;
+    private final double powerMin = 0.1;
     private double manualPower = 0;
 
     public double power;
@@ -39,7 +44,10 @@ public class Slides {
     private double target = 0;
     private boolean goingDown = false;
     private double profile_init_time = 0;
-    private MotionProfiler profiler = new MotionProfiler(30000, 20000);
+
+    public static double maxVelo = 30000, maxAccel = 20000;
+    private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
+    public boolean profiling;
 
     public Slides(OpMode opMode) {
         motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_312);
@@ -62,48 +70,37 @@ public class Slides {
 
     private void adjustStaticF(double pivotAngleRadians) {
         // Adjust staticF based on the pivot angle
-        staticF = gComp * Math.sin(pivotAngleRadians);
+        staticF = gComp * Math.sin(pivotAngleRadians) + staticFOffset;
     }
 
     public void runTo(double pos) {
-        motorLeft.setRunMode(Motor.RunMode.RawPower);
-        motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        if (pos != target) {
+            motorLeft.setRunMode(Motor.RunMode.RawPower);
+            motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        motorRight.setRunMode(Motor.RunMode.RawPower);
-        motorRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            motorRight.setRunMode(Motor.RunMode.RawPower);
+            motorRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        controller = new PIDFController(p, i, d, f);
-        controller.setTolerance(tolerance);
-        resetProfiler();
-        profiler.init_new_profile(motorLeft.getCurrentPosition(), pos);
-        profile_init_time = opMode.time;
-
-        goingDown = pos > target;
-        target = pos;
-    }
-
-    public void runRelativeMM(double mm) {
-        runToMM(getmmPosition() + mm);
-    }
-
-    public void runToMM(double posMM) {
-        posMM -= 280; //length difference from pivot to diffy arm joint
-        posMM = Math.max(posMM, 0);
-        posMM = Math.min(posMM, 720);
-        runTo(convert2Ticks(posMM));
+            controller = new PIDFController(p, i, d, f);
+            controller.setTolerance(tolerance);
+            if (manualPower == 0) {
+                resetProfiler();
+                profiler.init_new_profile(motorLeft.getCurrentPosition(), pos);
+                profile_init_time = opMode.time;
+                profiling = true;
+            }
+            goingDown = pos > target;
+            target = pos;
+        }
     }
 
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
-            manualPower = manual;
+            manualPower = -manual;
+            //runRelativeMM(manual * 5);
         } else {
             manualPower = 0;
         }
-    }
-
-    public void resetEncoder() {
-        motorLeft.resetEncoder();
-        motorRight.resetEncoder();
     }
 
     public void periodic(double pivotAngleRadians) {
@@ -111,29 +108,64 @@ public class Slides {
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
         adjustStaticF(pivotAngleRadians);
+
+//        if (manualPower == 0) {
+//            double dt = opMode.time - profile_init_time;
+//            if (!profiler.isOver()) {
+//                controller.setSetPoint(profiler.motion_profile_pos(dt));
+//                power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+//                if (goingDown) {
+//                    powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
+//                    power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
+//                }
+//            } else {
+//                if (profiler.isDone()) {
+//                    resetProfiler();
+//                    profiling = false;
+//                }
+//                power = staticF * controller.calculate(motorLeft.getCurrentPosition());
+//            }
+//        } else {
+//            power = controller.calculate(motorLeft.getCurrentPosition(), target);
+//        }
+
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
             power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
             if (goingDown) {
+                powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
                 power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
             }
-            motorLeft.set(power);
-            motorRight.set(power);
         } else {
             if (profiler.isDone()) {
-                profiler = new MotionProfiler(30000, 20000);
+                resetProfiler();
+                profiling = false;
             }
             if (manualPower != 0) {
                 controller.setSetPoint(motorLeft.getCurrentPosition());
-                motorLeft.set(manualPower / manualDivide);
-                motorRight.set(manualPower / manualDivide);
+                power = manualPower / manualDivide;
             } else {
                 power = staticF * controller.calculate(motorLeft.getCurrentPosition());
-                motorLeft.set(power);
-                motorRight.set(power);
             }
         }
+        motorLeft.set(power);
+        motorRight.set(power);
+    }
+
+    public void runRelativeMM(double mm) {
+        runToMM(getmmPosition() + mm);
+    }
+
+    public void runToIKMM(double posMM) {
+        posMM -= ikMMoffset; //length difference from pivot to diffy arm joint TODO: uncomment for IK
+        runToMM(posMM);
+    }
+
+    public void runToMM(double posMM) {
+        posMM = Math.max(posMM, 0);
+        posMM = Math.min(posMM, 720);
+        runTo(convert2Ticks(posMM));
     }
 
     public double getCurrent() {
@@ -146,19 +178,40 @@ public class Slides {
     }
 
     public double getmmPosition() {
-        return Math.toRadians(getPosition() * 360 / 537.7) * 20;
+        return Math.toRadians(getPosition() * 360 / -537.7) * 20;
+    }
+
+    public double getIKmmPosition() {
+        return Math.toRadians(getPosition() * 360 / -537.7) * 20 + ikMMoffset;
     }
 
     public double convert2MM(double ticks) {
-        return Math.toRadians(ticks * 360 / 537.7) * 20;
+        return Math.toRadians(ticks * 360 / -537.7) * 20;
     }
 
     public double convert2Ticks(double mm) {
-        return Math.toDegrees(mm/20) * 537.7 / 360;
+        return Math.toDegrees(mm/20) * -537.7 / 360;
+    }
+
+    public double getTarget() {
+        return target;
+    }
+
+    public double getProfilerTarget() {
+        return controller.getSetPoint();
+    }
+
+    public double getError() {
+        return controller.getPositionError();
     }
 
     public void resetProfiler() {
-        profiler = new MotionProfiler(30000, 20000);
+        profiler = new MotionProfiler(maxVelo, maxAccel);
+    }
+
+    public void resetEncoder() {
+        motorLeft.resetEncoder();
+        motorRight.resetEncoder();
     }
 
     public Position getState() {
