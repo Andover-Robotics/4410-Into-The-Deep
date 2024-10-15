@@ -31,7 +31,7 @@ public class Slides {
     public Position position = Position.BOTTOM;
     public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
     public static double staticF = 0;
-    public static double ikMMoffset = 280;
+    public static double ikMMoffset = 305;
     private final double tolerance = 10;
     private final double powerUp = 0.1;
     private double powerDown = 0.05;
