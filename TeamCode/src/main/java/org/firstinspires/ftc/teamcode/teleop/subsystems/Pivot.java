@@ -50,6 +50,8 @@ public class Pivot {
 
     public double inches2mm = 25.4;
 
+    public double xMin = -10 * inches2mm, xMax = 15 * inches2mm;
+
     public boolean testing = false, manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
@@ -64,8 +66,8 @@ public class Pivot {
     // distances forward from pivot for positions
     public double bucketX = -2.5 * inches2mm,
             chamberX = 8 * inches2mm,
-            frontIntakeX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((frontIntakeHeight/inches2mm), 2)) * inches2mm * inches2mm,
-            rearIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((frontIntakeHeight/inches2mm), 2)) * inches2mm,
+            frontIntakeX = 9.92,
+            rearIntakeX = -frontIntakeX,
             wallIntakeX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm;
     //STORAGE
     public double storageX = 6 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
@@ -95,7 +97,11 @@ public class Pivot {
 
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.05) {
-            slides.runManual(joystick);
+            if (joystick > 0 && targetX < xMax && targetX > xMin) {
+                slides.runManual(joystick);
+            } else if (joystick < 0) {
+                slides.runManual(joystick);
+            }
             adjustTargetX();
             updatePivotManualIK();
         }
