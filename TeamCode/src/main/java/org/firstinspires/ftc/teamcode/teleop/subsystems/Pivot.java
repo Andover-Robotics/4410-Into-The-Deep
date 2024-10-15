@@ -50,9 +50,9 @@ public class Pivot {
 
     public double inches2mm = 25.4;
 
-    public double xMin = -10 * inches2mm, xMax = 15 * inches2mm;
+    public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //TODO TUNE
 
-    public boolean testing = false, manualIK;
+    public boolean testing = true, armTesting = true, manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
@@ -60,14 +60,14 @@ public class Pivot {
             lowBucketHeight = 24 * inches2mm,
             highChamberHeight = 34 * inches2mm,
             lowChamberHeight = 20 * inches2mm,
-            frontIntakeHeight = 6.5 * inches2mm,
+            frontIntakeHeight = 9.5 * inches2mm,
             wallIntakeHeight = 8 * inches2mm;
 
     // distances forward from pivot for positions
     public double bucketX = -2.5 * inches2mm,
             chamberX = 8 * inches2mm,
-            frontIntakeX = 9.92,
-            rearIntakeX = -frontIntakeX,
+            frontIntakeX = 12 * inches2mm,
+            rearIntakeX = -9.5,
             wallIntakeX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm;
     //STORAGE
     public double storageX = 6 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
@@ -98,9 +98,9 @@ public class Pivot {
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.05) {
             if (joystick > 0 && targetX < xMax && targetX > xMin) {
-                slides.runManual(joystick);
+                slides.runManual(joystick * 0.6);
             } else if (joystick < 0) {
-                slides.runManual(joystick);
+                slides.runManual(joystick * 0.6);
             }
             adjustTargetX();
             updatePivotManualIK();
@@ -110,8 +110,10 @@ public class Pivot {
     public void adjustTargetX() {
         if (targetX < 0) {
             targetX = -Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
+            if (Double.isNaN(targetX)) targetX = -0.001;
         } else if (targetX > 0) {
             targetX = Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
+            if (Double.isNaN(targetX)) targetX = 0.001;
         }
     }
 
@@ -178,7 +180,7 @@ public class Pivot {
         }
 
         slides.periodic(getPivotTargetAngleRadians());
-        //arm.periodic(getPivotTargetAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
+        if (armTesting) arm.periodic(getPivotAngleDegrees(), armTesting); // feeds in the pivot angle so the arm can go to an absolute angle
     }
 
     public double calculateFeedForward() {
@@ -248,52 +250,60 @@ public class Pivot {
 //        this.manualIK = false; //turning manualIK PID off
 //    }
 
-    public void highBucket() {
+    public void highBucket(boolean pivot, boolean slides) {
         targetZ = highBucketHeight;
         targetX = bucketX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void lowBucket() {
+    public void lowBucket(boolean pivot, boolean slides) {
         targetZ = lowBucketHeight;
         targetX = bucketX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void highChamber() {
+    public void highChamber(boolean pivot, boolean slides) {
         targetZ = highChamberHeight;
         targetX = chamberX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void lowChamber() {
+    public void lowChamber(boolean pivot, boolean slides) {
         targetZ = lowChamberHeight;
         targetX = chamberX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void rearIntake() {
+    public void rearIntake(boolean pivot, boolean slides) {
         targetZ = frontIntakeHeight;
         targetX = rearIntakeX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void frontIntake() {
+    public void frontIntake(boolean pivot, boolean slides) {
         targetZ = frontIntakeHeight;
         targetX = frontIntakeX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void storage() {
+    public void storage(boolean pivot, boolean slides) {
         targetZ = storageZ;
         targetX = storageX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
-    public void wallIntake() {
+    public void wallIntake(boolean pivot, boolean slides) {
         targetZ = wallIntakeHeight;
         targetX = wallIntakeX;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
     public void changeZ(double inches) {
@@ -306,10 +316,11 @@ public class Pivot {
         runToIKPosition();
     }
 
-    public void frontIntakeStorage() {
+    public void frontIntakeStorage(boolean pivot, boolean slides) {
         targetZ = frontIntakeHeight + 3 * inches2mm;
         targetX = 8 * inches2mm;
-        runToIKPosition();
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
     public double calculateDegXZ(double x, double z) {
