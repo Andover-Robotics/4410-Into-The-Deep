@@ -16,7 +16,7 @@ public class Bot {
         LOW_CHAMBER, //low chamber
         REAR_INTAKE, //rear intake
         FRONT_INTAKE, //front intake
-        WALL_INTAKE,
+        WALL_INTAKE, //specimen intake from wall
         STORAGE, //starting config (18x18x18)
     }
 
@@ -71,15 +71,15 @@ public class Bot {
                 } else if (state == BotState.REAR_INTAKE) {
                     pivot.arm.rearPickupToStorage();
                     pivot.storage(true, true);
-                    Thread.sleep(150);
+                    Thread.sleep(300);
                     pivot.arm.storage();
                 } else if (state == BotState.WALL_INTAKE) {
                     pivot.storage(true, true);
-                    Thread.sleep(125);
+                    Thread.sleep(250);
                     pivot.arm.storage();
                 } else {
                     pivot.storage(false, true);
-                    Thread.sleep(250);
+                    Thread.sleep(400);
                     pivot.storage(true, true);
                     pivot.arm.storage();
                 }
@@ -93,11 +93,12 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 if (state == BotState.HIGH_BUCKET) { //TODO: Test if hits bucket
+                    pivot.arm.vertical();
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(170);
+                    Thread.sleep(250);
                 }
                 pivot.lowBucket(true, false);
-                Thread.sleep(25);
+                Thread.sleep(100);
                 pivot.arm.bucket();
                 state = BotState.LOW_BUCKET;
             } catch (InterruptedException ignored) {}
@@ -109,14 +110,15 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 if (state == BotState.LOW_BUCKET) { //TODO: Test if hits bucket
+                    pivot.arm.vertical();
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
                     pivot.highBucket(true, false);
-                    Thread.sleep(150);
+                    Thread.sleep(250);
                 }
-                pivot.lowBucket(false, true);
-                Thread.sleep(80);
+                pivot.highBucket(false, true);
+                Thread.sleep(100);
                 pivot.arm.bucket();
-                state = BotState.LOW_BUCKET;
+                state = BotState.HIGH_BUCKET;
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -155,13 +157,33 @@ public class Bot {
         thread.start();
     }
 
-    public void clip() {
+    public void clipDown() {
+        pivot.arm.outtakeDown();
+    }
+
+    public void clipCancel() {
+        pivot.arm.outtakeUp();
+    }
+
+    public void clipStorage() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.arm.outtakeDown();
-                Thread.sleep(75);
                 gripper.outtake();
                 Thread.sleep(350);
+                pivot.arm.outtakeUp();
+                gripper.stop();
+                storage();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void bucketDrop() {
+        Thread thread = new Thread(() -> {
+            try {
+
+                gripper.outtake();
+                Thread.sleep(450);
                 pivot.arm.outtakeUp();
                 gripper.stop();
                 storage();
@@ -209,7 +231,13 @@ public class Bot {
     }
 
     public void pickDown() {
-        pivot.changeZ(-1.5);
+        pivot.changeZ(-2);
+        gripper.intake();
+    }
+
+    public void pickUp() {
+        pivot.changeZ(+2);
+        gripper.stop();
     }
 
     public void rearIntake() {
