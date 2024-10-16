@@ -101,6 +101,8 @@ public class Pivot {
                 slides.runManual(joystick * 0.6);
             } else if (joystick < 0) {
                 slides.runManual(joystick * 0.6);
+            } else {
+                slides.runManual(0);
             }
             adjustTargetX();
             updatePivotManualIK();
