@@ -25,8 +25,8 @@ public class Gripper {
 
     //change these names as necessary thru testing
     public void intake() {
-        leftWheel.set(1);
-        rightWheel.set(-1);
+        leftWheel.set(-1);
+        rightWheel.set(1);
     }
 
     public void outtake() {

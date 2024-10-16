@@ -161,8 +161,9 @@ public class Bot {
                 pivot.arm.outtakeDown();
                 Thread.sleep(75);
                 gripper.outtake();
-                Thread.sleep(100);
+                Thread.sleep(350);
                 pivot.arm.outtakeUp();
+                gripper.stop();
                 storage();
             } catch (InterruptedException ignored) {}
         });
@@ -178,7 +179,7 @@ public class Bot {
                 pivot.arm.frontPickupToStorage();
                 Thread.sleep(400);
                 pivot.storage(true, false);
-                Thread.sleep(150);
+                Thread.sleep(300);
                 pivot.arm.storage();
                 storage();
 
@@ -195,11 +196,11 @@ public class Bot {
                     Thread.sleep(225);
                 }
                 pivot.arm.frontPickupToStorage();
-                Thread.sleep(25);
-                pivot.frontIntakeStorage(true, false);
-                Thread.sleep(50);
-                pivot.frontIntake(true, true);
                 Thread.sleep(100);
+                pivot.frontIntakeStorage(true, false);
+                Thread.sleep(100);
+                pivot.frontIntake(true, true);
+                Thread.sleep(300);
                 pivot.arm.frontPickup();
                 state = BotState.FRONT_INTAKE;
             } catch (InterruptedException ignored) {}
@@ -211,11 +212,11 @@ public class Bot {
         pivot.changeZ(-1.5);
     }
 
-    public void toRearIntake() {
+    public void rearIntake() {
         Thread thread = new Thread(() -> {
             try {
                 pivot.rearIntake(true, true);
-                Thread.sleep(50);
+                Thread.sleep(200);
                 pivot.arm.rearPickup();
             } catch (InterruptedException ignored) {}
         });
@@ -226,7 +227,7 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 pivot.wallIntake(true, true);
-                Thread.sleep(50);
+                Thread.sleep(200);
                 pivot.arm.wallPickup();
             } catch (InterruptedException ignored) {}
         });
