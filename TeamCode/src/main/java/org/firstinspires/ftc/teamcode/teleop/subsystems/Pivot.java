@@ -57,9 +57,9 @@ public class Pivot {
 
     // Heights for positions millimeters higher than pivot point
     public double highBucketHeight = 41 * inches2mm,
-            lowBucketHeight = 24 * inches2mm,
+            lowBucketHeight = 23 * inches2mm,
             highChamberHeight = 34 * inches2mm,
-            lowChamberHeight = 20 * inches2mm,
+            lowChamberHeight = 18 * inches2mm,
             frontIntakeHeight = 9.5 * inches2mm,
             wallIntakeHeight = 8 * inches2mm;
 

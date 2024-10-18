@@ -77,6 +77,11 @@ public class Bot {
                     pivot.storage(true, true);
                     Thread.sleep(250);
                     pivot.arm.storage();
+                } else if (state == BotState.HIGH_BUCKET) {
+                    pivot.storage(false, true);
+                    Thread.sleep(700);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
                 } else {
                     pivot.storage(false, true);
                     Thread.sleep(400);
