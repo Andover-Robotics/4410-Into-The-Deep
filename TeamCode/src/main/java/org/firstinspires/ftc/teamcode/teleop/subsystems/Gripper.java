@@ -11,51 +11,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class Gripper {
     public OpMode opMode;
-    private CRServo leftWheel, rightWheel;
+    public final Servo claw;
 
-    private static final float maxWheelIncrement = 30;
-    private static final double TURN_TIME = 0.1;
+    public static double closed = 0.5, open = 0.8;
 
     public Gripper(OpMode opMode) {
-        leftWheel = new CRServo(opMode.hardwareMap, "gripperLeft");
-        rightWheel = new CRServo(opMode.hardwareMap, "gripperRight");
+        claw = opMode.hardwareMap.servo.get("claw");;
     }
 
-    public void rotSpecimen(boolean clockwise) {}
-
-    //change these names as necessary thru testing
-    public void intake() {
-        leftWheel.set(-1);
-        rightWheel.set(1);
+    public void close() {
+        claw.setPosition(closed);
     }
 
-    public void outtake() {
-        leftWheel.set(1);
-        rightWheel.set(-1);
-    }
-
-    public void stop() {
-        leftWheel.set(0);
-        rightWheel.set(0);
-    }
-
-    public void left() {
-        long startTime = System.currentTimeMillis();
-        while (startTime - System.currentTimeMillis() <= TURN_TIME) {
-            leftWheel.set(-1);
-            rightWheel.set(-1);
-        }
-        leftWheel.set(0);
-        rightWheel.set(0);
-    }
-
-    public void right() {
-        long startTime = System.currentTimeMillis();
-        while (startTime - System.currentTimeMillis() <= TURN_TIME) {
-            leftWheel.set(1);
-            rightWheel.set(1);
-        }
-        leftWheel.set(0);
-        rightWheel.set(0);
+    public void open() {
+        claw.setPosition(open);
     }
 }

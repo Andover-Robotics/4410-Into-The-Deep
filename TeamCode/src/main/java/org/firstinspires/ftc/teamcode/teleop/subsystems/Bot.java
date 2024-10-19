@@ -173,10 +173,9 @@ public class Bot {
     public void clipStorage() {
         Thread thread = new Thread(() -> {
             try {
-                gripper.outtake();
+                gripper.open();
                 Thread.sleep(350);
                 pivot.arm.outtakeUp();
-                gripper.stop();
                 storage();
             } catch (InterruptedException ignored) {}
         });
@@ -187,10 +186,9 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
 
-                gripper.outtake();
-                Thread.sleep(450);
+                gripper.open();
+                Thread.sleep(350);
                 pivot.arm.outtakeUp();
-                gripper.stop();
                 storage();
             } catch (InterruptedException ignored) {}
         });
@@ -237,12 +235,11 @@ public class Bot {
 
     public void pickDown() {
         pivot.changeZ(-2);
-        gripper.intake();
+        gripper.close();
     }
 
     public void pickUp() {
         pivot.changeZ(+2);
-        gripper.stop();
     }
 
     public void rearIntake() {
