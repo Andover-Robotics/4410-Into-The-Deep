@@ -74,24 +74,22 @@ public class Slides {
     }
 
     public void runTo(double pos) {
-        if (pos != target) {
-            motorLeft.setRunMode(Motor.RunMode.RawPower);
-            motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorLeft.setRunMode(Motor.RunMode.RawPower);
+        motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-            motorRight.setRunMode(Motor.RunMode.RawPower);
-            motorRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorRight.setRunMode(Motor.RunMode.RawPower);
+        motorRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-            controller = new PIDFController(p, i, d, f);
-            controller.setTolerance(tolerance);
-            if (manualPower == 0) {
-                resetProfiler();
-                profiler.init_new_profile(motorLeft.getCurrentPosition(), pos);
-                profile_init_time = opMode.time;
-                profiling = true;
-            }
-            goingDown = pos > target;
-            target = pos;
+        controller = new PIDFController(p, i, d, f);
+        controller.setTolerance(tolerance);
+        if (manualPower == 0) {
+            resetProfiler();
+            profiler.init_new_profile(motorLeft.getCurrentPosition(), pos);
+            profile_init_time = opMode.time;
+            profiling = true;
         }
+        goingDown = pos > target;
+        target = pos;
     }
 
     public void runManual(double manual) {
@@ -108,27 +106,6 @@ public class Slides {
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
         adjustStaticF(pivotAngleRadians);
-
-//        if (manualPower == 0) {
-//            double dt = opMode.time - profile_init_time;
-//            if (!profiler.isOver()) {
-//                controller.setSetPoint(profiler.motion_profile_pos(dt));
-//                power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
-//                if (goingDown) {
-//                    powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
-//                    power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
-//                }
-//            } else {
-//                if (profiler.isDone()) {
-//                    resetProfiler();
-//                    profiling = false;
-//                }
-//                power = staticF * controller.calculate(motorLeft.getCurrentPosition());
-//            }
-//        } else {
-//            power = controller.calculate(motorLeft.getCurrentPosition(), target);
-//        }
-
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));

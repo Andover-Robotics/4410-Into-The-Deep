@@ -112,10 +112,10 @@ public class Pivot {
     public void adjustTargetX() {
         if (targetX < 0) {
             targetX = -Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
-            if (Double.isNaN(targetX)) targetX = -0.001;
+            if (Double.isNaN(targetX)) targetX = -0.001; //stops overflow for ik from front to back
         } else if (targetX > 0) {
             targetX = Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
-            if (Double.isNaN(targetX)) targetX = 0.001;
+            if (Double.isNaN(targetX)) targetX = 0.001; //stops overflow for ik from front to back
         }
     }
 
@@ -124,23 +124,23 @@ public class Pivot {
         manualRunToDeg(pivotIKTargetDegrees);
     }
 
-    public void runIKSlides() {
+    public void runIKSlides() { //runTo for slides (NOT MANUAL IK)
         slidesTarget = Math.sqrt(targetX * targetX + targetZ * targetZ);
         slides.runToIKMM(slidesTarget);
     }
 
-    public void runToIKPosition() {
+    public void runToIKPosition() { //runTo - NOT MANUAL IK
         double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
         runToDeg(pivotIKTargetDegrees);
         runIKSlides();
     }
 
-    public void runPivotToIKPosition() {
+    public void runPivotToIKPosition() { //runTo - NOT MANUAL IK
         double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
         runToDeg(pivotIKTargetDegrees);
     }
 
-    public void runSlidesToIKPosition() {
+    public void runSlidesToIKPosition() { //runTo - NOT MANUAL IK
         runIKSlides();
     }
 
