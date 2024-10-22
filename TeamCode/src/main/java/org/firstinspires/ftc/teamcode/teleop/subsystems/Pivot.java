@@ -60,7 +60,7 @@ public class Pivot {
             lowBucketHeight = 23 * inches2mm,
             highChamberHeight = 34 * inches2mm,
             lowChamberHeight = 18 * inches2mm,
-            frontIntakeHeight = 9.5 * inches2mm,
+            frontIntakeHeight = 6 * inches2mm,
             wallIntakeHeight = 8 * inches2mm;
 
     // distances forward from pivot for positions
@@ -211,7 +211,7 @@ public class Pivot {
     }
 
     public void runTo(double pos) {
-        if (target != pos && !Double.isNaN(pos)) {
+        if (!Double.isNaN(pos)) {
             pivotMotor.setRunMode(Motor.RunMode.RawPower);
             pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             controller.setTolerance(tolerance);
