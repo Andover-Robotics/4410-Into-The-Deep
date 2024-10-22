@@ -66,6 +66,7 @@ public class Bot {
     public void storage() {
         Thread thread = new Thread(() -> {
             try {
+                gripper.close();
                 if (state == BotState.FRONT_INTAKE) {
                     pivot.storage(true, true);
                 } else if (state == BotState.REAR_INTAKE) {
@@ -77,9 +78,9 @@ public class Bot {
                     pivot.storage(true, true);
                     Thread.sleep(250);
                     pivot.arm.storage();
-                } else if (state == BotState.HIGH_BUCKET) {
+                } else if (state == BotState.HIGH_BUCKET || state == BotState.HIGH_CHAMBER) {
                     pivot.storage(false, true);
-                    Thread.sleep(700);
+                    Thread.sleep(800);
                     pivot.storage(true, true);
                     pivot.arm.storage();
                 } else {
@@ -185,7 +186,6 @@ public class Bot {
     public void bucketDrop() {
         Thread thread = new Thread(() -> {
             try {
-
                 gripper.open();
                 Thread.sleep(350);
                 pivot.arm.outtakeUp();
@@ -220,6 +220,8 @@ public class Bot {
                     storage();
                     Thread.sleep(225);
                 }
+                gripper.open();
+
                 pivot.arm.frontPickupToStorage();
                 Thread.sleep(100);
                 pivot.frontIntakeStorage(true, false);
@@ -234,8 +236,14 @@ public class Bot {
     }
 
     public void pickDown() {
-        pivot.changeZ(-2);
-        gripper.close();
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.changeZ(-2.1);
+                Thread.sleep(300);
+                gripper.close();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
     }
 
     public void pickUp() {
@@ -245,9 +253,11 @@ public class Bot {
     public void rearIntake() {
         Thread thread = new Thread(() -> {
             try {
+                gripper.open();
                 pivot.rearIntake(true, true);
                 Thread.sleep(200);
                 pivot.arm.rearPickup();
+                state = BotState.REAR_INTAKE;
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -256,9 +266,11 @@ public class Bot {
     public void wallIntake() {
         Thread thread = new Thread(() -> {
             try {
+                gripper.open();
                 pivot.wallIntake(true, true);
                 Thread.sleep(200);
                 pivot.arm.wallPickup();
+                state = BotState.WALL_INTAKE;
             } catch (InterruptedException ignored) {}
         });
         thread.start();
