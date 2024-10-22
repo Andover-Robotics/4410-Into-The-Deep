@@ -91,7 +91,7 @@ public class ChamberDetectorTesting extends OpenCvPipeline {
 
         return input;
     }
-    // Find the distance brudda
+    // Find the distance with equation i found on youtube
     public double getDistance() {
         Rect rect = Imgproc.boundingRect(big);
         return (focalLength * realChamberHeight * camHeight)/(rect.height * sensorHeight);
