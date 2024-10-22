@@ -16,12 +16,14 @@ public class Arm {
     public final double MIN_ANGLE = 0, MAX_ANGLE = 473.33;
 
     // Define the range for roll and pitch
-    public final double ROLL_MIN = 0;       // Minimum roll value
+    public final double ROLL_MIN = -18;       // Minimum roll value
     public final double ROLL_MAX = 180;     // Maximum roll value
     public final double ROLL_MID = 90;     // Midpoint for straight roll angle
     public final double PITCH_MIN = 0;      // Minimum pitch value (front)
     public final double PITCH_MAX = 270;    // Maximum pitch value (back)
     public final double PITCH_MID = 135;    // Midpoint for vertical pitch angle - straight up through the slides
+
+    public double rollMultiplier = 1.105; //integrate later
 
     public double pitchGroundPickup = -90, pitchWallPickup = 180, pitchFrontPickupToStorage = -45, pitchRearPickupToStorage = -135, pitchStorage = -90, pitchOuttakeUp = 25, pitchOuttakeDown = 0, pitchBucket = 135;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopLeft = ROLL_MID - 45, rollFlipped = ROLL_MIN;
