@@ -93,6 +93,8 @@ public class MainTeleOp extends LinearOpMode {
                     bot.pickUp();
                     sleep(350);
                     bot.frontIntakeToStorage();
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                    intakeCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
                     intakeCancel = true;
@@ -113,6 +115,8 @@ public class MainTeleOp extends LinearOpMode {
                     bot.pickUp();
                     sleep(300);
                     bot.storage();
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                    intakeCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
                     intakeCancel = true;
@@ -127,7 +131,10 @@ public class MainTeleOp extends LinearOpMode {
                     bot.pivot.runManualIK(gp2.getLeftY());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    bot.gripper.intake();
+                    bot.gripper.close();
+                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                    bot.gripper.open();
                 }
             }
             if (bot.state == Bot.BotState.HIGH_CHAMBER || bot.state == Bot.BotState.LOW_CHAMBER) {
@@ -142,6 +149,8 @@ public class MainTeleOp extends LinearOpMode {
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
                     bot.clipStorage();
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
+                    clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
                     clipCancel = true;
