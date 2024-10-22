@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Scalar;
 public class ChamberDetectorTesting extends OpenCvPipeline {
     Telemetry telemetry;
-    public static int minWidth = 60; // Need to figure out minWidth;
+    public static int minWidth = 60; // TODO: Need to figure out minWidth;
     public static int camWidth = 1280;
     // variables for distance equation, found online for c270:
     public static int camHeight = 720;
@@ -31,7 +31,7 @@ public class ChamberDetectorTesting extends OpenCvPipeline {
     }
     public static ChamberDetected chamberDetected = ChamberDetected.NOTDETECTED;
     public static double lowH = 237, lowS = 93, lowV = 70, highH = 237, highS = 93, highV = 100;
-    // Base values - need to actually figure out HSV values for low and high blue and red
+    // TODO: Base values - need to actually figure out HSV values for low and high blue and red
     public static Scalar blueLowHSV = new Scalar(lowH, lowS, lowV);
     public static Scalar blueHighHSV = new Scalar(highH, highS, highV);
     Mat HSV = new Mat();
@@ -46,10 +46,10 @@ public class ChamberDetectorTesting extends OpenCvPipeline {
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV);
 
         Rect rectangle = new Rect(0, 360, 720, 10);
-        // Need to figure out dimensions of rectangle
+        // TODO: Need to figure out dimensions of rectangle
 
         Imgproc.rectangle(input, rectangle, new Scalar(240, 100, 50), 5);
-        // Need to figure out HSV for rectangle
+        // TODO: Need to figure out HSV for rectangle
 
         Core.inRange(HSV, blueLowHSV, blueHighHSV, HSV);
 
