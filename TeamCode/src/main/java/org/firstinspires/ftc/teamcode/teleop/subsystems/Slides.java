@@ -95,7 +95,6 @@ public class Slides {
     public void runManual(double manual) {
         if (manual > powerMin || manual < -powerMin) {
             manualPower = -manual;
-            //runRelativeMM(manual * 5);
         } else {
             manualPower = 0;
         }

@@ -212,6 +212,7 @@ public class Pivot {
 
     public void runTo(double pos) {
         if (!Double.isNaN(pos)) {
+            manualIK = false;
             pivotMotor.setRunMode(Motor.RunMode.RawPower);
             pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             controller.setTolerance(tolerance);
@@ -220,7 +221,6 @@ public class Pivot {
             profile_init_time = opMode.time;
 
             target = pos;
-            manualIK = false;
 
             goingDown = Math.sin(getPivotAngleRadians()) > Math.sin(getPivotTargetAngleRadians());
         }
