@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.opencv.imgproc.Imgproc.FONT_HERSHEY_SIMPLEX;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
@@ -40,14 +42,16 @@ public class SampleOrientation implements VisionProcessor {
     private List<MatOfPoint> YellowContours = new Vector<>();
 
     private final static Scalar RED_HSV = new Scalar(0,190,168);
-    private final static Scalar BLUE_HSV = new Scalar(231/2,190,168);
-    private final static Scalar YELLOW_HSV = new Scalar(25,190,127);
+    private final static Scalar BLUE_HSV = new Scalar(115,190,168);
+    private final static Scalar YELLOW_HSV = new Scalar(25,190,168);
 
-    private final static Scalar RED_RANGE = new Scalar(5,63,85);
+    private final static Scalar RED_RANGE = new Scalar(8,63,85);
     private final static Scalar BLUE_RANGE = new Scalar(10,80,127);
     private final static Scalar YELLOW_RANGE = new Scalar(10,63,85);
 
-    private double a1, a2, a3, a4;
+    private Point[] RedLine = new Point[2];
+
+    private double angleRed, angleBlue, angleYellow;
 
     private boolean detectYellow;
 
@@ -70,6 +74,10 @@ public class SampleOrientation implements VisionProcessor {
         detectYellow = set;
     }
 
+    public double getAngleRed() {
+        return angleRed;
+    }
+
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
     }
@@ -84,46 +92,62 @@ public class SampleOrientation implements VisionProcessor {
 
         if (alliance == Alliance.RED) {
             // red alliance detection system
-
             Core.inRange(HsvMat, range(RED_HSV, RED_RANGE, false), range(RED_HSV, RED_RANGE, true), RedMask);
-
             Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            boolean contoursDetected = true;
+            if (!RedContours.isEmpty()) {
+                LargestRed.fromList(largestContour(RedContours));
 
-            LargestRed.fromList(largestContour(RedContours));
+                try {
+                    RedRect = Imgproc.minAreaRect(LargestRed);
+
+                    Point[] RedRectPoints = new Point[4]; RedRect.points(RedRectPoints);
+                    Point[] RedLongestLine = new Point[2];
+                    RedLongestLine = findLongestSide(RedRectPoints[1],RedRectPoints[2],RedRectPoints[3]);
+
+                    RedLine = RedLongestLine;
+
+                    angleRed = getAngle (RedLongestLine[0],RedLongestLine[1]);
+                } finally {
+                }
+            }
+        } else {
+            // blue samples
+            Core.inRange(HsvMat, range(BLUE_HSV, BLUE_RANGE, false), range(BLUE_HSV, BLUE_RANGE, true), YellowMask);
+            Imgproc.findContours(BlueMask, BlueContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            LargestBlue.fromList(largestContour(BlueContours));
 
             try {
-                RedRect = Imgproc.minAreaRect(LargestRed);
+                BlueRect = Imgproc.minAreaRect(LargestBlue);
 
-                Point[] RedRectPoints = new Point[4]; RedRect.points(RedRectPoints);
-                a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
-                a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
-                a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
-                a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
+                Point[] RedRectPoints = new Point[4]; BlueRect.points(RedRectPoints);
+                //a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
+                //a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
+                //a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
+                //a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
             } finally {
             }
-
-        } else {
-            // blue alliance detection system
-
         }
 
         if (detectYellow) {
             Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
             Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            LargestYellow.fromList(largestContour(YellowContours));
+            if (!YellowContours.isEmpty()) {
+                LargestYellow.fromList(largestContour(YellowContours));
 
-            try {
-                YellowRect = Imgproc.minAreaRect(LargestYellow);
 
-                Point[] RedRectPoints = new Point[4]; YellowRect.points(RedRectPoints);
-                a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
-                a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
-                a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
-                a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
-            } finally {
+                try {
+                    YellowRect = Imgproc.minAreaRect(LargestYellow);
+
+                    Point[] RedRectPoints = new Point[4]; YellowRect.points(RedRectPoints);
+                    //a1 = getAngle(RedRectPoints[0],RedRectPoints[1]);
+                    //a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
+                    //a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
+                    //a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
+                } finally {
+                }
             }
         }
         return null;
@@ -133,9 +157,9 @@ public class SampleOrientation implements VisionProcessor {
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         Mat matCanvas = Frame;
 
-        Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(255,0,0), 5);
-        Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(0,0,255), 5);
-        Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(240,240,0), 5);
+        //Imgproc.drawContours(matCanvas, RedContours, -1, new Scalar(255,0,0), 5);
+        //Imgproc.drawContours(matCanvas, BlueContours, -1, new Scalar(0,0,255), 5);
+        //Imgproc.drawContours(matCanvas, YellowContours, -1, new Scalar(240,240,0), 5);
 
         if (alliance == Alliance.RED) {
             try {
@@ -143,6 +167,17 @@ public class SampleOrientation implements VisionProcessor {
                 RedRect.points(RedCorners);
                 for (int i = 0; i < 4; i++) {
                     Imgproc.line(matCanvas, RedCorners[i], RedCorners[(i + 1) % 4], new Scalar(255, 0, 0), 5);
+                    Imgproc.putText(matCanvas, String.valueOf(i), RedCorners[i],FONT_HERSHEY_SIMPLEX, 1, new Scalar(255,255,255));
+                }
+
+            } finally {
+            }
+        } else {
+            try {
+                Point[] BlueCorners = new Point[4];
+                BlueRect.points(BlueCorners);
+                for (int i = 0; i < 4; i++) {
+                    Imgproc.line(matCanvas, BlueCorners[i], BlueCorners[(i + 1) % 4], new Scalar(0, 0, 255), 5);
                 }
             } finally {
             }
@@ -150,14 +185,18 @@ public class SampleOrientation implements VisionProcessor {
 
         if (detectYellow) {
             try {
-                Point[] RedCorners = new Point[4];
-                YellowRect.points(RedCorners);
+                Point[] YellowCorners = new Point[4];
+                YellowRect.points(YellowCorners);
                 for (int i = 0; i < 4; i++) {
-                    Imgproc.line(matCanvas, RedCorners[i], RedCorners[(i + 1) % 4], new Scalar(255, 0, 0), 5);
+                    Imgproc.line(matCanvas, YellowCorners[i], YellowCorners[(i + 1) % 4], new Scalar(240, 240, 0), 5);
                 }
             } finally {
             }
         }
+
+
+        Imgproc.line(matCanvas, RedLine[0], RedLine[1], new Scalar(225, 225, 225), 5);
+
 
         // Convert Mat to Bitmap
         Bitmap bitmap = Bitmap.createBitmap(matCanvas.cols(), matCanvas.rows(), Bitmap.Config.ARGB_8888);
@@ -197,25 +236,32 @@ public class SampleOrientation implements VisionProcessor {
         if (largest != null) {
             return largest.toList();
         } else {
-            return null;
+            return java.util.Collections.emptyList();
         }
     }
 
     private double getAngle (Point p1, Point p2) {
-        return Math.atan2(Math.abs(p1.y-p1.y),Math.abs(p1.x-p1.x));
+        return Math.toDegrees(Math.atan2(Math.abs(p2.y-p1.y),Math.abs(p2.x-p1.x))-Math.PI/2);
     }
 
-    public double getAngle(int input){
-        switch(input) {
-            case 1:
-                return a1;
-            case 2:
-                return a2;
-            case 3:
-                return a3;
-            case 4:
-                return a4;
+    private Point[] findLongestSide(Point p1, Point p2, Point p3) {
+        double[] lengths = new double[2];
+        Point[] longestPair = new Point[2];
+        lengths[0] = Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p1.x-p2.x,2));
+        lengths[1] = Math.sqrt(Math.pow(p2.x-p3.x,2)+Math.pow(p2.x-p3.x,2));
+
+        double longest = -4410;
+        for (int i = 0; i<2; i++) {
+            longest = Math.max(longest, lengths[i]);
         }
-        return 0;
+
+        if (longest == lengths[0]) {
+            longestPair[0] = p1;
+            longestPair[1] = p2;
+        } else {
+            longestPair[0] = p2;
+            longestPair[1] = p3;
+        }
+        return longestPair;
     }
 }
