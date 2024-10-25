@@ -43,7 +43,7 @@ public class Pivot {
 
     // Constants for gravity compensation
     public static double STATIC_FF = 0.21; // main ff constant of the non-extending part
-    public static double EXTENSION_FF = 0.00012; // main ff constant of the extending part
+    public static double EXTENSION_FF = 0.000135; // main ff constant of the extending part
     public static double GRAVITY = 9.81; // gravity :)
     public static double ARM_LENGTH = 0.3; // m, length of the non extendo pivoting arm
     public static double EXTENSION_OFFSET = 0.05; // Extension starts from 0.15m
@@ -96,7 +96,7 @@ public class Pivot {
     }
 
     public void runManualIK(double joystick) {
-        if (Math.abs(joystick) > 0.05) {
+        if (Math.abs(joystick) > 0.1) {
             if (joystick > 0 && targetX < xMax && targetX > xMin) {
                 slides.runManual(joystick * 0.6);
             } else if (joystick < 0) {
@@ -242,15 +242,6 @@ public class Pivot {
     public void manualRunToDeg(double angle) {
         manualRunTo(degreestoTicks(angle));
     }
-
-//    public void runManual(double manual) {
-//        if (manual > 0.1 || manual < -0.1) {
-//            manualPower = manual * manualSpeed;
-//        } else {
-//            manualPower = 0;
-//        }
-//        this.manualIK = false; //turning manualIK PID off
-//    }
 
     public void highBucket(boolean pivot, boolean slides) {
         targetZ = highBucketHeight;
