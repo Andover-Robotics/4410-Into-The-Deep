@@ -45,7 +45,7 @@ public class ChamberDetectorTesting extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV);
 
-        Rect rectangle = new Rect(0, 360, 720, 10);
+        Rect rectangle = new Rect(0, 540, 1279, 360);
         // TODO: Need to figure out dimensions of rectangle
 
         Imgproc.rectangle(input, rectangle, new Scalar(240, 100, 50), 5);
