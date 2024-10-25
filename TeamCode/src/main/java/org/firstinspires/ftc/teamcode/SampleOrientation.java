@@ -41,13 +41,13 @@ public class SampleOrientation implements VisionProcessor {
     private List<MatOfPoint> BlueContours = new Vector<>();
     private List<MatOfPoint> YellowContours = new Vector<>();
 
-    private final static Scalar RED_HSV = new Scalar(0,190,168);
-    private final static Scalar BLUE_HSV = new Scalar(115,190,168);
-    private final static Scalar YELLOW_HSV = new Scalar(25,190,168);
+    private final static Scalar RED_LOW_HSV = new Scalar(0,190,168);
+    private final static Scalar BLUE_LOW_HSV = new Scalar(115,190,168);
+    private final static Scalar YELLOW_LOW_HSV = new Scalar(25,190,168);
 
-    private final static Scalar RED_RANGE = new Scalar(8,63,85);
-    private final static Scalar BLUE_RANGE = new Scalar(10,80,127);
-    private final static Scalar YELLOW_RANGE = new Scalar(10,63,85);
+    private final static Scalar RED_HIGH_HSV = new Scalar(8, 253, 253);
+    private final static Scalar BLUE_HIGH_HSV = new Scalar(125, 270, 295);
+    private final static Scalar YELLOW_HIGH_HSV = new Scalar(35, 253, 253);
 
     private Point[] RedLine = new Point[2];
 
@@ -92,7 +92,7 @@ public class SampleOrientation implements VisionProcessor {
 
         if (alliance == Alliance.RED) {
             // red alliance detection system
-            Core.inRange(HsvMat, range(RED_HSV, RED_RANGE, false), range(RED_HSV, RED_RANGE, true), RedMask);
+            Core.inRange(HsvMat, RED_LOW_HSV, RED_HIGH_HSV, RedMask);
             Imgproc.findContours(RedMask, RedContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
             if (!RedContours.isEmpty()) {
@@ -102,18 +102,16 @@ public class SampleOrientation implements VisionProcessor {
                     RedRect = Imgproc.minAreaRect(LargestRed);
 
                     Point[] RedRectPoints = new Point[4]; RedRect.points(RedRectPoints);
-                    Point[] RedLongestLine = new Point[2];
-                    RedLongestLine = findLongestSide(RedRectPoints[1],RedRectPoints[2],RedRectPoints[3]);
+                    Point[] RedLongestLine = findLongestSide(RedRectPoints[1],RedRectPoints[2],RedRectPoints[3]);
 
                     RedLine = RedLongestLine;
 
-                    angleRed = getAngle (RedLongestLine[0],RedLongestLine[1]);
-                } finally {
-                }
+                    angleRed = getAngle(RedLongestLine[0],RedLongestLine[1]);
+                } finally {}
             }
         } else {
             // blue samples
-            Core.inRange(HsvMat, range(BLUE_HSV, BLUE_RANGE, false), range(BLUE_HSV, BLUE_RANGE, true), YellowMask);
+            Core.inRange(HsvMat, BLUE_LOW_HSV, BLUE_HIGH_HSV, YellowMask);
             Imgproc.findContours(BlueMask, BlueContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
             LargestBlue.fromList(largestContour(BlueContours));
@@ -126,12 +124,11 @@ public class SampleOrientation implements VisionProcessor {
                 //a2 = getAngle(RedRectPoints[1],RedRectPoints[2]);
                 //a3 = getAngle(RedRectPoints[2],RedRectPoints[3]);
                 //a4 = getAngle(RedRectPoints[3],RedRectPoints[0]);
-            } finally {
-            }
+            } finally {}
         }
 
         if (detectYellow) {
-            Core.inRange(HsvMat, range(YELLOW_HSV, YELLOW_RANGE, false), range(YELLOW_HSV, YELLOW_RANGE, true), YellowMask);
+            Core.inRange(HsvMat, YELLOW_LOW_HSV, YELLOW_HIGH_HSV, YellowMask);
             Imgproc.findContours(YellowMask, YellowContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
             if (!YellowContours.isEmpty()) {
@@ -205,25 +202,6 @@ public class SampleOrientation implements VisionProcessor {
         canvas.drawBitmap(bitmap, 0, 0, null);
     }
 
-    // helper function for ranges because i'm a lazy ass
-    private Scalar range(Scalar input, Scalar range, boolean retUpper) {
-        Scalar ret = new Scalar(0,0,0);
-        if (retUpper) {
-            ret = new Scalar (
-                    Math.max((input.val[0] + range.val[0])%255, 0.0),
-                    Math.max((input.val[1] + range.val[1])%255, 0.0),
-                    Math.max((input.val[2] + range.val[2])%255, 0.0)
-            );
-        } else {
-            ret = new Scalar (
-                    Math.max((input.val[0] - range.val[0])%255, 0.0),
-                    Math.max((input.val[1] - range.val[1])%255, 0.0),
-                    Math.max((input.val[2] - range.val[2])%255, 0.0)
-            );
-        }
-        return ret;
-    }
-
     private List<Point> largestContour(List<MatOfPoint> contours) {
         double area = -69420;
         MatOfPoint largest = null;
@@ -241,7 +219,7 @@ public class SampleOrientation implements VisionProcessor {
     }
 
     private double getAngle (Point p1, Point p2) {
-        return Math.toDegrees(Math.atan2(Math.abs(p2.y-p1.y),Math.abs(p2.x-p1.x))-Math.PI/2);
+        return Math.toDegrees(Math.atan2(Math.abs(p2.y-p1.y),p2.x-p1.x));
     }
 
     private Point[] findLongestSide(Point p1, Point p2, Point p3) {
@@ -250,12 +228,7 @@ public class SampleOrientation implements VisionProcessor {
         lengths[0] = Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p1.x-p2.x,2));
         lengths[1] = Math.sqrt(Math.pow(p2.x-p3.x,2)+Math.pow(p2.x-p3.x,2));
 
-        double longest = -4410;
-        for (int i = 0; i<2; i++) {
-            longest = Math.max(longest, lengths[i]);
-        }
-
-        if (longest == lengths[0]) {
+        if (lengths[0] > lengths[1]) {
             longestPair[0] = p1;
             longestPair[1] = p2;
         } else {
