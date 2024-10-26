@@ -98,13 +98,15 @@ public class Bot {
     public void lowBucket() {
         Thread thread = new Thread(() -> {
             try {
-                if (state == BotState.HIGH_BUCKET) { //TODO: Test if hits bucket
+                if (state == BotState.HIGH_BUCKET || state == BotState.HIGH_CHAMBER) { //TODO: Test if hits bucket
                     pivot.arm.vertical();
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
                     Thread.sleep(250);
                 }
                 pivot.lowBucket(true, false);
-                Thread.sleep(100);
+                Thread.sleep(300);
+                pivot.lowBucket(false, true);
+                Thread.sleep(200);
                 pivot.arm.bucket();
                 state = BotState.LOW_BUCKET;
             } catch (InterruptedException ignored) {}
@@ -120,9 +122,12 @@ public class Bot {
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
                     pivot.highBucket(true, false);
                     Thread.sleep(250);
+                } else {
+                    pivot.highBucket(true, false);
+                    Thread.sleep(300);
                 }
                 pivot.highBucket(false, true);
-                Thread.sleep(100);
+                Thread.sleep(200);
                 pivot.arm.bucket();
                 state = BotState.HIGH_BUCKET;
             } catch (InterruptedException ignored) {}
@@ -150,10 +155,8 @@ public class Bot {
     public void highChamber() {
         Thread thread = new Thread(() -> {
             try {
-                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
-                    pivot.highChamber(true, false);
-                    Thread.sleep(300);
-                }
+                pivot.highChamber(true, false);
+                Thread.sleep(300);
                 pivot.highChamber(false, true);
                 Thread.sleep(80);
                 pivot.arm.outtakeUp();

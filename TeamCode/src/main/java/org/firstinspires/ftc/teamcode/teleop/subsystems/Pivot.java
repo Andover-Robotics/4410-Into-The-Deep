@@ -56,12 +56,12 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 41 * inches2mm,
-            lowBucketHeight = 23 * inches2mm,
-            highChamberHeight = 34 * inches2mm,
-            lowChamberHeight = 18 * inches2mm,
+    public double highBucketHeight = 39.5 * inches2mm,
+            lowBucketHeight = 20 * inches2mm,
+            highChamberHeight = 21 * inches2mm,
+            lowChamberHeight = 11.5 * inches2mm,
             frontIntakeHeight = 6 * inches2mm,
-            wallIntakeHeight = 8 * inches2mm;
+            wallIntakeHeight = 5.75 * inches2mm;
 
     // distances forward from pivot for positions
     public double bucketX = -2.5 * inches2mm,
@@ -101,8 +101,6 @@ public class Pivot {
                 slides.runManual(joystick * 0.6);
             } else if (joystick < 0) {
                 slides.runManual(joystick * 0.6);
-            } else {
-                slides.runManual(0);
             }
             adjustTargetX();
             updatePivotManualIK();

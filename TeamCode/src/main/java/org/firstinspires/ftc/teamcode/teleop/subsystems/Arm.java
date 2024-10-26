@@ -16,7 +16,7 @@ public class Arm {
     public final double MIN_ANGLE = 0, MAX_ANGLE = 473.33;
 
     // Define the range for roll and pitch
-    public final double ROLL_MIN = 0;       // Minimum roll value
+    public final double ROLL_MIN = -18;       // Minimum roll value
     public final double ROLL_MAX = 180;     // Maximum roll value
     public final double ROLL_MID = 90;     // Midpoint for straight roll angle
     public final double PITCH_MIN = 0;      // Minimum pitch value (front)
@@ -101,8 +101,8 @@ public class Arm {
         pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
 
         // Calculate servo angles for combined roll and pitch
-        double leftAngle = pitch + (roll) * rollMultiplier;
-        double rightAngle = pitch + (ROLL_MAX - (roll)) * rollMultiplier;
+        double leftAngle = pitch + (roll);
+        double rightAngle = pitch + (ROLL_MAX - (roll));
         // differential kinematics here: https://docs.google.com/spreadsheets/d/1JkhiQhE-VoVGqtl1_H_pUl7kZgCqxzRvsZEbwqYRP3o/edit?usp=sharing
 
         // Set servos to the calculated angles
@@ -121,7 +121,7 @@ public class Arm {
         roll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, roll));
 
         // Maintain the current pitch while setting roll
-        double leftAngle = currentPitch + (roll) * rollMultiplier;
+        double leftAngle = currentPitch + (roll);
         double rightAngle = currentPitch + (ROLL_MAX - (roll)) * rollMultiplier;
 
         // Set the servo angles for roll
