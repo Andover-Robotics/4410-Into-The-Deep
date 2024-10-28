@@ -203,7 +203,7 @@ public class SampleOrientation implements VisionProcessor {
     }
 
     private List<Point> largestContour(List<MatOfPoint> contours) {
-        double area = -69420;
+        double area = -Double.MAX_VALUE;
         MatOfPoint largest = null;
         for (MatOfPoint contour : contours) {
             if (Imgproc.contourArea(contour) > area) {
@@ -219,14 +219,14 @@ public class SampleOrientation implements VisionProcessor {
     }
 
     private double getAngle (Point p1, Point p2) {
-        return Math.toDegrees(Math.atan2(Math.abs(p2.y-p1.y),p2.x-p1.x));
+        return Math.toDegrees(Math.atan2(p2.y-p1.y,p2.x-p1.x));
     }
 
     private Point[] findLongestSide(Point p1, Point p2, Point p3) {
         double[] lengths = new double[2];
         Point[] longestPair = new Point[2];
-        lengths[0] = Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p1.x-p2.x,2));
-        lengths[1] = Math.sqrt(Math.pow(p2.x-p3.x,2)+Math.pow(p2.x-p3.x,2));
+        lengths[0] = Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p1.y-p2.y,2));
+        lengths[1] = Math.sqrt(Math.pow(p2.x-p3.x,2)+Math.pow(p2.y-p3.y,2));
 
         if (lengths[0] > lengths[1]) {
             longestPair[0] = p1;
