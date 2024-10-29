@@ -20,15 +20,6 @@ public class Slides {
     private PIDFController controller;
     private Pivot pivot;
 
-    public enum Position {
-        // HIGH, MID, LOW, BOTTOM - Position on lines on backboard
-        HIGH,
-        MID,
-        LOW,
-        BOTTOM, //storage and outtake round position
-    }
-
-    public Position position = Position.BOTTOM;
     public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
     public static double staticF = 0;
     public static double ikMMoffset = 305;
@@ -37,7 +28,7 @@ public class Slides {
     private double powerDown = 0.05;
     private final double manualDivide = 2;
     private final double powerMin = 0.1;
-    private double manualPower = 0;
+    public double manualPower = 0;
 
     public double power;
     private final OpMode opMode;
@@ -188,9 +179,5 @@ public class Slides {
     public void resetEncoder() {
         motorLeft.resetEncoder();
         motorRight.resetEncoder();
-    }
-
-    public Position getState() {
-        return position;
     }
 }

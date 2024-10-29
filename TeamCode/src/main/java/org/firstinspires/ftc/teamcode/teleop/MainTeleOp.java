@@ -232,7 +232,10 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Target Z", bot.pivot.targetZ);
             telemetry.addData("Current Pitch (Servo)", bot.pivot.arm.currentPitch);
             telemetry.addData("Pitch Setpoint", bot.pivot.arm.pitchSetpoint);
-            telemetry.addData("Arm Passive IK", bot.pivot.armTesting);
+            telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
+            telemetry.addData( "Slides Target", bot.pivot.slides.getTarget());
+            telemetry.addData( "Slides Setpoint", bot.pivot.slides.getProfilerTarget());
+            telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
             telemetry.update();
             bot.pivot.periodic();
         }
