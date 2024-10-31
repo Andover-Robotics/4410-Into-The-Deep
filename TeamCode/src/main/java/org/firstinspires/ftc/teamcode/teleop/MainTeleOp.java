@@ -56,10 +56,10 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                    bot.rearIntake();
-                    intakeCancel = false;
-                }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+//                    bot.rearIntake();
+//                    intakeCancel = false;
+//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.frontIntake();
                     intakeCancel = false;
@@ -109,7 +109,7 @@ public class MainTeleOp extends LinearOpMode {
                     bot.pivot.arm.rollRight();
                 }
             }
-            if (bot.state == Bot.BotState.REAR_INTAKE) {
+            if (bot.state == Bot.BotState.REAR_INTAKE) { //WILL NEVER REACH THIS
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.storage();
                 }
@@ -130,14 +130,19 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if (bot.state == Bot.BotState.WALL_INTAKE) {
-                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.storage();
                 }
-                bot.pivot.runManualIK(gp2.getLeftY());
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.gripper.close();
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
+                    bot.storage();
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                    intakeCancel = false;
+                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
+                    intakeCancel = true;
                     bot.gripper.open();
                 }
             }
@@ -238,7 +243,7 @@ public class MainTeleOp extends LinearOpMode {
     }
 
     // Driving
-    private void drive() { // Robot centric, drive multiplier default 1, 1/2 when distance sensor
+    private void drive() { // Robot centric, drive multiplier default 1
         driveSpeed = driveMultiplier - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
         bot.fixMotors();

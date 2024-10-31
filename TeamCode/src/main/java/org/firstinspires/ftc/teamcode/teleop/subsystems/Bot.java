@@ -258,6 +258,7 @@ public class Bot {
             try {
                 gripper.open();
                 pivot.rearIntake(true, true);
+                pivot.arm.vertical();
                 Thread.sleep(200);
                 pivot.arm.rearPickup();
                 state = BotState.REAR_INTAKE;
