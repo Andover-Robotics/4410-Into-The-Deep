@@ -80,7 +80,7 @@ public class Bot {
                     pivot.arm.storage();
                 } else if (state == BotState.HIGH_BUCKET || state == BotState.HIGH_CHAMBER) {
                     pivot.storage(false, true);
-                    Thread.sleep(800);
+                    Thread.sleep(900);
                     pivot.storage(true, true);
                     pivot.arm.storage();
                 } else {
@@ -127,7 +127,7 @@ public class Bot {
                     Thread.sleep(300);
                 }
                 pivot.highBucket(false, true);
-                Thread.sleep(200);
+                Thread.sleep(600);
                 pivot.arm.bucket();
                 state = BotState.HIGH_BUCKET;
             } catch (InterruptedException ignored) {}

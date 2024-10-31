@@ -42,7 +42,10 @@ public class MainTeleOp extends LinearOpMode {
         bot.state = Bot.BotState.STORAGE;
         bot.storage();
 
-        waitForStart();
+        while(!isStarted()) {
+            bot.pivot.periodic();
+        }
+        //waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
 
             gp1.readButtons();
@@ -83,9 +86,9 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.frontIntakeToStorage();
                 }
-                if (Math.abs(gp2.getLeftY()) > 0.05) {
-                    bot.pivot.runManualIK(gp2.getLeftY());
-                }
+
+                bot.pivot.runManualIK(gp2.getLeftY());
+
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.pickDown();
                 }
@@ -100,14 +103,17 @@ public class MainTeleOp extends LinearOpMode {
                     intakeCancel = true;
                     bot.pickUp();
                 }
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                    bot.pivot.arm.rollLeft();
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    bot.pivot.arm.rollRight();
+                }
             }
             if (bot.state == Bot.BotState.REAR_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.storage();
                 }
-                if (Math.abs(gp2.getLeftY()) > 0.05) {
-                    bot.pivot.runManualIK(gp2.getLeftY());
-                }
+                bot.pivot.runManualIK(gp2.getLeftY());
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.pickDown();
                 }
@@ -127,9 +133,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
-                if (Math.abs(gp2.getLeftY()) > 0.05) {
-                    bot.pivot.runManualIK(gp2.getLeftY());
-                }
+                bot.pivot.runManualIK(gp2.getLeftY());
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.gripper.close();
                 }
@@ -138,9 +142,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if (bot.state == Bot.BotState.HIGH_CHAMBER || bot.state == Bot.BotState.LOW_CHAMBER) {
-                if (Math.abs(gp2.getLeftY()) > 0.05) {
-                    bot.pivot.runManualIK(gp2.getLeftY());
-                }
+                bot.pivot.runManualIK(gp2.getLeftY());
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
@@ -172,16 +174,14 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if (bot.state == Bot.BotState.HIGH_BUCKET || bot.state == Bot.BotState.LOW_BUCKET) {
-//                if (Math.abs(gp2.getLeftY()) > 0.05) {
-//                    bot.pivot.runManualIK(gp2.getLeftY());
-//                }
+                bot.pivot.runManualIK(gp2.getLeftY());
+
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     bot.bucketDrop();
                 }
-
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                     bot.lowChamber();
                     clipCancel = false;
@@ -230,11 +230,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Slides Power", bot.pivot.slides.power);
             telemetry.addData("Target X", bot.pivot.targetX);
             telemetry.addData("Target Z", bot.pivot.targetZ);
-            telemetry.addData("Current Pitch (Servo)", bot.pivot.arm.currentPitch);
-            telemetry.addData("Pitch Setpoint", bot.pivot.arm.pitchSetpoint);
             telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
-            telemetry.addData( "Slides Target", bot.pivot.slides.getTarget());
-            telemetry.addData( "Slides Setpoint", bot.pivot.slides.getProfilerTarget());
             telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
             telemetry.update();
             bot.pivot.periodic();

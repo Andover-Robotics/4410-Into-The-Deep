@@ -18,7 +18,6 @@ public class Slides {
     public final MotorEx motorLeft;
     public final MotorEx motorRight;
     private PIDFController controller;
-    private Pivot pivot;
 
     public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
     public static double staticF = 0;

@@ -61,7 +61,7 @@ public class Pivot {
             highChamberHeight = 21 * inches2mm,
             lowChamberHeight = 11.5 * inches2mm,
             frontIntakeHeight = 6 * inches2mm,
-            wallIntakeHeight = 5.75 * inches2mm;
+            wallIntakeHeight = 5.25 * inches2mm;
 
     // distances forward from pivot for positions
     public double bucketX = -2.5 * inches2mm,
@@ -106,16 +106,18 @@ public class Pivot {
             }
             adjustTargetX();
             updatePivotManualIK();
+        } else {
+            slides.runManual(0);
         }
     }
 
     public void adjustTargetX() {
-        if (targetX < 0) {
+        if (targetX < -50) {
             targetX = -Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
-            if (Double.isNaN(targetX)) targetX = -0.001; //stops overflow for ik from front to back
-        } else if (targetX > 0) {
+            if (Double.isNaN(targetX)) targetX = -50; //stops overflow for ik from front to back
+        } else if (targetX > 100) {
             targetX = Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
-            if (Double.isNaN(targetX)) targetX = 0.001; //stops overflow for ik from front to back
+            if (Double.isNaN(targetX)) targetX = 100; //stops overflow for ik from front to back
         }
     }
 

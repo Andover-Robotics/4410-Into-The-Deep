@@ -25,7 +25,7 @@ public class Arm {
 
     public static double rollMultiplier = 1.0663; //integrate into code later
 
-    public double pitchGroundPickup = -90, pitchWallPickup = 180, pitchFrontPickupToStorage = -45, pitchRearPickupToStorage = -135, pitchStorage = -110, pitchOuttakeUp = 25, pitchOuttakeDown = 0, pitchBucket = 135;
+    public double pitchGroundPickup = -90, pitchWallPickup = 180, pitchFrontPickupToStorage = -45, pitchRearPickupToStorage = -135, pitchStorage = -110, pitchOuttakeUp = 25, pitchOuttakeDown = 0, pitchBucket = 160;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopLeft = ROLL_MID - 45, rollFlipped = ROLL_MIN;
 
     // Track the current angles for pitch and roll (accounts for pivot angle) (is the output sent to servos)
@@ -42,6 +42,18 @@ public class Arm {
         armLeft = new SimpleServo(opMode.hardwareMap, "armLeft", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
         armRight = new SimpleServo(opMode.hardwareMap, "armRight", MIN_ANGLE, MAX_ANGLE, AngleUnit.DEGREES);
         armLeft.setInverted(true);  // Invert one servo for simpler controls :)
+    }
+
+    public void rollLeft() {
+        if (rollSetpoint > ROLL_MIN) {
+            setRoll(rollSetpoint - 45);
+        }
+    }
+
+    public void rollRight() {
+        if (rollSetpoint < ROLL_MAX) {
+            setRoll(rollSetpoint + 45);
+        }
     }
 
     public void vertical() {
