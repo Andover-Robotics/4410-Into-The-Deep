@@ -14,6 +14,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+
+import org.firstinspires.ftc.teamcode.vision.SampleTrackingPipeline;
+
 import java.lang.*;
 
 @Config
@@ -31,6 +36,9 @@ public class MainTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        SampleTrackingPipeline sampleTracker = new SampleTrackingPipeline();
+        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), sampleTracker);
+
         Bot.instance = null;
         bot = Bot.getInstance(this);
 
@@ -41,6 +49,17 @@ public class MainTeleOp extends LinearOpMode {
         //bot.stopMotors();
         bot.state = Bot.BotState.STORAGE;
         bot.storage();
+
+        // left trigger for red, right trigger for blue alliance
+        if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5 || gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5 ) {
+            sampleTracker.setRedAlliance();
+        }
+
+        if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5 || gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5 ) {
+            sampleTracker.setBlueAlliance();
+        }
+
+
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
@@ -100,6 +119,27 @@ public class MainTeleOp extends LinearOpMode {
                     intakeCancel = true;
                     bot.pickUp();
                 }
+
+                if (sampleTracker.alliance == SampleTrackingPipeline.Alliance.RED) {
+                    if (sampleTracker.detectYellow) {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleYellow());
+                    } else {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleRed());
+                    }
+                } else {
+                    if (sampleTracker.detectYellow) {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleYellow());
+                    } else {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleBlue());
+                    }
+
+                }
+
+                if (gamepad2.right_trigger > 0.5) {
+                    sampleTracker.detectYellow(false);
+                } else {
+                    sampleTracker.detectYellow(true);
+                }
             }
             if (bot.state == Bot.BotState.REAR_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
@@ -135,6 +175,27 @@ public class MainTeleOp extends LinearOpMode {
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     bot.gripper.open();
+                }
+
+                if (sampleTracker.alliance == SampleTrackingPipeline.Alliance.RED) {
+                    if (sampleTracker.detectYellow) {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleYellow());
+                    } else {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleRed());
+                    }
+                } else {
+                    if (sampleTracker.detectYellow) {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleYellow());
+                    } else {
+                        bot.pivot.arm.setRoll(sampleTracker.getAngleBlue());
+                    }
+
+                }
+
+                if (gamepad2.right_trigger > 0.5) {
+                    sampleTracker.detectYellow(false);
+                } else {
+                    sampleTracker.detectYellow(true);
                 }
             }
             if (bot.state == Bot.BotState.HIGH_CHAMBER || bot.state == Bot.BotState.LOW_CHAMBER) {

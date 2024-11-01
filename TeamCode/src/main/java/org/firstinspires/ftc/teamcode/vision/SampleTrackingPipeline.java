@@ -55,14 +55,14 @@ public class SampleTrackingPipeline implements VisionProcessor {
 
     private double angleRed = -4410, angleBlue = -4410, angleYellow = -4410;
 
-    private boolean detectYellow;
+    public boolean detectYellow;
 
-    private enum Alliance {
+    public enum Alliance {
         BLUE,
         RED
     }
 
-    private Alliance alliance;
+    public Alliance alliance;
 
     public void setBlueAlliance() {
         alliance = Alliance.BLUE;
@@ -87,6 +87,8 @@ public class SampleTrackingPipeline implements VisionProcessor {
     public double getAngleYellow() {
         return angleYellow;
     }
+
+    public Alliance getAlliance() { return alliance; }
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
