@@ -56,10 +56,10 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 39.5 * inches2mm,
+    public double highBucketHeight = 38 * inches2mm,
             lowBucketHeight = 20 * inches2mm,
-            highChamberHeight = 21 * inches2mm,
-            lowChamberHeight = 11.5 * inches2mm,
+            highChamberHeight = 18.5 * inches2mm,
+            lowChamberHeight = 7 * inches2mm,
             frontIntakeHeight = 6 * inches2mm,
             wallIntakeHeight = 5.25 * inches2mm;
 

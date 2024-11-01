@@ -190,7 +190,7 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 gripper.open();
-                Thread.sleep(350);
+                Thread.sleep(500);
                 pivot.arm.outtakeUp();
                 storage();
             } catch (InterruptedException ignored) {}
