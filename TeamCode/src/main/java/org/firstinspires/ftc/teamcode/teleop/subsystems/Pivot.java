@@ -56,19 +56,26 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 38 * inches2mm,
-            lowBucketHeight = 20 * inches2mm,
-            highChamberHeight = 18.5 * inches2mm,
-            lowChamberHeight = 7 * inches2mm,
+    public double highBucketHeight = 39.5 * inches2mm,
+            lowBucketHeight = 23 * inches2mm,
+            highChamberHeight = 17.5 * inches2mm,
+            lowChamberHeight = 6 * inches2mm,
             frontIntakeHeight = 6 * inches2mm,
-            wallIntakeHeight = 5.25 * inches2mm;
+            wallIntakeHeight = 4.75 * inches2mm,
+
+            prel2ClimbHeight = 14 * inches2mm,
+            midl2ClimbHeight = 12 * inches2mm,
+            postl2ClimbHeight = 3 * inches2mm;
 
     // distances forward from pivot for positions
-    public double bucketX = -2.5 * inches2mm,
+    public double bucketX = -3.5 * inches2mm,
             chamberX = 8 * inches2mm,
             frontIntakeX = 12 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
-            wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm;
+            wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+            prel2ClimbX = 14 * inches2mm,
+            midl2ClimbX = 12 * inches2mm,
+            postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm;
     //STORAGE
     public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
 
@@ -297,6 +304,27 @@ public class Pivot {
     public void wallIntake(boolean pivot, boolean slides) {
         targetZ = wallIntakeHeight;
         targetX = wallIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void prel2Climb(boolean pivot, boolean slides) {
+        targetZ = prel2ClimbHeight;
+        targetX = prel2ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void midl2Climb(boolean pivot, boolean slides) {
+        targetZ = midl2ClimbHeight;
+        targetX = midl2ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void postl2Climb(boolean pivot, boolean slides) {
+        targetZ = postl2ClimbHeight;
+        targetX = postl2ClimbX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }

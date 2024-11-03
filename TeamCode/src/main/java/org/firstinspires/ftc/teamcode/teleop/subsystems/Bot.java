@@ -18,6 +18,7 @@ public class Bot {
         FRONT_INTAKE, //front intake
         WALL_INTAKE, //specimen intake from wall
         STORAGE, //starting config (18x18x18)
+        CLIMBING
     }
 
     public static Bot instance;
@@ -31,9 +32,6 @@ public class Bot {
     public Gripper gripper;
     public Pivot pivot;
 
-    public double wristUpPos = 0.0;
-
-
     // get bot instance
     public static Bot getInstance() {
         if (instance == null) {
@@ -41,6 +39,7 @@ public class Bot {
         }
         return instance;
     }
+
     public static Bot getInstance(OpMode opMode) {
         if (instance == null) {
             return instance = new Bot(opMode);
@@ -121,13 +120,13 @@ public class Bot {
                     pivot.arm.vertical();
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
                     pivot.highBucket(true, false);
-                    Thread.sleep(250);
+                    Thread.sleep(400);
                 } else {
                     pivot.highBucket(true, false);
                     Thread.sleep(300);
                 }
                 pivot.highBucket(false, true);
-                Thread.sleep(600);
+                Thread.sleep(900);
                 pivot.arm.bucket();
                 state = BotState.HIGH_BUCKET;
             } catch (InterruptedException ignored) {}
@@ -140,7 +139,7 @@ public class Bot {
             try {
                 if (state == BotState.HIGH_CHAMBER) { //TODO: Test if hits chamber rod
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(300);
+                    Thread.sleep(400);
                 }
                 pivot.lowChamber(true, false);
                 Thread.sleep(200);
@@ -152,9 +151,41 @@ public class Bot {
         thread.start();
     }
 
+    public void prel2Climb() {
+        Thread thread = new Thread(() -> {
+            try {
+                if (state != BotState.STORAGE) { //TODO: Test if hits chamber rod
+                    storage();
+                    Thread.sleep(500);
+                }
+                pivot.prel2Climb(true, false);
+                Thread.sleep(150);
+                pivot.prel2Climb(false, true);
+                state = BotState.CLIMBING;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void l2Climb() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.midl2Climb(false, true);
+                Thread.sleep(150);
+                pivot.postl2Climb(true, false);
+                Thread.sleep(175);
+                pivot.postl2Climb(false, true);
+            } catch (InterruptedException ignored) {}
+        });
+    }
+
     public void highChamber() {
         Thread thread = new Thread(() -> {
             try {
+                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
+                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+                    Thread.sleep(400);
+                }
                 pivot.highChamber(true, false);
                 Thread.sleep(300);
                 pivot.highChamber(false, true);
@@ -241,7 +272,7 @@ public class Bot {
     public void pickDown() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.changeZ(-2.1);
+                pivot.changeZ(-2.3);
                 Thread.sleep(300);
                 gripper.close();
             } catch (InterruptedException ignored) {}
@@ -250,7 +281,7 @@ public class Bot {
     }
 
     public void pickUp() {
-        pivot.changeZ(+2);
+        pivot.changeZ(+2.3);
     }
 
     public void rearIntake() {

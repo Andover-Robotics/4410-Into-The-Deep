@@ -56,10 +56,9 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-//                    bot.rearIntake();
-//                    intakeCancel = false;
-//                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                    bot.prel2Climb();
+                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.frontIntake();
                     intakeCancel = false;
@@ -82,6 +81,11 @@ public class MainTeleOp extends LinearOpMode {
                     bot.lowBucket();
                 }
             }
+            if (bot.state == Bot.BotState.CLIMBING) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                    bot.l2Climb();
+                }
+            }
             if (bot.state == Bot.BotState.FRONT_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.frontIntakeToStorage();
@@ -102,6 +106,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
                     intakeCancel = true;
                     bot.pickUp();
+                    bot.gripper.open();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     bot.pivot.arm.rollLeft();
@@ -109,26 +114,26 @@ public class MainTeleOp extends LinearOpMode {
                     bot.pivot.arm.rollRight();
                 }
             }
-            if (bot.state == Bot.BotState.REAR_INTAKE) { //WILL NEVER REACH THIS
-                if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
-                    bot.storage();
-                }
-                bot.pivot.runManualIK(gp2.getLeftY());
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    bot.pickDown();
-                }
-                if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-                    bot.pickUp();
-                    sleep(300);
-                    bot.storage();
-                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
-                    intakeCancel = false;
-                }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
-                    intakeCancel = true;
-                    bot.pickUp();
-                }
-            }
+//            if (bot.state == Bot.BotState.REAR_INTAKE) { //WILL NEVER REACH THIS
+//                if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
+//                    bot.storage();
+//                }
+//                bot.pivot.runManualIK(gp2.getLeftY());
+//                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+//                    bot.pickDown();
+//                }
+//                if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
+//                    bot.pickUp();
+//                    sleep(300);
+//                    bot.storage();
+//                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+//                    intakeCancel = false;
+//                }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
+//                    intakeCancel = true;
+//                    bot.pickUp();
+//                }
+//            }
             if (bot.state == Bot.BotState.WALL_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.storage();
