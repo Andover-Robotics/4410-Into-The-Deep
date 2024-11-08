@@ -23,6 +23,13 @@ import java.util.List;
 import java.util.Vector;
 
 public class SampleTrackingPipeline implements VisionProcessor {
+
+    public enum Alliance {
+        BLUE,
+        RED,
+        NULL,
+    }
+
     private Mat Frame = new Mat();
     private Mat HsvMat = new Mat();
     private Mat RedMask = new Mat();
@@ -57,12 +64,9 @@ public class SampleTrackingPipeline implements VisionProcessor {
 
     public boolean detectYellow;
 
-    public enum Alliance {
-        BLUE,
-        RED
-    }
 
-    public Alliance alliance;
+
+    public Alliance alliance = Alliance.NULL;
 
     public void setBlueAlliance() {
         alliance = Alliance.BLUE;
@@ -238,7 +242,7 @@ public class SampleTrackingPipeline implements VisionProcessor {
             point1 = p2;
             point2 = p1;
         }
-        return Math.toDegrees(Math.atan2(point2.y-point1.y,point2.x-point1.x))+90;
+        return (Math.toDegrees(Math.atan2(point2.y-point1.y,point2.x-point1.x))+90) % 180;
     }
 
     private Point[] findLongestSide(Point p1, Point p2, Point p3) {
