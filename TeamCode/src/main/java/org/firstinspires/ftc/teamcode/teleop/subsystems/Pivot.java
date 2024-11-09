@@ -63,9 +63,9 @@ public class Pivot {
             frontIntakeHeight = 6 * inches2mm,
             wallIntakeHeight = 4.75 * inches2mm,
 
-            prel2ClimbHeight = 14 * inches2mm,
-            midl2ClimbHeight = 12 * inches2mm,
-            postl2ClimbHeight = 3 * inches2mm;
+            prel2ClimbHeight = 21 * inches2mm,
+            midl2ClimbHeight = 19 * inches2mm,
+            postl2ClimbHeight = 6 * inches2mm;
 
     // distances forward from pivot for positions
     public double bucketX = -3.5 * inches2mm,
@@ -73,8 +73,8 @@ public class Pivot {
             frontIntakeX = 12 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
-            prel2ClimbX = 14 * inches2mm,
-            midl2ClimbX = 12 * inches2mm,
+            prel2ClimbX = 18 * inches2mm,
+            midl2ClimbX = 16 * inches2mm,
             postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm;
     //STORAGE
     public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;

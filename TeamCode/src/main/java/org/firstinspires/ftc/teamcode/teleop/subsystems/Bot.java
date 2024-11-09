@@ -85,7 +85,7 @@ public class Bot {
                 } else {
                     pivot.storage(false, true);
                     Thread.sleep(400);
-                    pivot.storage(true, true);
+                    pivot.storage(true, false);
                     pivot.arm.storage();
                 }
                 state = BotState.STORAGE;
@@ -158,6 +158,7 @@ public class Bot {
                     storage();
                     Thread.sleep(500);
                 }
+                pivot.arm.outtakeUp();
                 pivot.prel2Climb(true, false);
                 Thread.sleep(150);
                 pivot.prel2Climb(false, true);
@@ -177,6 +178,7 @@ public class Bot {
                 pivot.postl2Climb(false, true);
             } catch (InterruptedException ignored) {}
         });
+        thread.start();
     }
 
     public void highChamber() {

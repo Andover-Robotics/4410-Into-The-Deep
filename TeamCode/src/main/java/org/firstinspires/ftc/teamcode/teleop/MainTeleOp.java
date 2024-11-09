@@ -85,6 +85,9 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
                     bot.l2Climb();
                 }
+                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                    bot.storage();
+                }
             }
             if (bot.state == Bot.BotState.FRONT_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
