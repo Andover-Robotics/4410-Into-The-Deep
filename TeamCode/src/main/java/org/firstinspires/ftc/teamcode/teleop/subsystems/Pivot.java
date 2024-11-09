@@ -65,7 +65,15 @@ public class Pivot {
 
             prel2ClimbHeight = 21 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
-            postl2ClimbHeight = 6 * inches2mm;
+            postl2ClimbHeight = 6 * inches2mm,
+
+            climbTransferHeight = 15 * inches2mm,
+            prel3ClimbHeight = 31 * inches2mm,
+            midl3ClimbHeight = 28 * inches2mm,
+            tiltedl3ClimbHeight = 27 * inches2mm,
+            backTiltedl3ClimbHeight = 17 * inches2mm,
+            postl3ClimbHeight = 10.5 * inches2mm;
+
 
     // distances forward from pivot for positions
     public double bucketX = -3.5 * inches2mm,
@@ -75,7 +83,17 @@ public class Pivot {
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
             prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
-            postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm;
+            postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm,
+
+            climbTransferX = 1 * inches2mm,
+            prel3ClimbX = -1 * inches2mm,
+            midl3ClimbX = 1.5 * inches2mm,
+            tiltedl3ClimbX = -5 * inches2mm,
+            backTiltedl3ClimbX = 6 * inches2mm,
+            postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
+
+
+
     //STORAGE
     public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
 
@@ -325,6 +343,48 @@ public class Pivot {
     public void postl2Climb(boolean pivot, boolean slides) {
         targetZ = postl2ClimbHeight;
         targetX = postl2ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void climbTransfer(boolean pivot, boolean slides) {
+        targetZ = climbTransferHeight;
+        targetX = climbTransferX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void prel3Climb(boolean pivot, boolean slides) {
+        targetZ = prel3ClimbHeight;
+        targetX = prel3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void midl3Climb(boolean pivot, boolean slides) {
+        targetZ = midl3ClimbHeight;
+        targetX = midl3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void tiltedl3Climb(boolean pivot, boolean slides) {
+        targetZ = tiltedl3ClimbHeight;
+        targetX = tiltedl3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void backTiltedl3Climb(boolean pivot, boolean slides) {
+        targetZ = backTiltedl3ClimbHeight;
+        targetX = backTiltedl3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void postl3Climb(boolean pivot, boolean slides) {
+        targetZ = postl3ClimbHeight;
+        targetX = postl3ClimbX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }

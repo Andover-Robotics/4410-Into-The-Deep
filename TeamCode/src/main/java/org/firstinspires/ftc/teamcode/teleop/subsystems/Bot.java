@@ -181,6 +181,35 @@ public class Bot {
         thread.start();
     }
 
+    public void l3Climb() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.climbTransfer(true, false);
+                Thread.sleep(250);
+                pivot.climbTransfer(false, true);
+                Thread.sleep(200);
+                pivot.prel3Climb(true, false);
+                Thread.sleep(500);
+                pivot.prel3Climb(false, true);
+                Thread.sleep(1000);
+                pivot.midl3Climb(true, false);
+                Thread.sleep(300);
+                pivot.midl3Climb(false, true);
+                Thread.sleep(200);
+                pivot.tiltedl3Climb(false, true);
+                Thread.sleep(200);
+                pivot.tiltedl3Climb(true, false);
+                Thread.sleep(300);
+                pivot.backTiltedl3Climb(true, false);
+                Thread.sleep(300);
+                pivot.backTiltedl3Climb(false, true);
+                Thread.sleep(1000);
+                pivot.postl3Climb(true, false);
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
     public void highChamber() {
         Thread thread = new Thread(() -> {
             try {
