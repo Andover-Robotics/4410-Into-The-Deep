@@ -103,6 +103,6 @@ public class MainAutonomous extends LinearOpMode {
                                 new SleepAction(1)
                         )
                 )
-        );;
+        );
     }
 }
