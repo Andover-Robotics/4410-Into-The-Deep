@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Vector2d;
@@ -15,6 +17,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
 import java.lang.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Config
 @TeleOp(name = "MainTeleOp")
@@ -51,6 +55,8 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             gp2.readButtons();
 
+
+
             //STORAGE
             if (bot.state == Bot.BotState.STORAGE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
@@ -85,6 +91,9 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
                     bot.l2Climb();
                 }
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                    bot.l3Climb();
+                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
@@ -117,26 +126,6 @@ public class MainTeleOp extends LinearOpMode {
                     bot.pivot.arm.rollRight();
                 }
             }
-//            if (bot.state == Bot.BotState.REAR_INTAKE) { //WILL NEVER REACH THIS
-//                if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
-//                    bot.storage();
-//                }
-//                bot.pivot.runManualIK(gp2.getLeftY());
-//                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-//                    bot.pickDown();
-//                }
-//                if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-//                    bot.pickUp();
-//                    sleep(300);
-//                    bot.storage();
-//                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
-//                    intakeCancel = false;
-//                }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
-//                    intakeCancel = true;
-//                    bot.pickUp();
-//                }
-//            }
             if (bot.state == Bot.BotState.WALL_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     bot.storage();
@@ -211,17 +200,6 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
-
-
-//
-//            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.05) {
-//                bot.gripper.intake();
-//            } else if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.05) {
-//                bot.gripper.outtake();
-//            } else {
-//                bot.gripper.stop();
-//            }
-
             // DRIVE
             drive();
 
@@ -230,12 +208,12 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
-            //telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
             //telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
             //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
             //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
             //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
-            telemetry.addData("Pivot Power", bot.pivot.power);
+            //telemetry.addData("Pivot Power", bot.pivot.power);
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
             telemetry.addData("Slides IK Position (mm)", bot.pivot.slides.getIKmmPosition());
             //telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());

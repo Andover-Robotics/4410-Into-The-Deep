@@ -13,7 +13,7 @@ public class Gripper {
     public OpMode opMode;
     public final Servo claw;
 
-    public static double closed = 0.70, open = 0.45;
+    public static double closed = 0.70, open = 0.37;
 
     public Gripper(OpMode opMode) {
         claw = opMode.hardwareMap.servo.get("claw");;

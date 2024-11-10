@@ -48,7 +48,7 @@ public class Pivot {
     public static double ARM_LENGTH = 0.3; // m, length of the non extendo pivoting arm
     public static double EXTENSION_OFFSET = 0.05; // Extension starts from 0.15m
 
-    public double inches2mm = 25.4;
+    public static double inches2mm = 25.4;
 
     public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //TODO TUNE
 
@@ -56,7 +56,7 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 39.5 * inches2mm,
+    public static double highBucketHeight = 39.5 * inches2mm,
             lowBucketHeight = 23 * inches2mm,
             highChamberHeight = 17.5 * inches2mm,
             lowChamberHeight = 6 * inches2mm,
@@ -69,14 +69,14 @@ public class Pivot {
 
             climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 31 * inches2mm,
-            midl3ClimbHeight = 28 * inches2mm,
-            tiltedl3ClimbHeight = 27 * inches2mm,
+            midl3ClimbHeight = 25 * inches2mm,
+            tiltedl3ClimbHeight = 20 * inches2mm,
             backTiltedl3ClimbHeight = 17 * inches2mm,
-            postl3ClimbHeight = 10.5 * inches2mm;
+            postl3ClimbHeight = 11.6 * inches2mm;
 
 
     // distances forward from pivot for positions
-    public double bucketX = -3.5 * inches2mm,
+    public static double bucketX = -3.5 * inches2mm,
             chamberX = 8 * inches2mm,
             frontIntakeX = 12 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
@@ -89,7 +89,7 @@ public class Pivot {
             prel3ClimbX = -1 * inches2mm,
             midl3ClimbX = 1.5 * inches2mm,
             tiltedl3ClimbX = -5 * inches2mm,
-            backTiltedl3ClimbX = 6 * inches2mm,
+            backTiltedl3ClimbX = 7.5 * inches2mm,
             postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
 
 
