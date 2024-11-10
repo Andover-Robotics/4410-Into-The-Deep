@@ -63,6 +63,8 @@ public class Pivot {
             frontIntakeHeight = 6 * inches2mm,
             wallIntakeHeight = 4.75 * inches2mm,
 
+            frontAutoIntakeHeight = 5.25 * inches2mm,
+
             prel2ClimbHeight = 21 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
             postl2ClimbHeight = 6 * inches2mm,
@@ -81,6 +83,9 @@ public class Pivot {
             frontIntakeX = 12 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+
+            frontAutoIntakeX = 19 * inches2mm,
+
             prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
             postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm,
@@ -308,6 +313,13 @@ public class Pivot {
     public void frontIntake(boolean pivot, boolean slides) {
         targetZ = frontIntakeHeight;
         targetX = frontIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void frontAutoIntake(boolean pivot, boolean slides) {
+        targetZ = frontAutoIntakeHeight;
+        targetX = frontAutoIntakeX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }
