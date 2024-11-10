@@ -48,7 +48,7 @@ public class Pivot {
     public static double ARM_LENGTH = 0.3; // m, length of the non extendo pivoting arm
     public static double EXTENSION_OFFSET = 0.05; // Extension starts from 0.15m
 
-    public double inches2mm = 25.4;
+    public static double inches2mm = 25.4;
 
     public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //TODO TUNE
 
@@ -56,21 +56,51 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public double highBucketHeight = 41 * inches2mm,
+    public static double highBucketHeight = 39.5 * inches2mm,
             lowBucketHeight = 23 * inches2mm,
-            highChamberHeight = 34 * inches2mm,
-            lowChamberHeight = 18 * inches2mm,
+            highChamberHeight = 17.5 * inches2mm,
+            lowChamberHeight = 6 * inches2mm,
             frontIntakeHeight = 6 * inches2mm,
-            wallIntakeHeight = 8 * inches2mm;
+            wallIntakeHeight = 4.75 * inches2mm,
+
+    frontAutoIntakeHeight = 5.25 * inches2mm,
+
+    prel2ClimbHeight = 21 * inches2mm,
+            midl2ClimbHeight = 19 * inches2mm,
+            postl2ClimbHeight = 6 * inches2mm,
+
+    climbTransferHeight = 15 * inches2mm,
+            prel3ClimbHeight = 31 * inches2mm,
+            midl3ClimbHeight = 25 * inches2mm,
+            tiltedl3ClimbHeight = 20 * inches2mm,
+            backTiltedl3ClimbHeight = 17 * inches2mm,
+            postl3ClimbHeight = 11.6 * inches2mm;
+
 
     // distances forward from pivot for positions
-    public double bucketX = -2.5 * inches2mm,
+    public static double bucketX = -3.5 * inches2mm,
             chamberX = 8 * inches2mm,
             frontIntakeX = 12 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
-            wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm;
+            wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+
+    frontAutoIntakeX = 19 * inches2mm,
+
+    prel2ClimbX = 18 * inches2mm,
+            midl2ClimbX = 16 * inches2mm,
+            postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm,
+
+    climbTransferX = 1 * inches2mm,
+            prel3ClimbX = -1 * inches2mm,
+            midl3ClimbX = 1.5 * inches2mm,
+            tiltedl3ClimbX = -5 * inches2mm,
+            backTiltedl3ClimbX = 7.5 * inches2mm,
+            postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
+
+
+
     //STORAGE
-    public double storageX = 7 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
+    public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
 
     //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 
@@ -106,16 +136,18 @@ public class Pivot {
             }
             adjustTargetX();
             updatePivotManualIK();
+        } else {
+            slides.runManual(0);
         }
     }
 
     public void adjustTargetX() {
-        if (targetX < 0) {
+        if (targetX < -50) {
             targetX = -Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
-            if (Double.isNaN(targetX)) targetX = -0.001; //stops overflow for ik from front to back
-        } else if (targetX > 0) {
+            if (Double.isNaN(targetX)) targetX = -50; //stops overflow for ik from front to back
+        } else if (targetX > 100) {
             targetX = Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
-            if (Double.isNaN(targetX)) targetX = 0.001; //stops overflow for ik from front to back
+            if (Double.isNaN(targetX)) targetX = 100; //stops overflow for ik from front to back
         }
     }
 
@@ -285,6 +317,13 @@ public class Pivot {
         if (slides) runSlidesToIKPosition();
     }
 
+    public void frontAutoIntake(boolean pivot, boolean slides) {
+        targetZ = frontAutoIntakeHeight;
+        targetX = frontAutoIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
     public void storage(boolean pivot, boolean slides) {
         targetZ = storageZ;
         targetX = storageX;
@@ -295,6 +334,69 @@ public class Pivot {
     public void wallIntake(boolean pivot, boolean slides) {
         targetZ = wallIntakeHeight;
         targetX = wallIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void prel2Climb(boolean pivot, boolean slides) {
+        targetZ = prel2ClimbHeight;
+        targetX = prel2ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void midl2Climb(boolean pivot, boolean slides) {
+        targetZ = midl2ClimbHeight;
+        targetX = midl2ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void postl2Climb(boolean pivot, boolean slides) {
+        targetZ = postl2ClimbHeight;
+        targetX = postl2ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void climbTransfer(boolean pivot, boolean slides) {
+        targetZ = climbTransferHeight;
+        targetX = climbTransferX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void prel3Climb(boolean pivot, boolean slides) {
+        targetZ = prel3ClimbHeight;
+        targetX = prel3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void midl3Climb(boolean pivot, boolean slides) {
+        targetZ = midl3ClimbHeight;
+        targetX = midl3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void tiltedl3Climb(boolean pivot, boolean slides) {
+        targetZ = tiltedl3ClimbHeight;
+        targetX = tiltedl3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void backTiltedl3Climb(boolean pivot, boolean slides) {
+        targetZ = backTiltedl3ClimbHeight;
+        targetX = backTiltedl3ClimbX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void postl3Climb(boolean pivot, boolean slides) {
+        targetZ = postl3ClimbHeight;
+        targetX = postl3ClimbX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }

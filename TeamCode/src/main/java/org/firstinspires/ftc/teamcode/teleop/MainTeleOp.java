@@ -31,6 +31,8 @@ public class MainTeleOp extends LinearOpMode {
     private boolean fieldCentric, intakeCancel, clipCancel;
     private Thread thread;
 
+    private int trackingCycler = 0;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,13 +49,83 @@ public class MainTeleOp extends LinearOpMode {
 
         // Initialize bot
         //bot.stopMotors();
-        bot.state = Bot.BotState.STORAGE;
-        bot.storage();
-        sleep(3000);
+        bot.state = Bot.BotState.FRONT_INTAKE;
         bot.frontIntake();
 
+        while (!isStarted()) {
+            gp1.readButtons();
+            gp2.readButtons();
 
-        waitForStart();
+            // left trigger for red, right trigger for blue alliance
+            if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5 || gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5 ) {
+                sampleTracker.setRedAlliance();
+            }
+
+            if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5 || gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5 ) {
+                sampleTracker.setBlueAlliance();
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                bot.wallIntake();
+            }
+            if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                bot.storage();
+            }
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
+                sampleTracker.detectYellow = !sampleTracker.detectYellow;
+            }
+
+
+            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
+                if (sampleTracker.alliance == SampleTrackingPipeline.Alliance.RED) {
+                    if (sampleTracker.detectYellow) {
+                        if (sampleTracker.getAngleYellow() % 1 != 0) {
+                            bot.pivot.arm.incrementRoll(sampleTracker.getAngleYellow());
+                        }
+                    } else {
+                        if (sampleTracker.getAngleRed() % 1 != 0) {
+                            bot.pivot.arm.incrementRoll(sampleTracker.getAngleRed());
+                        }
+                    }
+                } else {
+                    if (sampleTracker.detectYellow) {
+                        if (sampleTracker.getAngleYellow() % 1 != 0) {
+                            bot.pivot.arm.incrementRoll(sampleTracker.getAngleYellow());
+                        }
+                    } else {
+                        if (sampleTracker.getAngleBlue() % 1 != 0) {
+                            bot.pivot.arm.incrementRoll(sampleTracker.getAngleBlue());
+                        }
+                    }
+
+                }
+            }
+
+            if (Math.abs(gp2.getLeftY()) > 0.05) {
+                bot.pivot.runManualIK(gp2.getLeftY());
+            }
+
+            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                sampleTracker.detectYellow(false);
+            } else {
+                sampleTracker.detectYellow(true);
+            }
+//
+//            telemetry.addData("Current Pitch (Servo)", bot.pivot.arm.currentPitch);
+//            telemetry.addData("Pitch Setpoint", bot.pivot.arm.pitchSetpoint);
+//            telemetry.addData("Arm Passive IK", bot.pivot.armTesting);
+            telemetry.addData("Red Angle", sampleTracker.getAngleRed());
+            telemetry.addData("Blue Angle", sampleTracker.getAngleBlue());
+            telemetry.addData("Yellow Angle", sampleTracker.getAngleYellow());
+            telemetry.addData("Tracking Alliance", sampleTracker.getAlliance());
+            telemetry.addData("Tracking Yellow", sampleTracker.detectYellow);
+            telemetry.addData("Current Roll", bot.pivot.arm.rollSetpoint);
+            telemetry.update();
+
+            bot.pivot.periodic();
+        }
+
         while (opModeIsActive() && !isStopRequested()) {
 
             gp1.readButtons();
@@ -122,19 +194,33 @@ public class MainTeleOp extends LinearOpMode {
                 sampleTracker.setBlueAlliance();
             }
 
-            if (sampleTracker.alliance == SampleTrackingPipeline.Alliance.RED) {
-                if (sampleTracker.detectYellow) {
-                    bot.pivot.arm.setRoll(sampleTracker.getAngleYellow());
-                } else {
-                    bot.pivot.arm.setRoll(sampleTracker.getAngleRed());
-                }
-            } else {
-                if (sampleTracker.detectYellow) {
-                    bot.pivot.arm.setRoll(sampleTracker.getAngleYellow());
-                } else {
-                    bot.pivot.arm.setRoll(sampleTracker.getAngleBlue());
-                }
+            if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                bot.wallIntake();
+            }
+            if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                bot.storage();
+            }
 
+
+            if (gp1.isDown(GamepadKeys.Button.B)) {
+                if (sampleTracker.alliance == SampleTrackingPipeline.Alliance.RED) {
+                    if (sampleTracker.detectYellow) {
+                        bot.pivot.arm.incrementRoll(sampleTracker.getAngleYellow());
+                    } else {
+                        bot.pivot.arm.incrementRoll(sampleTracker.getAngleRed());
+                    }
+                } else {
+                    if (sampleTracker.detectYellow) {
+                        bot.pivot.arm.incrementRoll(sampleTracker.getAngleYellow());
+                    } else {
+                        bot.pivot.arm.incrementRoll(sampleTracker.getAngleBlue());
+                    }
+
+                }
+            }
+
+            if (Math.abs(gp2.getLeftY()) > 0.05) {
+                bot.pivot.runManualIK(gp2.getLeftY());
             }
 
             if (gamepad2.right_trigger > 0.5) {
@@ -298,6 +384,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Red Angle", sampleTracker.getAngleRed());
             telemetry.addData("Blue Angle", sampleTracker.getAngleBlue());
             telemetry.addData("Yellow Angle", sampleTracker.getAngleYellow());
+            telemetry.addData("Tracking Alliance", sampleTracker.getAlliance());
+            telemetry.addData("Current Roll", bot.pivot.arm.rollSetpoint);
             telemetry.update();
             bot.pivot.periodic();
         }

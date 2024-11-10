@@ -216,7 +216,7 @@ public class SampleTrackingPipeline implements VisionProcessor {
     }
 
     private List<Point> largestContour(List<MatOfPoint> contours) {
-        double area = -69420;
+        double area = 3500;
         MatOfPoint largest = null;
         for (MatOfPoint contour : contours) {
             if (Imgproc.contourArea(contour) > area) {
@@ -242,7 +242,7 @@ public class SampleTrackingPipeline implements VisionProcessor {
             point1 = p2;
             point2 = p1;
         }
-        return (Math.toDegrees(Math.atan2(point2.y-point1.y,point2.x-point1.x))+90) % 180;
+        return (Math.toDegrees(Math.atan2(point2.y-point1.y,point2.x-point1.x)));
     }
 
     private Point[] findLongestSide(Point p1, Point p2, Point p3) {
