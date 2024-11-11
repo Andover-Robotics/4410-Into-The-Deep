@@ -428,10 +428,23 @@ public class Bot {
         );
     }
 
-    public void wallIntake() {
+    public void wallIntakeOpen() {
         Thread thread = new Thread(() -> {
             try {
                 gripper.open();
+                pivot.wallIntake(true, true);
+                Thread.sleep(200);
+                pivot.arm.wallPickup();
+                state = BotState.WALL_INTAKE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void wallIntakeClosed() {
+        Thread thread = new Thread(() -> {
+            try {
+                gripper.close();
                 pivot.wallIntake(true, true);
                 Thread.sleep(200);
                 pivot.arm.wallPickup();

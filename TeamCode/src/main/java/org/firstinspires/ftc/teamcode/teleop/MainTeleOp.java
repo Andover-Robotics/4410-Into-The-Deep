@@ -70,7 +70,11 @@ public class MainTeleOp extends LinearOpMode {
                     intakeCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    bot.wallIntake();
+                    if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
+                        bot.wallIntakeClosed();
+                    } else {
+                        bot.wallIntakeOpen();
+                    }
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                     bot.lowChamber();
@@ -140,6 +144,9 @@ public class MainTeleOp extends LinearOpMode {
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
                     intakeCancel = true;
+                    bot.gripper.open();
+                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     bot.gripper.open();
                 }
             }

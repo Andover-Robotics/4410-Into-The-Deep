@@ -15,15 +15,24 @@ public class Gripper {
 
     public static double closed = 0.70, open = 0.37;
 
+    public enum GripperState {
+        CLOSED,
+        OPEN
+    }
+
+    public GripperState state = GripperState.CLOSED;
+
     public Gripper(OpMode opMode) {
         claw = opMode.hardwareMap.servo.get("claw");;
     }
 
     public void close() {
         claw.setPosition(closed);
+        state = GripperState.CLOSED;
     }
 
     public void open() {
         claw.setPosition(open);
+        state = GripperState.OPEN;
     }
 }

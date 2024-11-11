@@ -134,7 +134,7 @@ public class Arm {
 
         // Maintain the current pitch while setting roll
         double leftAngle = currentPitch + (roll);
-        double rightAngle = currentPitch + (ROLL_MAX - (roll)) * rollMultiplier;
+        double rightAngle = currentPitch + (ROLL_MAX - (roll));
 
         // Set the servo angles for roll
         armLeft.turnToAngle(leftAngle);
@@ -163,43 +163,9 @@ public class Arm {
         currentPitch = pitch;
     }
 
-    // increment pitch by a given amount
-    public void incrementPitch(double incrementDegrees) {
-        // Calculate the new pitch
-        double newPitch = currentPitch + incrementDegrees;
-
-        // Clamp the new pitch to its range
-        newPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, newPitch));
-
-        // Maintain the current roll while setting the new pitch
-        double leftAngle = newPitch + currentRoll;
-        double rightAngle = newPitch - currentRoll;
-
-        // Adjust the servos by the relative amount
-        armLeft.rotateByAngle(newPitch - currentPitch);
-        armRight.rotateByAngle(newPitch - currentPitch);
-
-        // Update the current pitch value
-        currentPitch = newPitch;
-    }
-
     // increment roll by a given amount
     public void incrementRoll(double incrementDegrees) {
-        // Calculate the new roll
-        double newRoll = currentRoll + incrementDegrees;
+        setRoll(rollSetpoint + incrementDegrees);
 
-        // Clamp the new roll to its range
-        newRoll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, newRoll));
-
-        // Maintain the current pitch while setting the new roll
-        double leftAngle = currentPitch + newRoll;
-        double rightAngle = currentPitch - newRoll;
-
-        // Adjust the servos by the relative amount
-        armLeft.rotateByAngle(newRoll - currentRoll);
-        armRight.rotateByAngle(-(newRoll - currentRoll));
-
-        // Update the current roll value
-        currentRoll = newRoll;
     }
 }
