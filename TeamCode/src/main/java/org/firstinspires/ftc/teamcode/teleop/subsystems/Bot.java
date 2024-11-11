@@ -402,7 +402,7 @@ public class Bot {
     public void pickDown() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.changeZ(-2.3);
+                pivot.changeZ(-3.1);
                 Thread.sleep(300);
                 gripper.close();
             } catch (InterruptedException ignored) {}
@@ -413,13 +413,13 @@ public class Bot {
     public SequentialAction actionPickDown() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(-3.3)),
-                new SleepAction(0.3),
+                new SleepAction(0.4),
                 new InstantAction(() -> gripper.close())
         );
     }
 
     public void pickUp() {
-        pivot.changeZ(+2.3);
+        pivot.changeZ(+3.1);
     }
 
     public SequentialAction actionPickUp() {

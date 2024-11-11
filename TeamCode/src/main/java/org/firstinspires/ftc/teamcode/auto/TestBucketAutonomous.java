@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
         import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+
+import java.net.BindException;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
@@ -43,51 +45,53 @@ public class TestBucketAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(10, 33), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(8.5, 39.5), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
-                        new SleepAction(0.8),
+                        new SleepAction(0.2),
                         bot.actionClipStorage()
                 ))
                 .afterTime(0.5, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(49,46), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(48,46), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
-                        new SleepAction(0.4),
+                        new SleepAction(0.3),
                         bot.actionPickUp(),
                         new SleepAction(0.2),
                         bot.actionFrontIntakeToStorage()))
 
-                .afterTime(0.5, bot.actionHighBucket())
-                .strafeToLinearHeading(new Vector2d(54,54), Math.toRadians(-135))
+                .afterTime(0.2, bot.actionHighBucket())
+                .strafeToLinearHeading(new Vector2d(56,56), Math.toRadians(-135))
 
                 .waitSeconds(1)
                 .stopAndAdd(bot.actionBucketDrop())
 
-                .afterTime(0.2, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(57,46), Math.toRadians(-90))
+                .afterTime(0.1, bot.actionFrontIntake())
+                .strafeToLinearHeading(new Vector2d(55,46), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
-                        new SleepAction(0.4),
+                        new SleepAction(0.3),
                         bot.actionPickUp(),
                         new SleepAction(0.2),
                         bot.actionFrontIntakeToStorage()))
 
-                .afterTime(0.5, bot.actionHighBucket())
-                .strafeToLinearHeading(new Vector2d(54,54), Math.toRadians(-135))
+                .afterTime(0.2, bot.actionHighBucket())
+                .strafeToLinearHeading(new Vector2d(56,56), Math.toRadians(-135))
 
                 .waitSeconds(1)
                 .stopAndAdd(bot.actionBucketDrop())
 
-                .strafeToLinearHeading(new Vector2d(50,28), Math.toRadians(0))
-
-                .stopAndAdd(new SequentialAction(
+                .afterTime(0.8, new SequentialAction(
+                        new SleepAction(0.4),
                         bot.actionFrontIntake(),
-                        bot.actionRotateClaw(),
-                        new SleepAction(0.4),
+                        bot.actionRotateClaw()
+                ))
+                .strafeToLinearHeading(new Vector2d(48,28), Math.toRadians(0))
+
+                .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.3),
                         bot.actionPickUp(),
@@ -95,14 +99,14 @@ public class TestBucketAutonomous extends LinearOpMode {
                         bot.actionFrontIntakeToStorage()
                 ))
 
-                .afterTime(0.5, bot.actionHighBucket())
+                .afterTime(0.2, bot.actionHighBucket())
                 .strafeToLinearHeading(new Vector2d(54,54), Math.toRadians(-135))
 
-                .waitSeconds(1)
+                .waitSeconds(0.3)
                 .stopAndAdd(bot.actionBucketDrop())
 
-                .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(-180))
-                .splineToLinearHeading(new Pose2d(29,13, Math.toRadians(180)),Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(48,12), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(19.5,12), Math.toRadians(180))
                 .build();
 
         while(!isStarted()) {
