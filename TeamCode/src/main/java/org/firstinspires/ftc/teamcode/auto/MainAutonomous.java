@@ -31,27 +31,57 @@ public class MainAutonomous extends LinearOpMode {
 
         Action sample1 = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(-44, -51))
+                .afterTime(0.1, new SequentialAction(
+                        bot.actionFrontIntake(),
+                        new SleepAction(0.3),
+                        bot.actionPickDown(),
+                        new SleepAction(0.15),
+                        bot.actionPickUp(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntakeToStorage()
+                ))
+                .waitSeconds(3)
+                .strafeToLinearHeading(new Vector2d(-55, -52), Math.PI / 4)
+                .afterTime(0.1, bot.actionHighBucket())
+                .waitSeconds(2)
+                .stopAndAdd(bot.actionBucketDrop())
                 .build();
 
-        Action sample2 = drive.actionBuilder(new Pose2d(-55, -52, Math.PI/4))
+        Action sample2 = drive.actionBuilder(new Pose2d(-55, -52, Math.PI / 4))
                 .strafeToLinearHeading(new Vector2d(-44, -60), 0)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionFrontIntake(),
+                        new SleepAction(0.3),
+                        bot.actionPickDown(),
+                        new SleepAction(0.15),
+                        bot.actionPickUp(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntakeToStorage()
+                ))
+                .strafeToLinearHeading(new Vector2d(-55, -52), Math.PI / 4)
+                .afterTime(0.1, bot.actionHighBucket())
+                .waitSeconds(2)
+                .stopAndAdd(bot.actionBucketDrop())
                 .build();
 
         Action sample3 = drive.actionBuilder(new Pose2d(-55, -52, Math.PI / 4))
-                .strafeToLinearHeading(new Vector2d(-25, -54), -Math.PI / 2)
+                .strafeToLinearHeading(new Vector2d(-26, -54), -Math.PI / 2)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionFrontIntake(),
+                        bot.actionRotateClaw(),
+                        new SleepAction(0.3),
+                        bot.actionPickDown(),
+                        new SleepAction(0.15),
+                        bot.actionPickUp(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntakeToStorage()
+                ))
+                .strafeToLinearHeading(new Vector2d(-55, -52), Math.PI / 4)
+                .afterTime(0.1, bot.actionHighBucket())
+                .waitSeconds(2)
+                .stopAndAdd(bot.actionBucketDrop())
                 .build();
 
-        Action bucket1 = drive.actionBuilder(new Pose2d(-44, -51, 0))
-                .strafeToLinearHeading(new Vector2d(-55, -52), Math.PI / 4)
-                .build();
-
-        Action bucket2 = drive.actionBuilder(new Pose2d(-44, -60, 0))
-                .strafeToLinearHeading(new Vector2d(-55, -52), Math.PI / 4)
-                .build();
-
-        Action bucket3 = drive.actionBuilder(new Pose2d(-25, -54, -Math.PI / 2))
-                .strafeToLinearHeading(new Vector2d(-55, -52), Math.PI / 4)
-                .build();
 
         bot.state = Bot.BotState.STORAGE;
         bot.storage();
@@ -61,46 +91,11 @@ public class MainAutonomous extends LinearOpMode {
         }
 
         Actions.runBlocking(
-                new ParallelAction(
+                new ActionHelper.RaceParallelCommand(
                         bot.periodic(),
                         new SequentialAction(
                                 sample1,
-                                bot.actionFrontIntake(),
-                                new SleepAction(0.5),
-                                bot.actionPickDown(),
-                                new SleepAction(0.3),
-                                bot.actionPickUp(),
-                                new SleepAction(0.4),
-                                bot.actionFrontIntakeToStorage(),
-                                new ParallelAction(bucket1, new SequentialAction (new SleepAction(0.2), bot.actionHighBucket())),
-                                new SleepAction(0.4),
-                                bot.actionBucketDrop(),
-                                new SleepAction(1),
-                                sample2,
-                                bot.actionFrontIntake(),
-                                new SleepAction(0.5),
-                                bot.actionPickDown(),
-                                new SleepAction(0.3),
-                                bot.actionPickUp(),
-                                new SleepAction(0.4),
-                                bot.actionFrontIntakeToStorage(),
-                                new ParallelAction(bucket2, new SequentialAction (new SleepAction(0.2), bot.actionHighBucket())),
-                                new SleepAction(0.4),
-                                bot.actionBucketDrop(),
-                                new SleepAction(1),
-                                sample3,
-                                bot.actionFrontIntake(),
-                                bot.actionRotateClaw(),
-                                new SleepAction(0.3),
-                                bot.actionPickDown(),
-                                new SleepAction(0.15),
-                                bot.actionPickUp(),
-                                new SleepAction(0.2),
-                                bot.actionFrontIntakeToStorage(),
-                                new ParallelAction(bucket3, new SequentialAction (new SleepAction(0.2), bot.actionHighBucket())),
-                                new SleepAction(0.4),
-                                bot.actionBucketDrop(),
-                                new SleepAction(1)
+                                sample2
                         )
                 )
         );

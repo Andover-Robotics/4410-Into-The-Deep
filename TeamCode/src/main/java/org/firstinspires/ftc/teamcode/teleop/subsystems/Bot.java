@@ -412,7 +412,7 @@ public class Bot {
 
     public SequentialAction actionPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(-2.3)),
+                new InstantAction(() -> pivot.changeZ(-3.3)),
                 new SleepAction(0.3),
                 new InstantAction(() -> gripper.close())
         );
@@ -424,7 +424,7 @@ public class Bot {
 
     public SequentialAction actionPickUp() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(2.3))
+                new InstantAction(() -> pivot.changeZ(3.3))
         );
     }
 

@@ -26,7 +26,7 @@ public class Pivot {
 
     public static double target = 0, tolerance = 5, powerUp = -0.13;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
-    private final double startingAngleOffsetDegrees = 177; //offset from rest position to horizontal front
+    private final double startingAngleOffsetDegrees = 90; //offset from rest position to horizontal front
     private boolean goingDown, IK;
 
     public static double maxVelo = 1000, maxAccel = 60000;
@@ -63,7 +63,7 @@ public class Pivot {
             frontIntakeHeight = 6 * inches2mm,
             wallIntakeHeight = 4.75 * inches2mm,
 
-            frontAutoIntakeHeight = 5.25 * inches2mm,
+            frontAutoIntakeHeight = 6.25 * inches2mm,
 
             prel2ClimbHeight = 21 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
