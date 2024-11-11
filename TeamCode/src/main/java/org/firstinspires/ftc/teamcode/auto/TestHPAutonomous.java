@@ -5,6 +5,8 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -35,29 +37,71 @@ public class TestHPAutonomous extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Action hpAuto = drive.actionBuilder(drive.pose)
+                .stopAndAdd(bot.actionHighChamber())
                 .strafeToLinearHeading(new Vector2d(-15, 46), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-13,33),Math.toRadians(-90))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionClipDown(),
+                        new SleepAction(0.5),
+                        bot.actionClipStorage()
+                ))
+                .afterTime(0.5, bot.actionFrontIntake())
 
                 .strafeToConstantHeading(new Vector2d(-20,35))
                 .splineToConstantHeading(new Vector2d(-47,38), Math.toRadians(-90))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionPickDown(),
+                        new SleepAction(0.4),
+                        bot.actionPickUp(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntakeToStorage()))
                 .strafeToLinearHeading(new Vector2d(-42,54),Math.toRadians(330))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionPickDown(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntake()
+                ))
 
                 //-55 40
                 .strafeToLinearHeading(new Vector2d(-58,40), Math.toRadians(-90))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionPickDown(),
+                        new SleepAction(0.4),
+                        bot.actionPickUp(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntakeToStorage()))
                 .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(330))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionPickDown(),
+                        new SleepAction(0.2),
+                        bot.actionWallIntakeToStorage(),
+                        bot.actionHighChamber()
+                ))
 
                 .strafeToLinearHeading(new Vector2d(-6,33), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-25,33))
+                .stopAndAdd(new SequentialAction(
+                        bot.actionClipDown(),
+                        new SleepAction(0.5),
+                        bot.actionClipStorage()
+                ))
+                .afterTime(0.5, bot.actionFrontIntake())
 
+                .strafeTo(new Vector2d(-25,33))
                 .strafeToLinearHeading(new Vector2d(-55,25), Math.toRadians(-180))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionPickDown(),
+                        new SleepAction(0.4),
+                        bot.actionPickUp(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntakeToStorage()
+                ))
                 .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(120))
-                .waitSeconds(1)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionPickDown(),
+                        new SleepAction(0.2),
+                        bot.actionFrontIntake()
+                ))
+
                 .strafeToSplineHeading(new Vector2d(-24,13),Math.toRadians(0))
                 .build();
 
