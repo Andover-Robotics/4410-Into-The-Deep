@@ -21,6 +21,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
@@ -142,6 +143,7 @@ public class TestAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        // red big init pose NOTE: check comment above each trajectory to find the respective init pose
         Pose2d initialPose = new Pose2d(10, -58, Math.toRadians(90));
 
         Bot.instance = null;
@@ -259,7 +261,7 @@ public class TestAutonomous extends LinearOpMode {
         }
 
         Actions.runBlocking(
-                new ParallelAction(
+                new ActionHelpersJava.RaceParallelCommand(
                         bot.periodic(),
                         redBig
                 )
