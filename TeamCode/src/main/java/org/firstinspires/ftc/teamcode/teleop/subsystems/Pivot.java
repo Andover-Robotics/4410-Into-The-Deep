@@ -90,7 +90,7 @@ public class Pivot {
             midl2ClimbX = 16 * inches2mm,
             postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm,
 
-            climbTransferX = 1 * inches2mm,
+            climbTransferX = 0.01 * inches2mm,
             prel3ClimbX = -1 * inches2mm,
             midl3ClimbX = 1.5 * inches2mm,
             tiltedl3ClimbX = -5 * inches2mm,

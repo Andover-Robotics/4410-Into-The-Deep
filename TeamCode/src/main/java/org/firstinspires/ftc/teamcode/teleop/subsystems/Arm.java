@@ -105,7 +105,7 @@ public class Arm {
     public void setRollPitch(double roll, double pitch) {
         pitchSetpoint = pitch;
         rollSetpoint = roll;
-        pitch = (pitch % 360) + PITCH_MID - pivotAngleDegrees;
+        pitch = (pitch % 360) + PITCH_MID - pivotAngleDegrees + 10;
         pitch = pitch % 360;
 
         // Clamp roll and pitch to their respective ranges
@@ -130,6 +130,7 @@ public class Arm {
     public void setRoll(double roll) {
         rollSetpoint = roll;
         // Clamp roll to its range
+        roll += 10;
         roll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, roll));
 
         // Maintain the current pitch while setting roll

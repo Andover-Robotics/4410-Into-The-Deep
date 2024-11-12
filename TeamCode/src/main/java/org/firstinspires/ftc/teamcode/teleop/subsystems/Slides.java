@@ -22,6 +22,8 @@ public class Slides {
     public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
     public static double staticF = 0;
     public static double ikMMoffset = 305;
+
+    public boolean climbingPower = false;
     private final double tolerance = 10;
     private final double powerUp = 0.1;
     private double powerDown = 0.05;
@@ -90,6 +92,14 @@ public class Slides {
         }
     }
 
+    public void climbOn() {
+        climbingPower = true;
+    }
+
+    public void climbOff() {
+        climbingPower = false;
+    }
+
     public void periodic(double pivotAngleRadians) {
         motorRight.setInverted(false);
         motorLeft.setInverted(true);
@@ -115,8 +125,13 @@ public class Slides {
                 power = staticF * controller.calculate(motorLeft.getCurrentPosition());
             }
         }
-        motorLeft.set(power);
-        motorRight.set(power);
+        if (climbingPower) {
+            motorLeft.set(0.95);
+            motorRight.set(0.95);
+        } else {
+            motorLeft.set(power);
+            motorRight.set(power);
+        }
     }
 
     public void runRelativeMM(double mm) {

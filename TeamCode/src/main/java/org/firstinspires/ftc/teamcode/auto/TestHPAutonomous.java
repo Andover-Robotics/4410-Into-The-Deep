@@ -17,12 +17,15 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
-@Autonomous(name = "HP Auto", group = "Autonomous")
+@Autonomous(name = "HP Autonomous", group = "Autonomous")
 public class TestHPAutonomous extends LinearOpMode {
     Bot bot;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        Bot.instance = null;
+        bot = Bot.getInstance(this);
 
         bot.state = Bot.BotState.STORAGE;
         bot.storage();
@@ -31,80 +34,111 @@ public class TestHPAutonomous extends LinearOpMode {
         // red big init pose NOTE: check comment above each trajectory to find the respective init pose
         Pose2d initialPose = new Pose2d(-10, 63, Math.toRadians(-90));
 
-        Bot.instance = null;
-        bot = Bot.getInstance(this);
-
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Action hpAuto = drive.actionBuilder(drive.pose)
-                .stopAndAdd(bot.actionHighChamber())
-                .strafeToLinearHeading(new Vector2d(-15, 46), Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(-13,33),Math.toRadians(-90))
+                .stopAndAdd(bot.actionHighChamber())  // First chamber clip
+                .strafeToLinearHeading(new Vector2d(-8, 39.5), Math.toRadians(-90))
+
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
                         new SleepAction(0.5),
                         bot.actionClipStorage()
                 ))
-                .afterTime(0.5, bot.actionFrontIntake())
 
-                .strafeToConstantHeading(new Vector2d(-20,35))
-                .splineToConstantHeading(new Vector2d(-47,38), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-13,43), Math.toRadians(-90))
+                .afterTime(0.5, bot.actionFrontIntake()) // Pick up first sample
+
+                .strafeToLinearHeading(new Vector2d(-51,45), Math.toRadians(-90))
+
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
-                        new SleepAction(0.4),
+                        new SleepAction(0.3),
                         bot.actionPickUp(),
                         new SleepAction(0.2),
                         bot.actionFrontIntakeToStorage()))
-                .strafeToLinearHeading(new Vector2d(-42,54),Math.toRadians(330))
-                .stopAndAdd(new SequentialAction(
-                        bot.actionPickDown(),
-                        new SleepAction(0.2),
-                        bot.actionFrontIntake()
+
+                .stopAndAdd(new SequentialAction( // Drop first sample in HP zone
+                        bot.actionWallIntakeClosed(),
+                        new SleepAction(1.4),
+                        bot.actionOpenGripper(),
+                        new SleepAction(0.6),
+                        bot.actionWallIntakeToStorage()
                 ))
 
-                //-55 40
-                .strafeToLinearHeading(new Vector2d(-58,40), Math.toRadians(-90))
+                .afterTime(0.5, bot.actionFrontIntake()) // Pick up second sample
+                .strafeToLinearHeading(new Vector2d(-59,44), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
+                        new SleepAction(1),
                         bot.actionPickDown(),
-                        new SleepAction(0.4),
+                        new SleepAction(0.5),
                         bot.actionPickUp(),
-                        new SleepAction(0.2),
+                        new SleepAction(0.3),
                         bot.actionFrontIntakeToStorage()))
-                .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(330))
+
+                //back to hp station to drop
                 .stopAndAdd(new SequentialAction(
-                        bot.actionPickDown(),
-                        new SleepAction(0.2),
-                        bot.actionWallIntakeToStorage(),
-                        bot.actionHighChamber()
+                        bot.actionWallIntakeClosed(),
+                        new SleepAction(1.4),
+                        bot.actionOpenGripper()
                 ))
 
-                .strafeToLinearHeading(new Vector2d(-6,33), Math.toRadians(-90))
+                //pick up from wall
+                .strafeToLinearHeading(new Vector2d(-44,48.5),Math.toRadians(-90))
+                .stopAndAdd(new SequentialAction(
+                        new SleepAction(0.3),
+                        bot.actionCloseGripper(),
+                        new SleepAction(0.5),
+                        bot.actionHighChamber(),
+                        new SleepAction(0.3)
+                ))
+
+                //high chamber
+                .strafeToLinearHeading(new Vector2d(-4,39.5), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
                         new SleepAction(0.5),
                         bot.actionClipStorage()
                 ))
-                .afterTime(0.5, bot.actionFrontIntake())
 
-                .strafeTo(new Vector2d(-25,33))
-                .strafeToLinearHeading(new Vector2d(-55,25), Math.toRadians(-180))
+                // Pick up third sample
+                .strafeToLinearHeading(new Vector2d(-40,39), Math.toRadians(-180))
+                .strafeToLinearHeading(new Vector2d(-52,27), Math.toRadians(-180))
                 .stopAndAdd(new SequentialAction(
+                        bot.actionFrontIntake(),
+                        bot.actionRotateClaw(),
+                        new SleepAction(0.4),
                         bot.actionPickDown(),
                         new SleepAction(0.4),
                         bot.actionPickUp(),
                         new SleepAction(0.2),
                         bot.actionFrontIntakeToStorage()
                 ))
-                .strafeToLinearHeading(new Vector2d(-44,54),Math.toRadians(120))
+
+                // Drop third sample in HP zone
+                .strafeToLinearHeading(new Vector2d(-44,41.5),Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
-                        bot.actionPickDown(),
-                        new SleepAction(0.2),
-                        bot.actionFrontIntake()
+                        bot.actionWallIntakeClosed(),
+                        new SleepAction(1.4),
+                        bot.actionOpenGripper()
                 ))
 
-                .strafeToSplineHeading(new Vector2d(-24,13),Math.toRadians(0))
+                //pick up from wall
+                .strafeToLinearHeading(new Vector2d(-44,48.5),Math.toRadians(-90))
+                .stopAndAdd(new SequentialAction(
+                        new SleepAction(0.5),
+                        bot.actionCloseGripper(),
+                        new SleepAction(0.5),
+                        bot.actionWallIntakeToStorage()
+                ))
+
+                .strafeToLinearHeading(new Vector2d(-48,12), Math.toRadians(-180))
+                .strafeToLinearHeading(new Vector2d(-4,12), Math.toRadians(-180))
                 .build();
 
+        while(!isStarted()) {
+            bot.pivot.periodic();
+        }
 
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
