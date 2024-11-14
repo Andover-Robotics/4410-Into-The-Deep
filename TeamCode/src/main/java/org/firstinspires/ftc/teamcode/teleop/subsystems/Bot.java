@@ -201,8 +201,10 @@ public class Bot {
                 pivot.postl2Climb(true, false);
                 Thread.sleep(175);
                 pivot.postl2Climb(false, true);
-                Thread.sleep(500);
-                pivot.slides.climbOn();
+                Thread.sleep(1000);
+                pivot.climbTransfer(true, false);
+                Thread.sleep(1000);
+                pivot.climbTransfer(false, true);
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -212,9 +214,7 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 pivot.climbTransfer(true, false);
-                Thread.sleep(200);
-                pivot.slides.climbOff();
-                Thread.sleep(800);
+                Thread.sleep(1000);
                 pivot.climbTransfer(false, true);
                 Thread.sleep(1000);
                 pivot.prel3Climb(true, false);
