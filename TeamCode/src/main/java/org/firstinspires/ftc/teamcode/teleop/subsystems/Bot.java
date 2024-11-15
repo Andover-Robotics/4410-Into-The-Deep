@@ -167,7 +167,7 @@ public class Bot {
                     Thread.sleep(400);
                 }
                 pivot.lowChamber(true, false);
-                Thread.sleep(200);
+                Thread.sleep(250);
                 pivot.arm.outtakeUp();
                 pivot.lowChamber(false, true);
                 state = BotState.LOW_CHAMBER;
@@ -273,6 +273,43 @@ public class Bot {
 
     public void clipDown() {
         pivot.arm.outtakeDown();
+    }
+
+    public void slidesClipDown() {
+        pivot.changeZ(-5);
+    }
+
+    public void slidesClipStorage() {
+        Thread thread = new Thread(() -> {
+            try {
+                gripper.open();
+                Thread.sleep(350);
+                storage();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void slidesHighChamber() {
+        Thread thread = new Thread(() -> {
+            try {
+                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
+                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+                    Thread.sleep(400);
+                }
+                pivot.slidesHighChamber(true, false);
+                Thread.sleep(300);
+                pivot.slidesHighChamber(false, true);
+                Thread.sleep(80);
+                pivot.arm.outtakeHoriz();
+                state = BotState.HIGH_CHAMBER;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void slidesClipCancel() {
+        pivot.changeZ(+5);
     }
 
     public SequentialAction actionClipDown() {

@@ -296,6 +296,13 @@ public class Pivot {
         if (slides) runSlidesToIKPosition();
     }
 
+    public void slidesHighChamber(boolean pivot, boolean slides) {
+        targetZ = highChamberHeight + 5 * inches2mm;
+        targetX = chamberX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
     public void lowChamber(boolean pivot, boolean slides) {
         targetZ = lowChamberHeight;
         targetX = chamberX;
