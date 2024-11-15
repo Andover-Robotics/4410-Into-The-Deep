@@ -128,9 +128,9 @@ public class Pivot {
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.1) {
             if (joystick > 0 && targetX < xMax && targetX > xMin) {
-                slides.runManual(joystick * 0.6);
+                slides.runManual(joystick * 0.7);
             } else if (joystick < 0) {
-                slides.runManual(joystick * 0.6);
+                slides.runManual(joystick * 0.7);
             } else {
                 slides.runManual(0);
             }

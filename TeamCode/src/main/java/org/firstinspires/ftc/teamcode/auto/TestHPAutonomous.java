@@ -58,15 +58,16 @@ public class TestHPAutonomous extends LinearOpMode {
                         bot.actionFrontIntakeToStorage(),
                         new SleepAction(0.1),
                         bot.actionWallIntakeClosed(),
-                        new SleepAction(2),
+                        new SleepAction(1.2),
                         bot.actionOpenGripper(),
                         new SleepAction(0.6),
-                        bot.actionWallIntakeToStorage()
+                        bot.actionWallIntakeToStorage(),
+                        new SleepAction(0.5)
                 ))
-
-                .afterTime(0.1, bot.actionFrontIntake()) // Pick up second sample
                 .strafeToLinearHeading(new Vector2d(-59,44), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
+                        bot.actionFrontIntake(),
+                        new SleepAction(0.5),
                         bot.actionPickDown(),
                         new SleepAction(0.6),
                         bot.actionPickUp(),
@@ -74,7 +75,7 @@ public class TestHPAutonomous extends LinearOpMode {
                         bot.actionFrontIntakeToStorage(),
                         new SleepAction(0.1),
                         bot.actionWallIntakeClosed(),
-                        new SleepAction(2),
+                        new SleepAction(1.2),
                         bot.actionOpenGripper()
                 ))
 
