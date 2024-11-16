@@ -84,10 +84,6 @@ public class MainTeleOp extends LinearOpMode {
                     bot.highChamber();
                     clipCancel = false;
                 }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-//                    bot.slidesHighChamber();
-//                    clipCancel = false;
-//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     bot.highBucket();
                 }
@@ -100,7 +96,7 @@ public class MainTeleOp extends LinearOpMode {
                     bot.l2Climb();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    //bot.l3Climb(); TODO: TUNE L3 CLIMB
+                    bot.l3Climb();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
@@ -159,18 +155,6 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-//                    bot.slidesClipDown();
-//                }
-//                if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
-//                    bot.slidesClipStorage();
-//                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
-//                    clipCancel = false;
-//                }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
-//                    clipCancel = true;
-//                    bot.slidesClipCancel();
-//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     bot.clipDown();
                 }

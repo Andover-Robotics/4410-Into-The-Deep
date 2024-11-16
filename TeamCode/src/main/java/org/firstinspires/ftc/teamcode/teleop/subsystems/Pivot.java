@@ -60,7 +60,7 @@ public class Pivot {
             lowBucketHeight = 23 * inches2mm,
             highChamberHeight = 17.5 * inches2mm,
             lowChamberHeight = 6 * inches2mm,
-            frontIntakeHeight = 6 * inches2mm,
+            frontIntakeHeight = 6.75 * inches2mm,
             wallIntakeHeight = 4 * inches2mm,
 
             frontAutoIntakeHeight = 6.75 * inches2mm,
