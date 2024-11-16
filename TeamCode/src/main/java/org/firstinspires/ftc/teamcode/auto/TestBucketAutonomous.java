@@ -45,7 +45,7 @@ public class TestBucketAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(8.5, 39.5), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(8.5, 39.1), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
@@ -53,7 +53,7 @@ public class TestBucketAutonomous extends LinearOpMode {
                         bot.actionClipStorage()
                 ))
                 .afterTime(0.5, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(48,46), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(50,46), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
@@ -63,13 +63,13 @@ public class TestBucketAutonomous extends LinearOpMode {
                         bot.actionFrontIntakeToStorage()))
 
                 .afterTime(0.2, bot.actionHighBucket())
-                .strafeToLinearHeading(new Vector2d(56,56), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(52,56), Math.toRadians(-135))
 
                 .waitSeconds(1)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.1, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(55,46), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(56,44.5), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
@@ -79,7 +79,7 @@ public class TestBucketAutonomous extends LinearOpMode {
                         bot.actionFrontIntakeToStorage()))
 
                 .afterTime(0.2, bot.actionHighBucket())
-                .strafeToLinearHeading(new Vector2d(56,56), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(52,56), Math.toRadians(-135))
 
                 .waitSeconds(1)
                 .stopAndAdd(bot.actionBucketDrop())
@@ -89,7 +89,7 @@ public class TestBucketAutonomous extends LinearOpMode {
                         bot.actionFrontIntake(),
                         bot.actionRotateClaw()
                 ))
-                .strafeToLinearHeading(new Vector2d(48,28), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(49,29), Math.toRadians(0))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
@@ -100,7 +100,7 @@ public class TestBucketAutonomous extends LinearOpMode {
                 ))
 
                 .afterTime(0.2, bot.actionHighBucket())
-                .strafeToLinearHeading(new Vector2d(54,54), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(52,56), Math.toRadians(-135))
 
                 .waitSeconds(0.3)
                 .stopAndAdd(bot.actionBucketDrop())

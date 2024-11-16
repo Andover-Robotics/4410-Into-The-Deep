@@ -48,7 +48,7 @@ public class TestHPAutonomous extends LinearOpMode {
 
                 .afterTime(0.5, bot.actionFrontIntake()) // Pick up first sample
 
-                .strafeToLinearHeading(new Vector2d(-51,45), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-50,45), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
@@ -64,7 +64,7 @@ public class TestHPAutonomous extends LinearOpMode {
                         bot.actionWallIntakeToStorage(),
                         new SleepAction(0.5)
                 ))
-                .strafeToLinearHeading(new Vector2d(-59,44), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-58,44), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
                         bot.actionFrontIntake(),
                         new SleepAction(0.5),
@@ -80,7 +80,7 @@ public class TestHPAutonomous extends LinearOpMode {
                 ))
 
                 //pick up from wall
-                .strafeToLinearHeading(new Vector2d(-59,50),Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-59,50.5),Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.3),
                         bot.actionCloseGripper(),
@@ -89,7 +89,7 @@ public class TestHPAutonomous extends LinearOpMode {
                 ))
 
                 //high chamber
-                .strafeToLinearHeading(new Vector2d(-4,39.5), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-5,38.5), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
                         new SleepAction(0.5),
@@ -110,25 +110,25 @@ public class TestHPAutonomous extends LinearOpMode {
                         bot.actionFrontIntakeToStorage()
                 ))
 
-                // Drop third sample in HP zone
-                .afterTime(0.3, bot.actionWallIntakeClosed())
-                .strafeToLinearHeading(new Vector2d(-59,44),Math.toRadians(-90))
-                .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.5),
-                        bot.actionOpenGripper()
-                ))
+//                // Drop third sample in HP zone
+//                .afterTime(0.3, bot.actionWallIntakeClosed())
+//                .strafeToLinearHeading(new Vector2d(-59,44),Math.toRadians(-90))
+//                .stopAndAdd(new SequentialAction(
+//                        new SleepAction(0.5),
+//                        bot.actionOpenGripper()
+//                ))
+//
+//                //pick up from wall
+//                .strafeToLinearHeading(new Vector2d(-59,50),Math.toRadians(-90))
+//                .stopAndAdd(new SequentialAction(
+//                        new SleepAction(0.3),
+//                        bot.actionCloseGripper(),
+//                        new SleepAction(0.5),
+//                        bot.actionHighChamber()
+//                ))
 
-                //pick up from wall
-                .strafeToLinearHeading(new Vector2d(-59,50),Math.toRadians(-90))
-                .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.3),
-                        bot.actionCloseGripper(),
-                        new SleepAction(0.5),
-                        bot.actionHighChamber()
-                ))
-
-                .strafeToLinearHeading(new Vector2d(-48,12), Math.toRadians(-180))
-                .strafeToLinearHeading(new Vector2d(-19.5,12), Math.toRadians(-180))
+                //.strafeToLinearHeading(new Vector2d(-48,12), Math.toRadians(-180))
+                .strafeToLinearHeading(new Vector2d(-19.5,7), Math.toRadians(-180))
                 .build();
 
         while(!isStarted()) {

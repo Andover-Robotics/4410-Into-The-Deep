@@ -404,7 +404,7 @@ public class Bot {
                 new InstantAction(() -> pivot.highBucket(true, false)),
                 new SleepAction(0.3),
                 new InstantAction(() -> pivot.highBucket(false, true)),
-                new SleepAction(0.9),
+                new SleepAction(1.05),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
@@ -429,7 +429,7 @@ public class Bot {
 
     public SequentialAction actionPickUp() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(3.3))
+                new InstantAction(() -> pivot.changeZ(3.7))
         );
     }
 
@@ -489,7 +489,7 @@ public class Bot {
 
     public SequentialAction actionPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(-3.3)),
+                new InstantAction(() -> pivot.changeZ(-3.7)),
                 new SleepAction(0.4),
                 new InstantAction(() -> gripper.close())
         );
