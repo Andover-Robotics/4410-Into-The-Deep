@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Pivot;
 
@@ -34,17 +35,30 @@ public class L3ClimbTester extends LinearOpMode {
         bot.instance = null;
         bot = Bot.getInstance(this);
 
+        bot.storage();
+        state = STORAGE;
+
         gp = new GamepadEx(gamepad1);
 
         while(!isStarted()) {
             bot.pivot.periodic();
+            telemetry.addData("Bot State", bot.state);
+            telemetry.addData("Pivot Active", bot.pivot.testing);
+            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
+            telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
+//            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+            //telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+            //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
+            //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
+            //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
+            //telemetry.addData("Pivot Power", bot.pivot.power);
+            telemetry.update();
         }
 
         while(opModeIsActive() && !isStopRequested()) {
             gp.readButtons();
 
-            bot.storage();
-            state = STORAGE;
+
 
             // Pre L2 Climb
             if (state.equals(STORAGE)) {
@@ -210,6 +224,7 @@ public class L3ClimbTester extends LinearOpMode {
             telemetry.addData("State: ", state);
             telemetry.addData("TargetX: ", targetX);
             telemetry.addData("TargetZ: ", targetZ);
+            telemetry.update();
         }
     }
 

@@ -183,7 +183,7 @@ public class Bot {
                     storage();
                     Thread.sleep(500);
                 }
-                pivot.arm.outtakeUp();
+                pivot.arm.bucket();
                 pivot.prel2Climb(true, false);
                 Thread.sleep(150);
                 pivot.prel2Climb(false, true);
@@ -437,7 +437,7 @@ public class Bot {
             try {
                 gripper.open();
                 pivot.wallIntake(true, true);
-                Thread.sleep(200);
+                Thread.sleep(400);
                 pivot.arm.wallPickup();
                 state = BotState.WALL_INTAKE;
             } catch (InterruptedException ignored) {}
