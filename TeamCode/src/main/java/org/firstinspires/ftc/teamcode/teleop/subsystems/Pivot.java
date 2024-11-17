@@ -52,7 +52,7 @@ public class Pivot {
 
     public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //TODO TUNE
 
-    public boolean testing = true, armTesting = true, manualIK;
+    public boolean manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
@@ -119,10 +119,6 @@ public class Pivot {
         arm = new Arm(opMode);
 
         this.opMode = opMode;
-    }
-
-    public void setTesting(boolean testing) {
-        this.testing = testing;
     }
 
     public void runManualIK(double joystick) {
@@ -207,14 +203,9 @@ public class Pivot {
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
 
-        if (testing) { //TODO remove for master code
-            pivotMotor.set(power);
-        } else {
-            pivotMotor.set(0);
-        }
 
         slides.periodic(getPivotTargetAngleRadians());
-        if (armTesting) arm.periodic(getPivotAngleDegrees(), armTesting); // feeds in the pivot angle so the arm can go to an absolute angle
+        arm.periodic(getPivotAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
     }
 
     public double calculateFeedForward() {

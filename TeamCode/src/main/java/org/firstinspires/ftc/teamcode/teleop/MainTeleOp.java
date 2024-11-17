@@ -44,12 +44,12 @@ public class MainTeleOp extends LinearOpMode {
         // Initialize bot
         //bot.stopMotors();
         bot.state = Bot.BotState.STORAGE;
+        //bot.storage();
+
+        waitForStart();
+
         bot.storage();
 
-        while(!isStarted()) {
-            bot.pivot.periodic();
-        }
-        //waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
 
             gp1.readButtons();
@@ -212,7 +212,6 @@ public class MainTeleOp extends LinearOpMode {
 
             // TELEMETRY
             telemetry.addData("Bot State", bot.state);
-            telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
             telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
