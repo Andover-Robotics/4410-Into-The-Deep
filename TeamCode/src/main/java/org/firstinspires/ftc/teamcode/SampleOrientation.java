@@ -13,6 +13,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Vector;
 
 public class SampleOrientation implements VisionProcessor {
+    private Rect Crop = new Rect(0,0,44,10); // EDIT THESE VALUES
+
     private Mat Frame = new Mat();
     private Mat HsvMat = new Mat();
     private Mat RedMask = new Mat();
@@ -97,8 +100,10 @@ public class SampleOrientation implements VisionProcessor {
         RedContours.clear(); BlueContours.clear(); YellowContours.clear();
 
         Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
-        Imgproc.medianBlur(HsvMat, HsvMat, 5);
+        Imgproc.medianBlur(HsvMat, HsvMat, 3);
         Imgproc.cvtColor(HsvMat, Frame, Imgproc.COLOR_HSV2RGB);
+
+        HsvMat = new Mat(HsvMat,Crop);
 
         if (alliance == Alliance.RED) {
             // red alliance detection system
