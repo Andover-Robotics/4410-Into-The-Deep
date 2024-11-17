@@ -114,7 +114,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
                     bot.pickUp();
-                    sleep(350);
+                    sleep(250);
                     bot.frontIntakeToStorage();
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
