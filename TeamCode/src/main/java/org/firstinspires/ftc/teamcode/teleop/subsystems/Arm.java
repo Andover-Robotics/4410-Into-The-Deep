@@ -100,9 +100,9 @@ public class Arm {
         setRollPitch(rollFlipped, pitchGroundPickup);
     }
 
-    public void periodic(double pivotAngleDegrees, boolean liveIK) {
+    public void periodic(double pivotAngleDegrees) {
         this.pivotAngleDegrees = pivotAngleDegrees;
-        if (liveIK) setRollPitch(rollSetpoint, pitchSetpoint); //TODO: uncomment to TEST LIVE UPDATING ARM IK
+        setRollPitch(rollSetpoint, pitchSetpoint);
     }
 
     // set both roll and pitch at the same time

@@ -44,12 +44,12 @@ public class MainTeleOp extends LinearOpMode {
         // Initialize bot
         //bot.stopMotors();
         bot.state = Bot.BotState.STORAGE;
+        //bot.storage();
+
+        waitForStart();
+
         bot.storage();
 
-        while(!isStarted()) {
-            bot.pivot.periodic();
-        }
-        //waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
 
             gp1.readButtons();
