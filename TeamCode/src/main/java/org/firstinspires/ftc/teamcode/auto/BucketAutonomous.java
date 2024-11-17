@@ -15,13 +15,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
         import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-
-import java.net.BindException;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
 @Autonomous(name = "Bucket Autonomous", group = "Autonomous")
-public class TestBucketAutonomous extends LinearOpMode {
+public class BucketAutonomous extends LinearOpMode {
     Bot bot;
 
     @Override
