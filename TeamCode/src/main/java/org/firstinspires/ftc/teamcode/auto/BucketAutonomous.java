@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.auto;
 // RR-specific imports
 import com.acmerobotics.dashboard.config.Config;
         import com.acmerobotics.roadrunner.Action;
-        import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -105,6 +106,7 @@ public class BucketAutonomous extends LinearOpMode {
 
                 .strafeToLinearHeading(new Vector2d(48,12), Math.toRadians(180))
                 .strafeToLinearHeading(new Vector2d(18.5,12), Math.toRadians(180))
+                .stopAndAdd(new InstantAction(() -> bot.pivot.arm.vertical()))
 
                 .build();
 
