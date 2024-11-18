@@ -27,7 +27,7 @@ public class Pivot {
     public static double target = 0, tolerance = 5, powerUp = -0.13;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
     private final double startingAngleOffsetDegrees = 90; //offset from rest position to horizontal front
-    private boolean goingDown, IK;
+    private boolean goingDown, limits;
 
     public static double maxVelo = 1000, maxAccel = 60000;
     private double profilerTarget;
@@ -50,7 +50,7 @@ public class Pivot {
 
     public static double inches2mm = 25.4;
 
-    public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //TODO TUNE
+    public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //expansion limits
 
     public boolean manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
@@ -93,7 +93,7 @@ public class Pivot {
             climbTransferX = 0.01 * inches2mm,
             prel3ClimbX = -2 * inches2mm,
             midl3ClimbX = 1.5 * inches2mm,
-            tiltedl3ClimbX = -12 * inches2mm,
+            tiltedl3ClimbX = -20 * inches2mm,
             backTiltedl3ClimbX = 7.5 * inches2mm,
             postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
 
@@ -138,7 +138,7 @@ public class Pivot {
     }
 
     public void adjustTargetX() {
-        if (targetX < -50) {
+        if (targetX < -50) { //these units are in MM
             targetX = -Math.sqrt(Math.pow(slides.getIKmmPosition(), 2) - Math.pow(targetZ, 2)); //updates the x value so that pivot can adjust
             if (Double.isNaN(targetX)) targetX = -50; //stops overflow for ik from front to back
         } else if (targetX > 100) {
