@@ -42,29 +42,32 @@ public class BucketAutonomous extends LinearOpMode {
         // new Pose2d(10, 58, Math.toRadians(-90))
         Action bucketAuto = drive.actionBuilder(drive.pose)
 
-                .stopAndAdd(bot.actionHighChamber())
-
+                .afterTime(0.1, bot.actionHighChamber())
                 .strafeToLinearHeading(new Vector2d(8.5, 39.1), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
-                        new SleepAction(0.2),
+                        new SleepAction(0.15),
                         bot.actionClipStorage()
                 ))
+
                 .afterTime(0.5, bot.actionFrontIntake())
                 .strafeToLinearHeading(new Vector2d(48,46), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.3),
-                        bot.actionPickUp(),
-                        new SleepAction(0.2),
-                        bot.actionFrontIntakeToStorage()))
+                        bot.actionPickUp()))
 
-                .afterTime(0.2, bot.actionHighBucket())
+                .afterTime(0.2, new SequentialAction(
+                        bot.actionFrontIntakeToStorage(),
+                        new SleepAction(0.4),
+                        bot.actionHighBucket()
+                ))
+
                 .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
 
-                .waitSeconds(1)
+                .waitSeconds(0.9)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.1, bot.actionFrontIntake())
@@ -73,18 +76,21 @@ public class BucketAutonomous extends LinearOpMode {
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.3),
-                        bot.actionPickUp(),
-                        new SleepAction(0.2),
-                        bot.actionFrontIntakeToStorage()))
+                        bot.actionPickUp()))
 
-                .afterTime(0.2, bot.actionHighBucket())
+                .afterTime(0.2, new SequentialAction(
+                        bot.actionFrontIntakeToStorage(),
+                        new SleepAction(0.4),
+                        bot.actionHighBucket()
+                ))
                 .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
 
-                .waitSeconds(1)
+                .waitSeconds(0.9)
                 .stopAndAdd(bot.actionBucketDrop())
 
-                .afterTime(0.8, new SequentialAction(
-                        new SleepAction(0.4),
+                .afterTime(0.2, new SequentialAction(
+                        bot.actionBucketToStorage(),
+                        new SleepAction(1.2),
                         bot.actionFrontIntake(),
                         bot.actionRotateClaw()
                 ))
@@ -93,16 +99,21 @@ public class BucketAutonomous extends LinearOpMode {
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.3),
-                        bot.actionPickUp(),
-                        new SleepAction(0.2),
-                        bot.actionFrontIntakeToStorage()
-                ))
+                        bot.actionPickUp()))
 
-                .afterTime(0.2, bot.actionHighBucket())
+                .afterTime(0.01, new SequentialAction(
+                        bot.actionFrontIntakeToStorage(),
+                        new SleepAction(0.3),
+                        bot.actionHighBucket()
+                ))
                 .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
 
-                .waitSeconds(0.3)
-                .stopAndAdd(bot.actionBucketDrop())
+                .waitSeconds(0.2)
+                .stopAndAdd(new SequentialAction(
+                        bot.actionBucketDrop(),
+                        new SleepAction(0.2),
+                        bot.actionBucketToStorage()
+                ))
 
                 .strafeToLinearHeading(new Vector2d(48,12), Math.toRadians(180))
                 .strafeToLinearHeading(new Vector2d(18.5,12), Math.toRadians(180))

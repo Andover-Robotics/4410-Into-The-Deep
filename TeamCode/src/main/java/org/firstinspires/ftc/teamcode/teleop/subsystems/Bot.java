@@ -458,7 +458,12 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
                 new SleepAction(0.4),
-                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new InstantAction(() -> pivot.arm.outtakeUp())
+        );
+    }
+
+    public SequentialAction actionBucketToStorage() {
+        return new SequentialAction(
                 new InstantAction(() -> pivot.storage(false, true)),
                 new SleepAction(0.9),
                 new InstantAction(() -> pivot.storage(true, true)),
