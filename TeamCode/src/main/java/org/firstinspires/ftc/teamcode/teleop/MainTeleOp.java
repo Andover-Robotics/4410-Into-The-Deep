@@ -42,7 +42,7 @@ public class MainTeleOp extends LinearOpMode {
         gp2 = new GamepadEx(gamepad2);
 
         // Initialize bot
-        //bot.stopMotors();
+        bot.stopMotors();
         bot.state = Bot.BotState.STORAGE;
         //bot.storage();
 
