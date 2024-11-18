@@ -43,7 +43,6 @@ public class L3ClimbTester extends LinearOpMode {
         while(!isStarted()) {
             bot.pivot.periodic();
             telemetry.addData("Bot State", bot.state);
-            telemetry.addData("Pivot Active", bot.pivot.testing);
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
 //            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
