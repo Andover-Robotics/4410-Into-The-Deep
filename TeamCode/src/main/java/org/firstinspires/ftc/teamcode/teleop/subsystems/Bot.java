@@ -457,7 +457,7 @@ public class Bot {
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.4),
+                new SleepAction(0.25),
                 new InstantAction(() -> pivot.arm.outtakeUp())
         );
     }

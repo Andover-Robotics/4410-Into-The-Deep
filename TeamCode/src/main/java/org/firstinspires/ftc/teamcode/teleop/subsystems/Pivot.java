@@ -203,6 +203,7 @@ public class Pivot {
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
 
+        pivotMotor.set(power);
 
         slides.periodic(getPivotTargetAngleRadians());
         arm.periodic(getPivotAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle

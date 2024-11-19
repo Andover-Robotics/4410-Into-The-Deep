@@ -52,7 +52,7 @@ public class BucketAutonomous extends LinearOpMode {
                 ))
 
                 .afterTime(0.5, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(48,46), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(47,43), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
@@ -60,17 +60,19 @@ public class BucketAutonomous extends LinearOpMode {
                         bot.actionPickUp()))
 
                 .afterTime(0.2, new SequentialAction(
-                        bot.actionFrontIntakeToStorage(),
-                        new SleepAction(0.4),
                         bot.actionHighBucket()
                 ))
 
                 .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
 
                 .waitSeconds(0.9)
-                .stopAndAdd(bot.actionBucketDrop())
+                .stopAndAdd(new SequentialAction(
+                        bot.actionBucketDrop(),
+                        new SleepAction(0.2),
+                        bot.actionBucketToStorage(),
+                        new SleepAction(0.2)))
 
-                .afterTime(0.1, bot.actionFrontIntake())
+                .afterTime(0.2, bot.actionFrontIntake())
                 .strafeToLinearHeading(new Vector2d(56,44.5), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
@@ -79,8 +81,6 @@ public class BucketAutonomous extends LinearOpMode {
                         bot.actionPickUp()))
 
                 .afterTime(0.2, new SequentialAction(
-                        bot.actionFrontIntakeToStorage(),
-                        new SleepAction(0.4),
                         bot.actionHighBucket()
                 ))
                 .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
@@ -88,36 +88,36 @@ public class BucketAutonomous extends LinearOpMode {
                 .waitSeconds(0.9)
                 .stopAndAdd(bot.actionBucketDrop())
 
-                .afterTime(0.2, new SequentialAction(
-                        bot.actionBucketToStorage(),
-                        new SleepAction(1.2),
-                        bot.actionFrontIntake(),
-                        bot.actionRotateClaw()
+                .afterTime(0.01, new SequentialAction(
+                        bot.actionBucketToStorage()
                 ))
                 .strafeToLinearHeading(new Vector2d(49,28), Math.toRadians(0))
 
                 .stopAndAdd(new SequentialAction(
+                        bot.actionFrontIntake(),
+                        bot.actionRotateClaw(),
+                        new SleepAction(0.6),
                         bot.actionPickDown(),
                         new SleepAction(0.3),
                         bot.actionPickUp()))
 
                 .afterTime(0.01, new SequentialAction(
-                        bot.actionFrontIntakeToStorage(),
-                        new SleepAction(0.3),
-                        bot.actionHighBucket()
+                        bot.actionFrontIntakeToStorage()
                 ))
                 .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
-
-                .waitSeconds(0.2)
                 .stopAndAdd(new SequentialAction(
+                        bot.actionHighBucket(),
+                        new SleepAction(0.8),
                         bot.actionBucketDrop(),
-                        new SleepAction(0.2),
+                        new SleepAction(0.1),
                         bot.actionBucketToStorage()
                 ))
 
                 .strafeToLinearHeading(new Vector2d(48,12), Math.toRadians(180))
                 .strafeToLinearHeading(new Vector2d(18.5,12), Math.toRadians(180))
-                .stopAndAdd(new InstantAction(() -> bot.pivot.arm.vertical()))
+                .stopAndAdd(new SequentialAction(
+                        new InstantAction(() -> bot.pivot.arm.bucket()),
+                        new SleepAction(0.5)))
 
                 .build();
 
