@@ -241,7 +241,7 @@ public class HPAutonomous extends LinearOpMode {
 
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
-                        bot.periodic(),
+                        bot.actionPeriodic(),
                         (solo)? soloFirstSampleSpecimenClip : withPartnerFirstSampleDropoff,
                         otherSamplesSpecimen,
                         (solo)? basicPark : oneMoreSpecimenPark

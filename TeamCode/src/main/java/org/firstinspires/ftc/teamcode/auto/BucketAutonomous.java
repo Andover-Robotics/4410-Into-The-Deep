@@ -127,7 +127,7 @@ public class BucketAutonomous extends LinearOpMode {
 
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
-                        bot.periodic(),
+                        bot.actionPeriodic(),
                         bucketAuto
                 )
         );

@@ -547,7 +547,7 @@ public class Bot {
         );
     }
 
-    public class periodic implements Action {
+    public class actionPeriodic implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             pivot.periodic();
@@ -555,8 +555,8 @@ public class Bot {
         }
     }
 
-    public Action periodic() {
-        return new periodic();
+    public Action actionPeriodic() {
+        return new actionPeriodic();
     }
 
     // MOTORS
