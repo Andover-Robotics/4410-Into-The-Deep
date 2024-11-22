@@ -50,16 +50,15 @@ public class MainTeleOp extends LinearOpMode {
         // Initialize bot
         //bot.stopMotors();
         bot.state = Bot.BotState.FRONT_INTAKE;
-        bot.frontIntake();
 
         while (!isStarted()) {
             bot.pivot.periodic();
         }
 
+        bot.frontIntake();
+
         while (opModeIsActive() && !isStopRequested()) {
 
-            gp1.readButtons();
-            gp2.readButtons();
             gp1.readButtons();
             gp2.readButtons();
 
@@ -113,11 +112,11 @@ public class MainTeleOp extends LinearOpMode {
                 bot.pivot.runManualIK(gp2.getLeftY());
             }
 
-            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-                sampleTracker.detectYellow(false);
-            } else {
-                sampleTracker.detectYellow(true);
-            }
+//            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+//                sampleTracker.detectYellow(false);
+//            } else {
+//                sampleTracker.detectYellow(true);
+//            }
 //
 //            telemetry.addData("Current Pitch (Servo)", bot.pivot.arm.currentPitch);
 //            telemetry.addData("Pitch Setpoint", bot.pivot.arm.pitchSetpoint);
