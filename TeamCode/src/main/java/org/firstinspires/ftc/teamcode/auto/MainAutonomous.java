@@ -92,7 +92,7 @@ public class MainAutonomous extends LinearOpMode {
 
         Actions.runBlocking(
                 new ActionHelper.RaceParallelCommand(
-                        bot.periodic(),
+                        bot.actionPeriodic(),
                         new SequentialAction(
                                 sample1,
                                 sample2

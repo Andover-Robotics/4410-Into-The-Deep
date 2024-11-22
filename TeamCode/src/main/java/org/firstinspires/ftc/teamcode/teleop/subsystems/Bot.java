@@ -172,7 +172,7 @@ public class Bot {
                     storage();
                     Thread.sleep(500);
                 }
-                pivot.arm.outtakeUp();
+                pivot.arm.bucket();
                 pivot.prel2Climb(true, false);
                 Thread.sleep(150);
                 pivot.prel2Climb(false, true);
@@ -202,14 +202,11 @@ public class Bot {
     public void l3Climb() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.climbTransfer(true, false);
-                Thread.sleep(800);
-                pivot.climbTransfer(false, true);
-                Thread.sleep(1000);
                 pivot.prel3Climb(true, false);
                 Thread.sleep(600);
                 pivot.prel3Climb(false, true);
                 Thread.sleep(1000);
+                pivot.arm.outtakeUp();
                 pivot.midl3Climb(true, false);
                 Thread.sleep(800);
                 pivot.midl3Climb(false, true);
@@ -217,13 +214,11 @@ public class Bot {
                 pivot.tiltedl3Climb(true, false);
                 Thread.sleep(800);
                 pivot.tiltedl3Climb(false, true);
-                Thread.sleep(1000);
+                Thread.sleep(2800);
                 pivot.backTiltedl3Climb(true, false);
-                Thread.sleep(800);
-                pivot.backTiltedl3Climb(false, true);
-                Thread.sleep(1000);
+                Thread.sleep(1500);
                 pivot.postl3Climb(false, true);
-                Thread.sleep(1000);
+                Thread.sleep(1300);
                 pivot.postl3Climb(true, false);
                 Thread.sleep(800);
             } catch (InterruptedException ignored) {}
@@ -588,7 +583,7 @@ public class Bot {
 
     // DRIVE METHODS
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
-        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.4 : 1;
+        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.15 : 1.03;
         if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.2;
         double rearWheelModifier = (state == BotState.WALL_INTAKE || state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.15 : 1;
         double[] speeds = {
