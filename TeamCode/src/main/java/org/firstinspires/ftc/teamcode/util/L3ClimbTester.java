@@ -219,6 +219,8 @@ public class L3ClimbTester extends LinearOpMode {
             // DRIVE
             drive();
 
+            bot.pivot.periodic();
+
             // TELEMETRY
             telemetry.addData("State: ", state);
             telemetry.addData("TargetX: ", targetX);
