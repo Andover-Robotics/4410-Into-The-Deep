@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.List;
 import java.util.Vector;
 
-public class SampleTrackingPipeline extends OpenCvPipeline implements VisionProcessor {
+public class SampleTrackingPipeline extends OpenCvPipeline {
 
     public enum Alliance {
         BLUE,
@@ -93,7 +93,6 @@ public class SampleTrackingPipeline extends OpenCvPipeline implements VisionProc
 
     public Alliance getAlliance() { return alliance; }
 
-    @Override
     public void init(int width, int height, CameraCalibration calibration) {
     }
 
