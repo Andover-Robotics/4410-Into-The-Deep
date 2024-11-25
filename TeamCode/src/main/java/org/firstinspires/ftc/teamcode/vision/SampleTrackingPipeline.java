@@ -17,12 +17,13 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.MatOfPoint2f;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 
 import java.util.List;
 import java.util.Vector;
 
-public class SampleTrackingPipeline implements VisionProcessor {
+public class SampleTrackingPipeline extends OpenCvPipeline implements VisionProcessor {
 
     public enum Alliance {
         BLUE,
@@ -64,8 +65,6 @@ public class SampleTrackingPipeline implements VisionProcessor {
 
     public boolean detectYellow;
 
-
-
     public Alliance alliance = Alliance.NULL;
 
     public void setBlueAlliance() {
@@ -99,10 +98,10 @@ public class SampleTrackingPipeline implements VisionProcessor {
     }
 
     @Override
-    public Object processFrame(Mat frame, long captureTimeNanos) {
+    public Mat processFrame(Mat input) {
         RedContours.clear(); BlueContours.clear(); YellowContours.clear();
 
-        Imgproc.cvtColor(frame, HsvMat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, HsvMat, Imgproc.COLOR_RGB2HSV);
         Imgproc.medianBlur(HsvMat, HsvMat, 5);
         Imgproc.cvtColor(HsvMat, Frame, Imgproc.COLOR_HSV2RGB);
 
