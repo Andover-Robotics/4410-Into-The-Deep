@@ -192,7 +192,7 @@ public class Bot {
                 pivot.postl2Climb(false, true);
                 Thread.sleep(1000);
                 pivot.climbTransfer(true, false);
-                Thread.sleep(1000);
+                Thread.sleep(850);
                 pivot.climbTransfer(false, true);
             } catch (InterruptedException ignored) {}
         });
@@ -205,7 +205,7 @@ public class Bot {
                 pivot.prel3Climb(true, false);
                 Thread.sleep(600);
                 pivot.prel3Climb(false, true);
-                Thread.sleep(1000);
+                Thread.sleep(800);
                 pivot.arm.outtakeUp();
                 pivot.midl3Climb(true, false);
                 Thread.sleep(800);
@@ -214,13 +214,12 @@ public class Bot {
                 pivot.tiltedl3Climb(true, false);
                 Thread.sleep(800);
                 pivot.tiltedl3Climb(false, true);
-                Thread.sleep(2800);
+                Thread.sleep(1900);
                 pivot.backTiltedl3Climb(true, false);
-                Thread.sleep(1500);
+                Thread.sleep(1300);
                 pivot.postl3Climb(false, true);
                 Thread.sleep(1300);
                 pivot.postl3Climb(true, false);
-                Thread.sleep(800);
             } catch (InterruptedException ignored) {}
         });
         thread.start();

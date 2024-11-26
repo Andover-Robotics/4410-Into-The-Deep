@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
         import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -52,7 +53,7 @@ public class BucketAutonomous extends LinearOpMode {
                 ))
 
                 .afterTime(0.5, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(47,43), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(47,44.5), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
@@ -91,7 +92,7 @@ public class BucketAutonomous extends LinearOpMode {
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage()
                 ))
-                .strafeToLinearHeading(new Vector2d(49,28), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(49,28), Math.toRadians(0), drive.defaultVelConstraint, new ProfileAccelConstraint(-20, 20))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionFrontIntake(),
@@ -104,7 +105,7 @@ public class BucketAutonomous extends LinearOpMode {
                 .afterTime(0.01, new SequentialAction(
                         bot.actionFrontIntakeToStorage()
                 ))
-                .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(53.5,57.5), Math.toRadians(-135), drive.defaultVelConstraint, new ProfileAccelConstraint(-20, 20))
                 .stopAndAdd(new SequentialAction(
                         bot.actionHighBucket(),
                         new SleepAction(0.8),
@@ -116,8 +117,8 @@ public class BucketAutonomous extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(48,12), Math.toRadians(180))
                 .strafeToLinearHeading(new Vector2d(18.5,12), Math.toRadians(180))
                 .stopAndAdd(new SequentialAction(
-                        new InstantAction(() -> bot.pivot.arm.bucket()),
-                        new SleepAction(0.5)))
+                        new InstantAction(() -> bot.pivot.arm.vertical()),
+                        new SleepAction(5)))
 
                 .build();
 
