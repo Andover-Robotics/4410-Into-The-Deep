@@ -61,7 +61,7 @@ public class Pivot {
             highChamberHeight = 17.5 * inches2mm,
             lowChamberHeight = 6 * inches2mm,
             frontIntakeHeight = 6.75 * inches2mm,
-            wallIntakeHeight = 3 * inches2mm,
+            wallIntakeHeight = 2.5 * inches2mm,
 
             frontAutoIntakeHeight = 6.75 * inches2mm,
 
@@ -72,13 +72,13 @@ public class Pivot {
             climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 34 * inches2mm,
             midl3ClimbHeight = 25 * inches2mm,
-            tiltedl3ClimbHeight = 10 * inches2mm,
+            tiltedl3ClimbHeight = 9.75 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 11.8 * inches2mm;
 
 
     // distances forward from pivot for positions
-    public static double bucketX = -3.5 * inches2mm,
+    public static double bucketX = -4.5 * inches2mm,
             chamberX = 8 * inches2mm,
             frontIntakeX = 12 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
@@ -93,7 +93,7 @@ public class Pivot {
             climbTransferX = 0.01 * inches2mm,
             prel3ClimbX = 0.3 * inches2mm,
             midl3ClimbX = 3 * inches2mm,
-            tiltedl3ClimbX = -10 * inches2mm,
+            tiltedl3ClimbX = -9.75 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
             postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
 
