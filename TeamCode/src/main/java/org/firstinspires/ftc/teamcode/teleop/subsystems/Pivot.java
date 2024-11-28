@@ -50,7 +50,7 @@ public class Pivot {
 
     public static double inches2mm = 25.4;
 
-    public double xMin = -10 * inches2mm, xMax = 20 * inches2mm; //expansion limits
+    public double xMin = -10 * inches2mm, xMax = 21.5 * inches2mm; //expansion limits
 
     public boolean manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
@@ -60,10 +60,10 @@ public class Pivot {
             lowBucketHeight = 23 * inches2mm,
             highChamberHeight = 17.5 * inches2mm,
             lowChamberHeight = 6 * inches2mm,
-            frontIntakeHeight = 6.75 * inches2mm,
+            frontIntakeHeight = 3.25 * inches2mm,
             wallIntakeHeight = 2.5 * inches2mm,
 
-            frontAutoIntakeHeight = 6.75 * inches2mm,
+            frontAutoIntakeHeight = 3.25 * inches2mm,
 
             prel2ClimbHeight = 21 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
@@ -80,7 +80,7 @@ public class Pivot {
     // distances forward from pivot for positions
     public static double bucketX = -4.5 * inches2mm,
             chamberX = 8 * inches2mm,
-            frontIntakeX = 12 * inches2mm,
+            frontIntakeX = 12.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 

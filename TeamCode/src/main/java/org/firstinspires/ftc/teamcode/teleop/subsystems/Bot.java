@@ -37,6 +37,8 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
+    double pickDownUpValue = 2;
+
     // Define subsystem objects
     public Gripper gripper;
     public Pivot pivot;
@@ -355,7 +357,7 @@ public class Bot {
     public void pickDown() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.changeZ(-3.5);
+                pivot.changeZ(-pickDownUpValue);
                 Thread.sleep(300);
                 gripper.close();
             } catch (InterruptedException ignored) {}
@@ -364,7 +366,7 @@ public class Bot {
     }
 
     public void pickUp() {
-        pivot.changeZ(+3.5);
+        pivot.changeZ(pickDownUpValue);
     }
 
     public void wallIntakeOpen() {
