@@ -402,6 +402,14 @@ public class Bot {
         thread.start();
     }
 
+    public SequentialAction actionSubPark() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.subPark(true, true)),
+                new InstantAction(() -> pivot.arm.vertical())
+        );
+    }
+
+
     public SequentialAction actionHighBucket() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highBucket(true, false)),
@@ -432,13 +440,13 @@ public class Bot {
 
     public SequentialAction actionPickUp() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(4))
+                new InstantAction(() -> pivot.changeZ(5))
         );
     }
 
     public SequentialAction actionPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(-4)),
+                new InstantAction(() -> pivot.changeZ(-5)),
                 new SleepAction(0.4),
                 new InstantAction(() -> gripper.close())
         );
@@ -477,13 +485,13 @@ public class Bot {
 
     public SequentialAction actionFrontIntakeToStorage() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(2)),
-                new SleepAction(0.2),
-                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.changeZ(3)),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
-                new SleepAction(0.4),
-                new InstantAction(() -> pivot.storage(true, false)),
                 new SleepAction(0.3),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.storage(true, false)),
+                new SleepAction(0.5),
                 new InstantAction(() -> pivot.arm.storage()),
                 new InstantAction(() -> state = BotState.STORAGE)
         );
@@ -508,9 +516,9 @@ public class Bot {
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
                 new SleepAction(0.1),
-                new InstantAction(() -> pivot.frontIntakeStorage(true, true)),
-                new SleepAction(0.4),
-                new InstantAction(() -> pivot.frontAutoIntake(true, true)),
+                new InstantAction(() -> pivot.frontAutoIntake(true, false)),
+                new SleepAction(0.3),
+                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
@@ -561,6 +569,12 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.rollLeft()),
                 new InstantAction(() -> pivot.arm.rollLeft()),
+                new InstantAction(() -> pivot.arm.rollLeft())
+        );
+    }
+
+    public SequentialAction actionHPRotateClaw() {
+        return new SequentialAction(
                 new InstantAction(() -> pivot.arm.rollLeft())
         );
     }

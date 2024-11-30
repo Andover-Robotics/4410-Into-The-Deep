@@ -61,9 +61,9 @@ public class Pivot {
             highChamberHeight = 17.1 * inches2mm,
             lowChamberHeight = 6 * inches2mm,
             frontIntakeHeight = 3.25 * inches2mm,
-            wallIntakeHeight = 2.5 * inches2mm,
+            wallIntakeHeight = 3.2 * inches2mm,
 
-            frontAutoIntakeHeight = 3.25 * inches2mm,
+            frontAutoIntakeHeight = 4.7 * inches2mm,
 
             prel2ClimbHeight = 21 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
@@ -75,7 +75,6 @@ public class Pivot {
             tiltedl3ClimbHeight = 9.75 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 11.8 * inches2mm;
-
 
     // distances forward from pivot for positions
     public static double bucketX = -4.5 * inches2mm,
@@ -101,6 +100,9 @@ public class Pivot {
 
     //STORAGE
     public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
+
+    //SUB PARK
+    public double subParkX = 10 * inches2mm, subParkZ = 11.5 * inches2mm;
 
     //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 
@@ -265,6 +267,13 @@ public class Pivot {
 
     public void manualRunToDeg(double angle) {
         manualRunTo(degreestoTicks(angle));
+    }
+
+    public void subPark(boolean pivot, boolean slides) {
+        targetZ = subParkZ;
+        targetX = subParkX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
     public void highBucket(boolean pivot, boolean slides) {

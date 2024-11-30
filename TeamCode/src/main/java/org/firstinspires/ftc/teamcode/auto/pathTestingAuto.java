@@ -40,28 +40,27 @@ public class pathTestingAuto extends LinearOpMode {
 
 
         // red big init pose NOTE: check comment above each trajectory to find the respective init pose
-        Pose2d initialPose = new Pose2d(-10, 63, Math.toRadians(-90));
+        Pose2d initialPose = new Pose2d(-12, 63, Math.toRadians(-90));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Action basicPark = drive.actionBuilder(initialPose)
 
                 //-55 40
-                .strafeToConstantHeading(new Vector2d(-36,45))
-
-                .strafeToConstantHeading(new Vector2d(-36,13))
-                .strafeToConstantHeading(new Vector2d(-50,50))
+                .strafeToConstantHeading(new Vector2d(-6,50))
+                .splineToConstantHeading(new Vector2d(-35,50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-35,16), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-44,16), Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(-44,50))
 
                 //-45,33
-                .strafeToConstantHeading(new Vector2d(-47,13))
-                .strafeToConstantHeading(new Vector2d(-58,50))
+                .splineToConstantHeading(new Vector2d(-41,16),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-56,16),Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(-56,50))
 
-                .strafeToConstantHeading(new Vector2d(-55,13))
-                .strafeToConstantHeading(new Vector2d(-66,13))
-                .strafeToConstantHeading(new Vector2d(-66,50))
-
-                .strafeToConstantHeading(new Vector2d(-45,25))
-                .splineToLinearHeading(new Pose2d(-24,13, Math.toRadians(180)),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56,16),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-64,16),Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(-63,50))
                 .build();
 
         while(!isStarted()) {
