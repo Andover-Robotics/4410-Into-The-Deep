@@ -37,7 +37,7 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
-    double pickDownUpValue = 2;
+    double pickDownUpValue = 3; //TELEOP ONLY (not auton)
 
     // Define subsystem objects
     public Gripper gripper;
@@ -156,6 +156,9 @@ public class Bot {
                 if (state == BotState.HIGH_CHAMBER) { //TODO: Test if hits chamber rod
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
                     Thread.sleep(400);
+                } else if (state == BotState.HIGH_BUCKET) {
+                    storage();
+                    Thread.sleep(600);
                 }
                 pivot.lowChamber(true, false);
                 Thread.sleep(250);
@@ -233,6 +236,9 @@ public class Bot {
                 if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
                     pivot.storage(false, true); //pull slides in so that it doesn't hit
                     Thread.sleep(400);
+                } else if (state == BotState.HIGH_BUCKET) {
+                    storage();
+                    Thread.sleep(600);
                 }
                 pivot.highChamber(true, false);
                 Thread.sleep(300);
@@ -293,6 +299,7 @@ public class Bot {
     public void clipStorage() {
         Thread thread = new Thread(() -> {
             try {
+                Thread.sleep(200);
                 gripper.open();
                 Thread.sleep(350);
                 pivot.arm.outtakeUp();
@@ -496,6 +503,20 @@ public class Bot {
         );
     }
 
+    public SequentialAction actionDiagFrontIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.arm.frontPickupToStorage()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.frontIntakeStorage(true, true)),
+                new SleepAction(0.4),
+                new InstantAction(() -> pivot.frontAutoIntake(true, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.arm.frontPickup()),
+                new InstantAction(() -> state = BotState.FRONT_INTAKE)
+        );
+    }
+
     public SequentialAction actionWallIntakeOpen() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
@@ -538,6 +559,7 @@ public class Bot {
 
     public SequentialAction actionRotateClaw() {
         return new SequentialAction(
+                new InstantAction(() -> pivot.arm.rollLeft()),
                 new InstantAction(() -> pivot.arm.rollLeft()),
                 new InstantAction(() -> pivot.arm.rollLeft())
         );
