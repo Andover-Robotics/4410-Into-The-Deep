@@ -37,7 +37,7 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
-    double pickDownUpValue = 3; //TELEOP ONLY (not auton)
+    double pickDownUpValue = 3.75; //TELEOP ONLY (not auton)
 
     // Define subsystem objects
     public Gripper gripper;
@@ -77,6 +77,43 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 gripper.close();
+                if (state == BotState.FRONT_INTAKE) {
+                    pivot.storage(true, true);
+                } else if (state == BotState.REAR_INTAKE) {
+                    pivot.arm.rearPickupToStorage();
+                    pivot.storage(true, true);
+                    Thread.sleep(300);
+                    pivot.arm.storage();
+                } else if (state == BotState.WALL_INTAKE) {
+                    pivot.storage(true, true);
+                    Thread.sleep(250);
+                    pivot.arm.storage();
+                } else if (state == BotState.HIGH_BUCKET) {
+                    pivot.storage(false, true);
+                    Thread.sleep(900);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
+                } else if (state == BotState.HIGH_CHAMBER){
+                    pivot.storage(false, true);
+                    Thread.sleep(500);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
+                } else {
+                    pivot.storage(false, true);
+                    Thread.sleep(400);
+                    pivot.storage(true, false);
+                    pivot.arm.storage();
+                }
+                state = BotState.STORAGE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void storageOpenGripper() {
+        Thread thread = new Thread(() -> {
+            try {
+                gripper.open();
                 if (state == BotState.FRONT_INTAKE) {
                     pivot.storage(true, true);
                 } else if (state == BotState.REAR_INTAKE) {
@@ -303,7 +340,7 @@ public class Bot {
                 gripper.open();
                 Thread.sleep(350);
                 pivot.arm.outtakeUp();
-                storage();
+                storageOpenGripper();
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -409,7 +446,6 @@ public class Bot {
         );
     }
 
-
     public SequentialAction actionHighBucket() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highBucket(true, false)),
@@ -455,8 +491,8 @@ public class Bot {
     public SequentialAction actionClipStorage() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.35),
-                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.arm.frontPickup()),
                 new InstantAction(() -> pivot.storage(false, true)),
                 new SleepAction(0.5),
                 new InstantAction(() -> pivot.storage(true, true)),

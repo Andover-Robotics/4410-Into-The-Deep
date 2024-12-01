@@ -60,7 +60,7 @@ public class Pivot {
             lowBucketHeight = 23 * inches2mm,
             highChamberHeight = 17.1 * inches2mm,
             lowChamberHeight = 6 * inches2mm,
-            frontIntakeHeight = 3.25 * inches2mm,
+            frontIntakeHeight = 4 * inches2mm,
             wallIntakeHeight = 3.2 * inches2mm,
 
             frontAutoIntakeHeight = 4.7 * inches2mm,
@@ -72,7 +72,7 @@ public class Pivot {
             climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 34 * inches2mm,
             midl3ClimbHeight = 25 * inches2mm,
-            tiltedl3ClimbHeight = 9.75 * inches2mm,
+            tiltedl3ClimbHeight = 10.75 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 11.8 * inches2mm;
 
@@ -92,7 +92,7 @@ public class Pivot {
             climbTransferX = 0.01 * inches2mm,
             prel3ClimbX = 0.3 * inches2mm,
             midl3ClimbX = 3 * inches2mm,
-            tiltedl3ClimbX = -9.75 * inches2mm,
+            tiltedl3ClimbX = -10.75 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
             postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
 
@@ -102,7 +102,7 @@ public class Pivot {
     public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
 
     //SUB PARK
-    public double subParkX = 10 * inches2mm, subParkZ = 11.5 * inches2mm;
+    public double subParkX = 10 * inches2mm, subParkZ = 12 * inches2mm;
 
     //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 
