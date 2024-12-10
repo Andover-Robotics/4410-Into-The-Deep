@@ -179,7 +179,7 @@ public class Bot {
                     Thread.sleep(300);
                 }
                 pivot.highBucket(false, true);
-                Thread.sleep(900);
+                Thread.sleep(950);
                 pivot.arm.bucket();
                 state = BotState.HIGH_BUCKET;
             } catch (InterruptedException ignored) {}
@@ -267,7 +267,7 @@ public class Bot {
         thread.start();
     }
 
-    public void highChamber() {
+    public void teleopHighChamber() {
         Thread thread = new Thread(() -> {
             try {
                 if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
@@ -277,12 +277,30 @@ public class Bot {
                     storage();
                     Thread.sleep(600);
                 }
-                pivot.highChamber(true, false);
+                pivot.teleopHighChamber(true, false);
                 Thread.sleep(300);
-                pivot.highChamber(false, true);
+                pivot.teleopHighChamber(false, true);
                 Thread.sleep(80);
                 pivot.arm.outtakeUp();
                 state = BotState.HIGH_CHAMBER;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void teleopClipCancel() {
+        gripper.close();
+    }
+
+    public void teleopClipDown() {
+        gripper.open();
+    }
+
+    public void teleopClipStorage() {
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(400);
+                storageOpenGripper();
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -323,6 +341,27 @@ public class Bot {
 
     public void slidesClipCancel() {
         pivot.changeZ(+5);
+    }
+
+    public void highChamber() {
+        Thread thread = new Thread(() -> {
+            try {
+                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
+                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+                    Thread.sleep(400);
+                } else if (state == BotState.HIGH_BUCKET) {
+                    storage();
+                    Thread.sleep(600);
+                }
+                pivot.highChamber(true, false);
+                Thread.sleep(300);
+                pivot.highChamber(false, true);
+                Thread.sleep(80);
+                pivot.arm.outtakeUp();
+                state = BotState.HIGH_CHAMBER;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
     }
 
     public void clipCancel() {
@@ -656,14 +695,16 @@ public class Bot {
 
     // DRIVE METHODS
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
-        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.15 : 1.03;
-        if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.2;
+        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.09 : 1.05;
+        if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.11;
+        double speed = (state == BotState.HIGH_CHAMBER || state == BotState.FRONT_INTAKE)? 0.8 : 1;
+        double turnSpeedModi = (state == BotState.FRONT_INTAKE || state == BotState.WALL_INTAKE)? 0.55 : 1;
         double rearWheelModifier = (state == BotState.WALL_INTAKE || state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.15 : 1;
         double[] speeds = {
-                (forwardBackSpeed - strafeSpeed - turnSpeed) * frontWheelModifier,
-                (forwardBackSpeed + strafeSpeed + turnSpeed) * frontWheelModifier,
-                (forwardBackSpeed + strafeSpeed - turnSpeed) * rearWheelModifier,
-                (forwardBackSpeed - strafeSpeed + turnSpeed) * rearWheelModifier
+                (forwardBackSpeed - strafeSpeed - turnSpeed * turnSpeedModi) * frontWheelModifier,
+                (forwardBackSpeed + strafeSpeed + turnSpeed * turnSpeedModi) * frontWheelModifier,
+                (forwardBackSpeed + strafeSpeed - turnSpeed * turnSpeedModi) * rearWheelModifier,
+                (forwardBackSpeed - strafeSpeed + turnSpeed * turnSpeedModi) * rearWheelModifier
         };
         double maxSpeed = 0;
         for (int i = 0; i < 4; i++) {
@@ -674,10 +715,10 @@ public class Bot {
                 speeds[i] /= maxSpeed;
             }
         }
-        fl.set(speeds[0]);
-        fr.set(speeds[1]);
-        bl.set(speeds[2]);
-        br.set(speeds[3]);
+        fl.set(speeds[0] * speed);
+        fr.set(speeds[1] * speed);
+        bl.set(speeds[2] * speed);
+        br.set(speeds[3] * speed);
     }
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
         double magnitude = Math.sqrt(strafeSpeed * strafeSpeed + forwardBackSpeed * forwardBackSpeed);

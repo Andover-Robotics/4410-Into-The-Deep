@@ -81,7 +81,7 @@ public class MainTeleOp extends LinearOpMode {
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.highChamber();
+                    bot.teleopHighChamber();
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
@@ -156,23 +156,23 @@ public class MainTeleOp extends LinearOpMode {
                     bot.storage();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    bot.clipDown();
+                    bot.teleopClipDown();
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
-                    bot.clipStorage();
+                    bot.teleopClipStorage();
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
                     clipCancel = true;
-                    bot.clipCancel();
+                    bot.teleopClipCancel();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                     bot.lowChamber();
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.highChamber();
+                    bot.teleopHighChamber();
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
@@ -196,7 +196,7 @@ public class MainTeleOp extends LinearOpMode {
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.highChamber();
+                    bot.teleopHighChamber();
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
@@ -236,7 +236,7 @@ public class MainTeleOp extends LinearOpMode {
 
     // Driving
     private void drive() { // Robot centric, drive multiplier default 1
-        driveSpeed = driveMultiplier - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        driveSpeed = driveMultiplier - 0.7 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
         bot.fixMotors();
 

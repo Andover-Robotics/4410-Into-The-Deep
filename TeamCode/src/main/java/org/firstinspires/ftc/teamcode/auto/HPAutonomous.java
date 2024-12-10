@@ -57,19 +57,19 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionClipStorage())
 
-                .strafeToConstantHeading(new Vector2d(-36,40), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 65))
-                .strafeToConstantHeading(new Vector2d(-36,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 65))
+                .strafeToConstantHeading(new Vector2d(-36,40), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
+                .strafeToConstantHeading(new Vector2d(-36,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
                 .splineToConstantHeading(new Vector2d(-46,16), Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-46,46))
+                .strafeToConstantHeading(new Vector2d(-46,46), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
 
                 //-45,33
-                .splineToConstantHeading(new Vector2d(-32,16),Math.toRadians(50))
-                .splineToConstantHeading(new Vector2d(-57,16),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-57,49))
+                .splineToConstantHeading(new Vector2d(-30,15),Math.toRadians(55))
+                .splineToConstantHeading(new Vector2d(-55,14),Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(-55,49), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
 
-                .splineToConstantHeading(new Vector2d(-56,16),Math.toRadians(45))
-                .splineToConstantHeading(new Vector2d(-65,16),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-65,52))
+                .splineToConstantHeading(new Vector2d(-45,16),Math.toRadians(45))
+                .splineToConstantHeading(new Vector2d(-62,16),Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(-63,52), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
                 .build();
 
         Action threeSpecimens = drive.actionBuilder(new Pose2d(-65, 53, Math.toRadians(-90)))
@@ -92,7 +92,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
-                        new SleepAction(0.25),
+                        new SleepAction(0.30),
                         bot.actionOpenGripper()
                 ))
 
@@ -130,7 +130,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-8,37.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-7,36.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
@@ -143,7 +143,7 @@ public class HPAutonomous extends LinearOpMode {
                 ))
 
 
-                .strafeToLinearHeading(new Vector2d(-32,60), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 75)) //PARK
+                .strafeToLinearHeading(new Vector2d(-32,60), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 85)) //PARK
 
                 .build();
 

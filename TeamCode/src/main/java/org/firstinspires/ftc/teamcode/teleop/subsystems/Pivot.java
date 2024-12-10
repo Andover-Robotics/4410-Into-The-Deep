@@ -63,6 +63,8 @@ public class Pivot {
             frontIntakeHeight = 4 * inches2mm,
             wallIntakeHeight = 3.2 * inches2mm,
 
+            teleopHighChamberHeight = 12.5 * inches2mm, //drive clipping
+
             frontAutoIntakeHeight = 4.7 * inches2mm,
 
             prel2ClimbHeight = 21 * inches2mm,
@@ -82,6 +84,8 @@ public class Pivot {
             frontIntakeX = 12.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+
+            teleopChamberX = 8 * inches2mm,//drive clipping
 
             frontAutoIntakeX = 19 * inches2mm,
 
@@ -297,6 +301,13 @@ public class Pivot {
         if (slides) runSlidesToIKPosition();
     }
 
+    public void teleopHighChamber(boolean pivot, boolean slides) {
+        targetZ = teleopHighChamberHeight;
+        targetX = teleopChamberX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
     public void slidesHighChamber(boolean pivot, boolean slides) {
         targetZ = highChamberHeight + 5 * inches2mm;
         targetX = chamberX;
@@ -307,6 +318,13 @@ public class Pivot {
     public void lowChamber(boolean pivot, boolean slides) {
         targetZ = lowChamberHeight;
         targetX = chamberX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void teleopLowChamber(boolean pivot, boolean slides) {
+        targetZ = lowChamberHeight;
+        targetX = teleopChamberX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }
