@@ -179,7 +179,7 @@ public class Bot {
                     Thread.sleep(300);
                 }
                 pivot.highBucket(false, true);
-                Thread.sleep(900);
+                Thread.sleep(1000);
                 pivot.arm.bucket();
                 state = BotState.HIGH_BUCKET;
             } catch (InterruptedException ignored) {}
@@ -255,8 +255,10 @@ public class Bot {
                 Thread.sleep(1000);
                 pivot.tiltedl3Climb(true, false);
                 Thread.sleep(800);
+                pivot.pivotOff = true;
                 pivot.tiltedl3Climb(false, true);
-                Thread.sleep(1900);
+                Thread.sleep(2500);
+                pivot.pivotOff = false;
                 pivot.backTiltedl3Climb(true, false);
                 Thread.sleep(1300);
                 pivot.postl3Climb(false, true);

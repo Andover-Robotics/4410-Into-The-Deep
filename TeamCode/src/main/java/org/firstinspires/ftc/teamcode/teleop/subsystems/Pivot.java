@@ -36,6 +36,7 @@ public class Pivot {
 
 
     public double targetX, targetZ, slidesTarget, pivotIKTargetDegrees;
+    public boolean pivotOff = false;
 
     public double power, manualPower, manualPowerUp;
 
@@ -67,12 +68,12 @@ public class Pivot {
 
             prel2ClimbHeight = 21 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
-            postl2ClimbHeight = 6 * inches2mm,
+            postl2ClimbHeight = 5.6 * inches2mm,
 
             climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 34 * inches2mm,
             midl3ClimbHeight = 25 * inches2mm,
-            tiltedl3ClimbHeight = 10.75 * inches2mm,
+            tiltedl3ClimbHeight = 10.5 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 11.8 * inches2mm;
 
@@ -92,7 +93,7 @@ public class Pivot {
             climbTransferX = 0.01 * inches2mm,
             prel3ClimbX = 0.3 * inches2mm,
             midl3ClimbX = 3 * inches2mm,
-            tiltedl3ClimbX = -10.75 * inches2mm,
+            tiltedl3ClimbX = -10.5 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
             postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
 
@@ -204,6 +205,13 @@ public class Pivot {
         power += ff;
         // Set motor power with limits between -1 and 1
         power = Math.max(Math.min(power, 1.0), -1.0);
+
+//        if (pivotOff) {
+//            power = 0;
+//            pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+//        } else {
+//            pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        }
 
         pivotMotor.set(power);
 
