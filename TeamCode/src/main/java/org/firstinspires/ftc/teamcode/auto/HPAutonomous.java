@@ -69,7 +69,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .splineToConstantHeading(new Vector2d(-44,16),Math.toRadians(45))
                 .splineToConstantHeading(new Vector2d(-62,16),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-63.5,52), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
+                .strafeToConstantHeading(new Vector2d(-64,52), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
                 .build();
 
         Action threeSpecimens = drive.actionBuilder(new Pose2d(-65, 53, Math.toRadians(-90)))
@@ -88,7 +88,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-3,37.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-3,36.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
@@ -109,7 +109,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-5,37.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-5,36.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
@@ -130,7 +130,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-7,37.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-7,37), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
