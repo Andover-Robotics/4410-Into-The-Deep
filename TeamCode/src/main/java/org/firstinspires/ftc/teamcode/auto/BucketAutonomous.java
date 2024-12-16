@@ -42,7 +42,7 @@ public class BucketAutonomous extends LinearOpMode {
         Action bucketAuto = drive.actionBuilder(drive.pose)
 
                 .afterTime(0.01, bot.actionHighChamber())
-                .strafeToLinearHeading(new Vector2d(10.5, 36.5), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(10.5, 37), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
@@ -51,7 +51,7 @@ public class BucketAutonomous extends LinearOpMode {
                 ))
 
 //                .afterTime(0.58, bot.actionFrontIntake())
-                .strafeToLinearHeading(new Vector2d(49.5,44), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(49,44), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionFrontIntake(),
@@ -85,7 +85,7 @@ public class BucketAutonomous extends LinearOpMode {
                 .afterTime(0.1, new SequentialAction(
                         bot.actionHighBucket()
                 ))
-                .strafeToLinearHeading(new Vector2d(55,59), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(55.75,59.75), Math.toRadians(-135))
 
                 .waitSeconds(0.65)
                 .stopAndAdd(bot.actionBucketDrop())

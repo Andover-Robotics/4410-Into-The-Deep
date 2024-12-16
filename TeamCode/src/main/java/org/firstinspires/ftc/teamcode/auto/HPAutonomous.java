@@ -88,11 +88,11 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-3,36.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-3,36.8), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
-                        new SleepAction(0.42),
+                        new SleepAction(0.5),
                         bot.actionOpenGripper()
                 ))
 
@@ -109,11 +109,11 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-5,36.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-5,36.8), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
-                        new SleepAction(0.42),
+                        new SleepAction(0.5),
                         bot.actionOpenGripper()
                 ))
 
@@ -130,11 +130,11 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-7,37), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-7,36.8), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipDown(),
-                        new SleepAction(0.42),
+                        new SleepAction(0.4),
                         bot.actionOpenGripper()
                 ))
 
