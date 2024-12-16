@@ -59,8 +59,8 @@ public class Pivot {
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 39.5 * inches2mm,
             lowBucketHeight = 23 * inches2mm,
-            highChamberHeight = 16.5 * inches2mm,
-            lowChamberHeight = 6 * inches2mm,
+            highChamberHeight = 15.2 * inches2mm,
+            lowChamberHeight = 4.2 * inches2mm,
             frontIntakeHeight = 4 * inches2mm,
             wallIntakeHeight = 3.2 * inches2mm,
 
@@ -80,11 +80,12 @@ public class Pivot {
     // distances forward from pivot for positions
     public static double bucketX = -4.5 * inches2mm,
             chamberX = 8 * inches2mm,
+            highChamberTransferX = 5 * inches2mm,
             frontIntakeX = 12.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
-            frontAutoIntakeX = 19 * inches2mm,
+            frontAutoIntakeX = 21 * inches2mm,
 
             prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
@@ -305,9 +306,9 @@ public class Pivot {
         if (slides) runSlidesToIKPosition();
     }
 
-    public void slidesHighChamber(boolean pivot, boolean slides) {
-        targetZ = highChamberHeight + 5 * inches2mm;
-        targetX = chamberX;
+    public void highChamberTransfer(boolean pivot, boolean slides) {
+        targetZ = highChamberHeight;
+        targetX = highChamberTransferX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }

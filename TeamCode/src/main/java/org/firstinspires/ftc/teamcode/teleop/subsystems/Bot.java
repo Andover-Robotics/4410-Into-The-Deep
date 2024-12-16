@@ -94,6 +94,8 @@ public class Bot {
                     pivot.storage(true, true);
                     pivot.arm.storage();
                 } else if (state == BotState.HIGH_CHAMBER){
+                    pivot.highChamberTransfer(true, true);
+                    Thread.sleep(300);
                     pivot.storage(false, true);
                     Thread.sleep(500);
                     pivot.storage(true, true);
@@ -131,6 +133,8 @@ public class Bot {
                     pivot.storage(true, true);
                     pivot.arm.storage();
                 } else if (state == BotState.HIGH_CHAMBER){
+                    pivot.highChamberTransfer(true, true);
+                    Thread.sleep(300);
                     pivot.storage(false, true);
                     Thread.sleep(500);
                     pivot.storage(true, true);
@@ -255,10 +259,8 @@ public class Bot {
                 Thread.sleep(1000);
                 pivot.tiltedl3Climb(true, false);
                 Thread.sleep(800);
-                pivot.pivotOff = true;
                 pivot.tiltedl3Climb(false, true);
                 Thread.sleep(2500);
-                pivot.pivotOff = false;
                 pivot.backTiltedl3Climb(true, false);
                 Thread.sleep(1300);
                 pivot.postl3Climb(false, true);
@@ -290,42 +292,6 @@ public class Bot {
         thread.start();
     }
 
-    public void slidesClipDown() {
-        pivot.changeZ(-5);
-    }
-
-    public void slidesClipStorage() {
-        Thread thread = new Thread(() -> {
-            try {
-                gripper.open();
-                Thread.sleep(350);
-                storage();
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void slidesHighChamber() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
-                    pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(400);
-                }
-                pivot.slidesHighChamber(true, false);
-                Thread.sleep(300);
-                pivot.slidesHighChamber(false, true);
-                Thread.sleep(80);
-                pivot.arm.outtakeHoriz();
-                state = BotState.HIGH_CHAMBER;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void slidesClipCancel() {
-        pivot.changeZ(+5);
-    }
 
     public void clipCancel() {
         pivot.arm.outtakeUp();
@@ -343,6 +309,7 @@ public class Bot {
                 Thread.sleep(350);
                 pivot.arm.outtakeUp();
                 storageOpenGripper();
+                Thread.sleep(300);
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -386,7 +353,6 @@ public class Bot {
                     Thread.sleep(225);
                 }
                 gripper.open();
-
                 pivot.arm.frontPickupToStorage();
                 Thread.sleep(100);
                 pivot.frontIntakeStorage(true, false);
@@ -490,16 +456,30 @@ public class Bot {
         );
     }
 
+
+
     public SequentialAction actionClipStorage() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
                 new SleepAction(0.1),
-                new InstantAction(() -> pivot.arm.frontPickup()),
+                new InstantAction(() -> pivot.arm.outtakeDown()),
                 new InstantAction(() -> pivot.storage(false, true)),
                 new SleepAction(0.5),
-                new InstantAction(() -> pivot.storage(true, true)),
+                new InstantAction(() -> pivot.storage(true, false)),
                 new InstantAction(() -> pivot.arm.storage()),
+                new SleepAction(0.3),
                 new InstantAction(() -> state = BotState.STORAGE)
+        );
+    }
+
+    public SequentialAction actionClipWall() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.arm.outtakeDown()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                actionWallIntakeOpen(),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
         );
     }
 

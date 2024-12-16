@@ -45,17 +45,15 @@ public class HPAutonomous extends LinearOpMode {
 
         Action clipAndFirstSample = drive.actionBuilder(drive.pose)
                 .afterTime(0.1, bot.actionHighChamber())  // First chamber clip
-                .strafeToLinearHeading(new Vector2d(-10.5, 36.2), Math.toRadians(-90))
-
-                .stopAndAdd(new SequentialAction(
-                        bot.actionClipDown(),
-                        new SleepAction(0.2)
-                ))
+                .strafeToLinearHeading(new Vector2d(-10.5, 35), Math.toRadians(-90))
                 .build();
 
-        Action zoom = drive.actionBuilder(new Pose2d(-10.5, 36.2, Math.toRadians(-90)))
+        Action zoom = drive.actionBuilder(new Pose2d(-10.5, 35, Math.toRadians(-90)))
 
-                .afterTime(0.01, bot.actionClipStorage())
+                .stopAndAdd(new SequentialAction(
+                        bot.actionClipStorage(),
+                        new SleepAction(0.5)
+                ))
 
                 .strafeToConstantHeading(new Vector2d(-36,40), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
                 .strafeToConstantHeading(new Vector2d(-36,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
@@ -88,20 +86,19 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-3,36.8), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-3,35), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
-                        bot.actionClipDown(),
-                        new SleepAction(0.5),
-                        bot.actionOpenGripper()
+                        bot.actionOpenGripper(),
+                        new SleepAction(0.1)
                 ))
 
                 .afterTime(0.05, new SequentialAction(
                         bot.actionWallIntakeOpen()
                 ))
-                .strafeToLinearHeading(new Vector2d(-38,50), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60)) //run it back
 
                 .strafeToLinearHeading(new Vector2d(-38,53), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
                         new SleepAction(0.2)
@@ -109,20 +106,19 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-5,36.8), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-5,35), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
-                        bot.actionClipDown(),
-                        new SleepAction(0.5),
-                        bot.actionOpenGripper()
+                        bot.actionOpenGripper(),
+                        new SleepAction(0.1)
                 ))
 
                 .afterTime(0.05, new SequentialAction(
                         bot.actionWallIntakeOpen()
                 ))
-                .strafeToLinearHeading(new Vector2d(-38,50), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60)) //run it back
 
                 .strafeToLinearHeading(new Vector2d(-38,53), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
                         new SleepAction(0.2)
@@ -130,18 +126,16 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-7,36.8), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
+                .strafeToLinearHeading(new Vector2d(-7,35), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 60))
 
                 .stopAndAdd(new SequentialAction(
-                        bot.actionClipDown(),
-                        new SleepAction(0.4),
-                        bot.actionOpenGripper()
+                        bot.actionOpenGripper(),
+                        new SleepAction(0.1)
                 ))
 
                 .afterTime(0.1, new SequentialAction(
                         bot.actionClipStorage()
                 ))
-
 
                 .strafeToLinearHeading(new Vector2d(-32,60), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 85)) //PARK
 
