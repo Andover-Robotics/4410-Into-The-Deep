@@ -98,7 +98,6 @@ public class SampleDetectionPipeline
         ColorBlobLocatorProcessor.Util.filterByArea(minArea, 1000000, blobs);
         ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
 
-        // Display the size (area) and center location for each Blob.
         if (!blobs.isEmpty()) {
             bigBlob = blobs.get(0);
             boxFit = bigBlob.getBoxFit();
