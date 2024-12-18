@@ -21,7 +21,7 @@ public class Slides {
 
     public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
     public static double staticF = 0;
-    public static double ikMMoffset = 305;
+    public static double ikMMoffset = 254;
 
     public boolean climbingPower = false;
     private final double tolerance = 10;
@@ -30,6 +30,10 @@ public class Slides {
     private final double manualDivide = 2;
     private final double powerMin = 0.1;
     public double manualPower = 0;
+
+    public double coax = 0;
+
+    public double spoolRadius = 19;
 
     public double power;
     private final OpMode opMode;
@@ -63,6 +67,11 @@ public class Slides {
     private void adjustStaticF(double pivotAngleRadians) {
         // Adjust staticF based on the pivot angle
         staticF = gComp * Math.sin(pivotAngleRadians) + staticFOffset;
+    }
+
+    private void adjustCoax(double pivotAngleRadians) {
+        // Adjust staticF based on the pivot angle
+        coax = 537.7 * ((Math.toDegrees(pivotAngleRadians) - Pivot.startingAngleOffsetDegrees) / 360); //forward of starting position is negative (front intake), back of it is positive (rear)
     }
 
     public void runTo(double pos) {
@@ -105,9 +114,10 @@ public class Slides {
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
         adjustStaticF(pivotAngleRadians);
+        adjustCoax(pivotAngleRadians);
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
-            controller.setSetPoint(profiler.motion_profile_pos(dt));
+            controller.setSetPoint(profiler.motion_profile_pos(dt) + coax); //TODO check if plus or minus by unplugging pivot motor and seeing what happens
             power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
             if (goingDown) {
                 powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
@@ -126,20 +136,16 @@ public class Slides {
             }
         }
         if (climbingPower) {
-            motorLeft.set(0.95);
-            motorRight.set(0.95);
+            motorLeft.set(1);
+            motorRight.set(1);
         } else {
             motorLeft.set(power);
             motorRight.set(power);
         }
     }
 
-    public void runRelativeMM(double mm) {
-        runToMM(getmmPosition() + mm);
-    }
-
     public void runToIKMM(double posMM) {
-        posMM -= ikMMoffset; //length difference from pivot to diffy arm joint TODO: uncomment for IK
+        posMM -= ikMMoffset; //length difference from pivot to diffy arm joint
         runToMM(posMM);
     }
 
@@ -159,19 +165,19 @@ public class Slides {
     }
 
     public double getmmPosition() {
-        return Math.toRadians(getPosition() * 360 / -537.7) * 20;
+        return Math.toRadians(getPosition() * 360 / -537.7) * spoolRadius;
     }
 
     public double getIKmmPosition() {
-        return Math.toRadians(getPosition() * 360 / -537.7) * 20 + ikMMoffset;
+        return Math.toRadians(getPosition() * 360 / -537.7) * spoolRadius + ikMMoffset;
     }
 
     public double convert2MM(double ticks) {
-        return Math.toRadians(ticks * 360 / -537.7) * 20;
+        return Math.toRadians(ticks * 360 / -537.7) * spoolRadius;
     }
 
     public double convert2Ticks(double mm) {
-        return Math.toDegrees(mm/20) * -537.7 / 360;
+        return Math.toDegrees(mm/spoolRadius) * -537.7 / 360;
     }
 
     public double getTarget() {
