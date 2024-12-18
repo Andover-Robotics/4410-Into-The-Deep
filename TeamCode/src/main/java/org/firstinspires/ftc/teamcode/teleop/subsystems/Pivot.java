@@ -21,6 +21,9 @@ public class Pivot {
 
     private final OpMode opMode;
 
+    //TODO REMOVE AFTER TUNING
+    public boolean testing = false;
+
     public static double p = 0.0054, i = 0, d = 0.00025, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
     public static double manualSpeed = 0.3; // need to tune
 
@@ -125,6 +128,11 @@ public class Pivot {
         this.opMode = opMode;
     }
 
+
+    public void setTesting(boolean testing) { //TODO REMOVE AFTER TESTING
+        this.testing = testing;
+    }
+
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.1) {
             if (joystick > 0 && targetX < xMax && targetX > xMin) {
@@ -213,8 +221,13 @@ public class Pivot {
 //        } else {
 //            pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 //        }
+        if (testing) { //TODO remove after TUNING
+            pivotMotor.set(power);
+        } else {
+            pivotMotor.set(0);
+        }
 
-        pivotMotor.set(power);
+        //pivotMotor.set(power); TODO UNCOMMENT AFTER TUNING
 
         slides.periodic(getPivotTargetAngleRadians());
         arm.periodic(getPivotAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
