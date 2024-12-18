@@ -16,12 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.opencv.core.RotatedRect;
-import com.qualcomm.robotcore.util.SortOrder;
+
+import org.firstinspires.ftc.teamcode.cv.SampleDetectionPipeline;
 
 
 public class Bot {
@@ -46,7 +42,11 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
+    SampleDetectionPipeline pipeline;
+
     double pickDownUpValue = 3.75; //TELEOP ONLY (not auton)
+
+    public double sampleYPos = 0;
 
     // Define subsystem objects
     public Gripper gripper;
@@ -82,6 +82,25 @@ public class Bot {
         pivot = new Pivot(opMode);
     }
 
+    public void openPipeline(boolean red, boolean blue, boolean yellow) {
+        pipeline = new SampleDetectionPipeline(red, blue, yellow);
+    }
+
+    public void alignClaw() {
+        pivot.arm.setRoll(pipeline.getAngle());
+    }
+
+    public void scan() {
+        pipeline.detect();
+    }
+
+    public void updateSampleDrive() {
+        sampleYPos = pipeline.getX(); //camera is sideways so X is Y
+    }
+
+    public void updateSampleSlides() {
+        pivot.changeX(pipeline.getY()); //camera is sideways so Y is X
+    }
 
 
     public void storage() {
@@ -617,8 +636,6 @@ public class Bot {
     public Action actionPeriodic() {
         return new actionPeriodic();
     }
-
-
 
     // MOTORS
     public void fixMotors() {

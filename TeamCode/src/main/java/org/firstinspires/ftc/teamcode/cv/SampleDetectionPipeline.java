@@ -1,35 +1,26 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.cv;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
-import android.annotation.SuppressLint;
 import android.util.Size;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.SortOrder;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 import java.util.List;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class SampleDetectionPipeline
 {
 
     public int height = 360, width = 640, minArea = 2000;
-    boolean red = false, blue = false, yellow = false;
+    public boolean red = false, blue = false, yellow = false;
     private final ColorBlobLocatorProcessor blueLocator;
     private final ColorBlobLocatorProcessor redLocator;
     private final ColorBlobLocatorProcessor yellowLocator;
@@ -38,7 +29,7 @@ public class SampleDetectionPipeline
     ColorBlobLocatorProcessor.Blob bigBlob;
     Point center;
 
-    private int angle, x, y;
+    private static int angle, x, y;
 
     public SampleDetectionPipeline(boolean red, boolean blue, boolean yellow) {
         this.red = red;
@@ -105,8 +96,8 @@ public class SampleDetectionPipeline
             angle = 180 - ((int) (boxFit.angle % 180));
 
             center = boxFit.center;
-            x = (int) center.x;
-            y = (int) center.y;
+            x = (int) center.x - width/2;
+            y = (int) center.y - height/2;
         } else {
             angle = -1;
         }
@@ -117,10 +108,10 @@ public class SampleDetectionPipeline
     }
 
     public int getX() {
-        return x;
+        return x/5; //NEEDS TO return in mm
     }
 
     public int getY() {
-        return y;
+        return y/70; //NEEDS To return in inches
     }
 }
