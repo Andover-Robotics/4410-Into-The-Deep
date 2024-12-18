@@ -14,6 +14,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.RotatedRect;
+import com.qualcomm.robotcore.util.SortOrder;
+
 
 public class Bot {
     public enum BotState {
@@ -72,6 +81,8 @@ public class Bot {
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
     }
+
+
 
     public void storage() {
         Thread thread = new Thread(() -> {
@@ -456,8 +467,6 @@ public class Bot {
         );
     }
 
-
-
     public SequentialAction actionClipStorage() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
@@ -608,6 +617,8 @@ public class Bot {
     public Action actionPeriodic() {
         return new actionPeriodic();
     }
+
+
 
     // MOTORS
     public void fixMotors() {

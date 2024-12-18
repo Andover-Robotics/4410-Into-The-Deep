@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
-// TODO: Set values for slide positions
-
 @Config
 public class Slides {
 
