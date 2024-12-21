@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
 import java.lang.*;
 
@@ -103,6 +104,8 @@ public class MainTeleOp extends LinearOpMode {
                 bot.pivot.slides.runToMM(240);
             }
 
+            bot.pivot.periodic();
+
             // DRIVE
             //drive();
 
@@ -116,11 +119,13 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
             telemetry.addData("Pivot Power", bot.pivot.power);
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
-            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());
-            telemetry.addData("Slides Profiler", bot.pivot.slides.getProfilerTarget());
+            telemetry.addData("Slides Position Target (ticks)", bot.pivot.slides.getTarget());
+            telemetry.addData("Slides PID Target (ticks)", bot.pivot.slides.getControllerSetpoint());
             telemetry.addData("Slides Power", bot.pivot.slides.power);
+
+            telemetry.addData("Slides Static F", Slides.staticF);
+            telemetry.addData("Slides Coax", bot.pivot.slides.getCoax());
             telemetry.update();
-            bot.pivot.periodic();
         }
     }
 

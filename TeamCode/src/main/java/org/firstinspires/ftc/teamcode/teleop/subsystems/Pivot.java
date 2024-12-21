@@ -21,18 +21,15 @@ public class Pivot {
 
     private final OpMode opMode;
 
-    //TODO REMOVE AFTER TUNING
-    public boolean testing = false;
 
     public static double p = 0.0054, i = 0, d = 0.00025, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
-    public static double manualSpeed = 0.3; // need to tune
 
     public static double target = 0, tolerance = 5, powerUp = -0.13;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
     public static final double startingAngleOffsetDegrees = 90; //offset from rest position to horizontal front
     private boolean goingDown, limits;
 
-    public static double maxVelo = 1000, maxAccel = 60000;
+    public static double maxVelo = 2000, maxAccel = 60000;
     private double profilerTarget;
     private double profile_init_time = 0;
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
@@ -42,8 +39,6 @@ public class Pivot {
     public boolean pivotOff = false;
 
     public double power, manualPower, manualPowerUp;
-
-    public int slidesCycler;
 
     // Constants for gravity compensation
     public static double STATIC_FF = 0.21; // main ff constant of the non-extending part
@@ -128,10 +123,6 @@ public class Pivot {
         this.opMode = opMode;
     }
 
-
-    public void setTesting(boolean testing) { //TODO REMOVE AFTER TESTING
-        this.testing = testing;
-    }
 
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.1) {
@@ -221,15 +212,10 @@ public class Pivot {
 //        } else {
 //            pivotMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 //        }
-        if (testing) { //TODO remove after TUNING
-            pivotMotor.set(power);
-        } else {
-            pivotMotor.set(0);
-        }
 
-        //pivotMotor.set(power); TODO UNCOMMENT AFTER TUNING
+        pivotMotor.set(power);
 
-        slides.periodic(getPivotTargetAngleRadians());
+        slides.periodic(getPivotAngleRadians());
         arm.periodic(getPivotAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
     }
 

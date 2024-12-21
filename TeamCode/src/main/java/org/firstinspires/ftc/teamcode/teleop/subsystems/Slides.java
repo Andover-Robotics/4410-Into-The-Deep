@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
-// TODO: Set values for slide positions
 
 @Config
 public class Slides {
@@ -31,7 +30,7 @@ public class Slides {
     private final double powerMin = 0.1;
     public double manualPower = 0;
 
-    public double coax = 0;
+    public static double coax = 0;
 
     public double spoolRadius = 19;
 
@@ -70,8 +69,12 @@ public class Slides {
     }
 
     private void adjustCoax(double pivotAngleRadians) {
-        // Adjust staticF based on the pivot angle
-        coax = 537.7 * ((Math.toDegrees(pivotAngleRadians) - Pivot.startingAngleOffsetDegrees) / 360); //forward of starting position is negative (front intake), back of it is positive (rear)
+        // Adjust coax based on the pivot angle
+        coax = -537.7 * ((Math.toDegrees(pivotAngleRadians) - Pivot.startingAngleOffsetDegrees) / 360); //forward of starting position is negative (front intake), back of it is positive (rear)
+    }
+
+    public double getCoax() {
+        return coax;
     }
 
     public void runTo(double pos) {
@@ -117,7 +120,7 @@ public class Slides {
         adjustCoax(pivotAngleRadians);
         double dt = opMode.time - profile_init_time;
         if (!profiler.isOver()) {
-            controller.setSetPoint(profiler.motion_profile_pos(dt) + coax); //TODO check if plus or minus by unplugging pivot motor and seeing what happens
+            controller.setSetPoint(profiler.motion_profile_pos(dt) + coax);
             power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
             if (goingDown) {
                 powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
@@ -131,7 +134,9 @@ public class Slides {
             if (manualPower != 0) {
                 controller.setSetPoint(motorLeft.getCurrentPosition());
                 power = manualPower / manualDivide;
+                target = motorLeft.getCurrentPosition();
             } else {
+                controller.setSetPoint(target + coax);
                 power = staticF * controller.calculate(motorLeft.getCurrentPosition());
             }
         }
@@ -184,7 +189,7 @@ public class Slides {
         return target;
     }
 
-    public double getProfilerTarget() {
+    public double getControllerSetpoint() {
         return controller.getSetPoint();
     }
 
