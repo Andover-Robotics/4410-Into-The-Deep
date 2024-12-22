@@ -11,8 +11,14 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+
+import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
 
 
 public class Bot {
@@ -37,7 +43,11 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
+    public SampleDetectionPipeline pipeline;
+
     double pickDownUpValue = 3.75; //TELEOP ONLY (not auton)
+
+    public static double sampleYPos = 0;
 
     // Define subsystem objects
     public Gripper gripper;
@@ -71,6 +81,47 @@ public class Bot {
 
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
+    }
+
+    public void openPipeline(boolean red, boolean blue, boolean yellow) {
+        pipeline = new SampleDetectionPipeline(red, blue, yellow, opMode.hardwareMap);
+    }
+
+    public void alignClaw() {
+        pivot.arm.setRoll(pipeline.getAngle());
+    }
+
+    public void scan() {
+        pipeline.detect();
+    }
+
+    public void updateSampleDrive() {
+        sampleYPos = pipeline.getX(); //camera is sideways so X is Y
+    }
+
+    public void updateSampleSlides() {
+        pivot.changeX(pipeline.getY()); //camera is sideways so Y is X
+    }
+
+    public void subAutoIntake() {
+        Thread thread = new Thread(() -> {
+            try {
+                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
+                    storage();
+                    Thread.sleep(225);
+                }
+                gripper.open();
+                pivot.arm.frontPickupToStorage();
+                Thread.sleep(100);
+                pivot.frontIntakeStorage(true, false);
+                Thread.sleep(100);
+                pivot.subAutoIntake(true, true);
+                Thread.sleep(300);
+                pivot.arm.frontPickup();
+                state = BotState.FRONT_INTAKE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
     }
 
     public void storage() {
@@ -377,6 +428,79 @@ public class Bot {
         thread.start();
     }
 
+    public void subAutoPickDown() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.changeZ(-5.5);
+                Thread.sleep(500);
+                pivot.changeZ(-4);
+                Thread.sleep(400);
+                gripper.close();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public SequentialAction actionSubAutoPickDown() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.changeZ(-5.5)),
+                new SleepAction(0.5),
+                new InstantAction(() -> pivot.changeZ(-4)),
+                new SleepAction(0.4),
+                new InstantAction(() -> gripper.close())
+        );
+    }
+
+    public void subAutoPickUp() {
+        pivot.changeZ(4);
+    }
+
+    public class actionDetectWait implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (pipeline.getAngle() == -1) {
+                scan();
+                return true;
+            } else {
+                return false;
+            }
+        }
+//        @Override
+//        public boolean run(@NonNull TelemetryPacket packet) {
+//            if (pipeline.getAngle() == -1 && pipeline.getArea() > 1400) {
+//                pivot.runManualIK(0.2);
+//                scan();
+//                return true;
+//            } else {
+//                pivot.runManualIK(0);
+//                return false;
+//            }
+//        }
+    }
+
+    public Action actionDetectWait() {
+        return new actionDetectWait();
+    }
+
+    public SequentialAction actionSubAutoPickUp() {
+        return new SequentialAction(
+                new InstantAction(this::subAutoPickUp)
+        );
+    }
+
+    public SequentialAction actionSubAutoIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.arm.frontPickupToStorage()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.frontIntakeStorage(true, false)),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.subAutoIntake(true, true)),
+                new SleepAction(0.3),
+                new InstantAction(() -> pivot.arm.frontPickup())
+        );
+    }
+
     public void pickUp() {
         pivot.changeZ(pickDownUpValue);
     }
@@ -455,8 +579,6 @@ public class Bot {
                 new InstantAction(() -> gripper.close())
         );
     }
-
-
 
     public SequentialAction actionClipStorage() {
         return new SequentialAction(

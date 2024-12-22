@@ -21,15 +21,15 @@ public class Pivot {
 
     private final OpMode opMode;
 
+
     public static double p = 0.0054, i = 0, d = 0.00025, f = 0; // NEED TO TUNE F FIRST WITH FULLY IN ARM - acts as static f constant for gravity
-    public static double manualSpeed = 0.3; // need to tune
 
     public static double target = 0, tolerance = 5, powerUp = -0.13;
     private final double ticksPerDegree = (1993.6 * 2.8) / 360.0; //1993.6 is motor tpr + 1:2.8 ratio
     public static final double startingAngleOffsetDegrees = 90; //offset from rest position to horizontal front
     private boolean goingDown, limits;
 
-    public static double maxVelo = 1000, maxAccel = 60000;
+    public static double maxVelo = 2000, maxAccel = 60000;
     private double profilerTarget;
     private double profile_init_time = 0;
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
@@ -39,8 +39,6 @@ public class Pivot {
     public boolean pivotOff = false;
 
     public double power, manualPower, manualPowerUp;
-
-    public int slidesCycler;
 
     // Constants for gravity compensation
     public static double STATIC_FF = 0.21; // main ff constant of the non-extending part
@@ -57,20 +55,21 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public static double highBucketHeight = 39.5 * inches2mm,
-            lowBucketHeight = 23 * inches2mm,
-            highChamberHeight = 15.2 * inches2mm,
-            lowChamberHeight = 4.2 * inches2mm,
-            frontIntakeHeight = 4 * inches2mm,
-            wallIntakeHeight = 3.2 * inches2mm,
+    public static double highBucketHeight = 40.5 * inches2mm,
+            lowBucketHeight = 24 * inches2mm,
+            highChamberHeight = 16.2 * inches2mm,
+            lowChamberHeight = 5.2 * inches2mm,
+            frontIntakeHeight = 5 * inches2mm,
+            wallIntakeHeight = 4.2 * inches2mm,
 
-            frontAutoIntakeHeight = 4.7 * inches2mm,
+    frontAutoIntakeHeight = 5.7 * inches2mm,
+    subAutoIntakeHeight = 12 * inches2mm,
 
-            prel2ClimbHeight = 21 * inches2mm,
+    prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
             postl2ClimbHeight = 5.6 * inches2mm,
 
-            climbTransferHeight = 15 * inches2mm,
+    climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 34 * inches2mm,
             midl3ClimbHeight = 25 * inches2mm,
             tiltedl3ClimbHeight = 10.5 * inches2mm,
@@ -85,13 +84,14 @@ public class Pivot {
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
-            frontAutoIntakeX = 21 * inches2mm,
+    frontAutoIntakeX = 21 * inches2mm,
+    subAutoIntakeX = 13 * inches2mm,
 
-            prel2ClimbX = 18 * inches2mm,
+    prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
             postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm,
 
-            climbTransferX = 0.01 * inches2mm,
+    climbTransferX = 0.01 * inches2mm,
             prel3ClimbX = 0.3 * inches2mm,
             midl3ClimbX = 3 * inches2mm,
             tiltedl3ClimbX = -10.5 * inches2mm,
@@ -101,7 +101,7 @@ public class Pivot {
 
 
     //STORAGE
-    public double storageX = 8 * inches2mm, storageZ = Math.sqrt(Math.pow(11.86, 2) - Math.pow((storageX/inches2mm), 2)) * inches2mm;
+    public double storageX = 4.5 * inches2mm, storageZ = 6 * inches2mm;
 
     //SUB PARK
     public double subParkX = 10 * inches2mm, subParkZ = 12 * inches2mm;
@@ -124,6 +124,7 @@ public class Pivot {
 
         this.opMode = opMode;
     }
+
 
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.1) {
@@ -216,7 +217,7 @@ public class Pivot {
 
         pivotMotor.set(power);
 
-        slides.periodic(getPivotTargetAngleRadians());
+        slides.periodic(getPivotAngleRadians());
         arm.periodic(getPivotAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
     }
 
@@ -276,6 +277,13 @@ public class Pivot {
 
     public void manualRunToDeg(double angle) {
         manualRunTo(degreestoTicks(angle));
+    }
+
+    public void subAutoIntake(boolean pivot, boolean slides) {
+        targetZ = subAutoIntakeHeight;
+        targetX = subAutoIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
     }
 
     public void subPark(boolean pivot, boolean slides) {

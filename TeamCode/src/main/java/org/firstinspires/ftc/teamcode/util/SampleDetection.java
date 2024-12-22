@@ -36,6 +36,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
@@ -73,80 +74,68 @@ public class SampleDetection extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        GamepadEx gp1;
+        GamepadEx gp1, gp2;
 
         gp1 = new GamepadEx(gamepad1);
+        gp2 = new GamepadEx(gamepad2);
 
         Bot.instance = null;
         bot = Bot.getInstance(this);
 
         bot.stopMotors();
         bot.state = Bot.BotState.STORAGE;
-        bot.frontIntake();
+        bot.subAutoIntake();
 
-        ColorBlobLocatorProcessor blueLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
-                //.setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(4)                               // Smooth the transitions between different colors in image
-                .build();
-
-        ColorBlobLocatorProcessor redLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.RED)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
-                //.setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(4)                               // Smooth the transitions between different colors in image
-                .build();
-
-        ColorBlobLocatorProcessor yellowLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
-                //.setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(4)                               // Smooth the transitions between different colors in image
-                .build();
-
-        VisionPortal portal = new VisionPortal.Builder()
-                .addProcessor(blueLocator)
-                .addProcessor(yellowLocator)
-                .addProcessor(redLocator)
-                .setCameraResolution(new Size(640, 360))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .build();
+        boolean intakeCancel = false;
 
         telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+        bot.openPipeline(true, false, true);
 
         // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
         while (opModeIsActive() || opModeInInit())
         {
             gp1.readButtons();
-            telemetry.addData("preview on/off", "... Camera Stream\n");
+            gp2.readButtons();
+            bot.pipeline.detect();
 
-            // Read the current list
-            List<ColorBlobLocatorProcessor.Blob> blobs = blueLocator.getBlobs();
-            blobs.addAll(yellowLocator.getBlobs());
-            blobs.addAll(redLocator.getBlobs());
-
-            ColorBlobLocatorProcessor.Util.filterByArea(2000, 1000000, blobs);
-            ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
-
-            telemetry.addLine(" Area Density Aspect  Center");
-
-            // Display the size (area) and center location for each Blob.
-            if (!blobs.isEmpty()) {
-                ColorBlobLocatorProcessor.Blob b = blobs.get(0);
-
-                RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)   %3d",
-                        b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y, (int) (-boxFit.angle)));
-
-                if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-                    bot.pivot.arm.setRoll((-(boxFit.angle)));
-                }
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+                bot.alignClaw();
             }
+            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+                bot.updateSampleSlides();
+            }
+            if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
+                bot.frontIntakeToStorage();
+            }
+
+            bot.pivot.runManualIK(gp2.getLeftY());
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                bot.subAutoPickDown();
+            }
+            if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
+                bot.subAutoPickUp();
+                sleep(250);
+                bot.frontIntakeToStorage();
+            } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                intakeCancel = false;
+            }
+            if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
+                intakeCancel = true;
+                bot.subAutoPickUp();
+                bot.gripper.open();
+            }
+            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                bot.pivot.arm.rollLeft();
+            } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                bot.pivot.arm.rollRight();
+            }
+
+
+            telemetry.addData("crrent roll", bot.pivot.arm.rollSetpoint);
+            telemetry.addData("current alge", bot.pipeline.getAngle());
+            telemetry.addData("current inch offset", bot.pipeline.getY());
 
             telemetry.update();
             bot.pivot.periodic();
