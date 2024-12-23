@@ -20,15 +20,19 @@ import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 
 import java.util.List;
+import java.util.Objects;
 
 @Config
 public class SampleDetectionPipeline
 {
 
-    public int height = 360, width = 640, minArea = 800;
-    public static int strafePixelsPerInch = 25;
-    public static int slidesPixelsPerInch = 32;
+    public int height = 360, width = 640, minArea = 7000;
+    public int rounds;
+    public static int strafePixelsPerInch = -39;
+    public static int slidesPixelsPerInch = 31;
     public static int slidesRescaledMax = 270;
+    public static int strafeRescaledMax = 570;
+    public static double pastStrafe = 0;
     public boolean red = false, blue = false, yellow = false;
     private final ColorBlobLocatorProcessor blueLocator;
     private final ColorBlobLocatorProcessor redLocator;
@@ -37,7 +41,6 @@ public class SampleDetectionPipeline
     RotatedRect boxFit;
     ColorBlobLocatorProcessor.Blob bigBlob;
     Point center;
-    Camera camera;
 
     private static double angle, x, y;
 
@@ -49,7 +52,7 @@ public class SampleDetectionPipeline
         blueLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))  // search central 1/4 of camera view
                 //.setDrawContours(true)                        // Show contours on the Stream Preview
                 .setBlurSize(2)                               // Smooth the transitions between different colors in image
                 .build();
@@ -57,7 +60,7 @@ public class SampleDetectionPipeline
         redLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.RED)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))  // search central 1/4 of camera view
                 //.setDrawContours(true)                        // Show contours on the Stream Preview
                 .setBlurSize(2)                               // Smooth the transitions between different colors in image
                 .build();
@@ -65,23 +68,31 @@ public class SampleDetectionPipeline
         yellowLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))  // search central 1/4 of camera view
                 //.setDrawContours(true)                        // Show contours on the Stream Preview
                 .setBlurSize(2)                               // Smooth the transitions between different colors in image
                 .build();
 
         VisionPortal.Builder portalBuilder = new VisionPortal.Builder();
 
-        if (blue) portalBuilder.addProcessor(blueLocator);
-        if (yellow) portalBuilder.addProcessor(yellowLocator);
-        if (red) portalBuilder.addProcessor(redLocator);
+        portalBuilder.addProcessor(blueLocator);
+        portalBuilder.addProcessor(yellowLocator);
+        portalBuilder.addProcessor(redLocator);
         portalBuilder.setCameraResolution(new Size(width, height));
         portalBuilder.setCamera(map.get(WebcamName.class, "Webcam 1"));
         VisionPortal portal = portalBuilder.build();
+
+        x = 0;
+        y = 0;
     }
 
+    public void setRed(boolean red) {
+        this.red = red;
+    }
 
-
+    public void setBlue(boolean blue) {
+        this.blue = blue;
+    }
 
     public void detect() {
         if (blue) {
@@ -96,7 +107,7 @@ public class SampleDetectionPipeline
                 blobs = yellowLocator.getBlobs();
             }
         }
-        ColorBlobLocatorProcessor.Util.filterByArea(minArea, 1000000, blobs);
+        ColorBlobLocatorProcessor.Util.filterByArea(minArea, 18000, blobs);
         ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
 
         if (!blobs.isEmpty()) {
@@ -118,7 +129,6 @@ public class SampleDetectionPipeline
             y = (double) center.y - (double) height/2; //accounts for claw being below camera
         } else {
             angle = -1;
-            y = 4;
         }
     }
 
@@ -127,18 +137,27 @@ public class SampleDetectionPipeline
     }
 
     public double getX() {
-        return (x)/strafePixelsPerInch; //NEEDS TO return in inches
+        if (x != 0) {
+            double value = ((x + 320)/640.0 * strafeRescaledMax - (strafeRescaledMax-320))/strafePixelsPerInch;
+            value += Math.max(0, ((value - 3.5) * 0.5874 - 0.5));
+            return value; //NEEDS TO return in inches
+        } else {
+            return 0;
+        }
     }
 
     public double getY() {
-        return ((y + 180)/360.0 * slidesRescaledMax - (slidesRescaledMax-180))/slidesPixelsPerInch; //NEEDS To return in inches
+            return ((y + 180)/360.0 * slidesRescaledMax - (slidesRescaledMax-180))/slidesPixelsPerInch; //NEEDS To return in inches
     }
 
     public int getArea() {
-        if (blobs.isEmpty()) {
+        if (Objects.isNull(blobs)) {
+            return 0;
+        } else if (blobs.isEmpty()) {
             return 0;
         } else {
             return bigBlob.getContourArea();
         }
     }
+
 }

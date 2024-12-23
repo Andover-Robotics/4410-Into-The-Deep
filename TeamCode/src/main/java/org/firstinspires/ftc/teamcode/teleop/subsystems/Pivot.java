@@ -55,15 +55,16 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public static double highBucketHeight = 40.5 * inches2mm,
+    public static double highBucketHeight = 34.45 * inches2mm,
             lowBucketHeight = 24 * inches2mm,
-            highChamberHeight = 16.2 * inches2mm,
-            lowChamberHeight = 5.2 * inches2mm,
+            highChamberHeight = 14.2 * inches2mm,
+            lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
-            wallIntakeHeight = 4.2 * inches2mm,
+            wallIntakeHeight = 2.7 * inches2mm,
 
-    frontAutoIntakeHeight = 5.7 * inches2mm,
+    frontAutoIntakeHeight = 5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm,
+    pushIntakeHeight = 0.3 * inches2mm,
 
     prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
@@ -78,14 +79,15 @@ public class Pivot {
 
     // distances forward from pivot for positions
     public static double bucketX = -4.5 * inches2mm,
-            chamberX = 8 * inches2mm,
-            highChamberTransferX = 5 * inches2mm,
+            chamberX = 12 * inches2mm,
+            highChamberTransferX = 2 * inches2mm,
             frontIntakeX = 12.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
-    frontAutoIntakeX = 21 * inches2mm,
+    frontAutoIntakeX = 17 * inches2mm,
     subAutoIntakeX = 13 * inches2mm,
+    pushIntakeX = 21 * inches2mm,
 
     prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
@@ -104,7 +106,7 @@ public class Pivot {
     public double storageX = 4.5 * inches2mm, storageZ = 6 * inches2mm;
 
     //SUB PARK
-    public double subParkX = 10 * inches2mm, subParkZ = 12 * inches2mm;
+    public double subParkX = 9 * inches2mm, subParkZ = 11 * inches2mm;
 
     //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 
@@ -279,6 +281,13 @@ public class Pivot {
         manualRunTo(degreestoTicks(angle));
     }
 
+    public void pushIntake(boolean pivot, boolean slides) {
+        targetZ = pushIntakeHeight;
+        targetX = pushIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
     public void subAutoIntake(boolean pivot, boolean slides) {
         targetZ = subAutoIntakeHeight;
         targetX = subAutoIntakeX;
@@ -315,7 +324,7 @@ public class Pivot {
     }
 
     public void highChamberTransfer(boolean pivot, boolean slides) {
-        targetZ = highChamberHeight;
+        targetZ = highChamberHeight - 1;
         targetX = highChamberTransferX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();

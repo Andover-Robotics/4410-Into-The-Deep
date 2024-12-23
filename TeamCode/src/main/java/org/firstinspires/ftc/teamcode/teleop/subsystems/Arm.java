@@ -16,7 +16,7 @@ public class Arm {
     public final double MIN_ANGLE = 0, MAX_ANGLE = 473.33;
 
     // Define the range for roll and pitch
-    public final double ROLL_MIN = -18;       // Minimum roll value
+    public final double ROLL_MIN = -14;       // Minimum roll value
     public final double ROLL_MAX = 180;     // Maximum roll value
     public final double ROLL_MID = 90;     // Midpoint for straight roll angle
     public final double PITCH_MIN = 0;      // Minimum pitch value (front)

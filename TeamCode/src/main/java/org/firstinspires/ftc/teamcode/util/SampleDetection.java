@@ -136,6 +136,7 @@ public class SampleDetection extends LinearOpMode
             telemetry.addData("crrent roll", bot.pivot.arm.rollSetpoint);
             telemetry.addData("current alge", bot.pipeline.getAngle());
             telemetry.addData("current inch offset", bot.pipeline.getY());
+            telemetry.addData("area", bot.pipeline.getArea());
 
             telemetry.update();
             bot.pivot.periodic();
