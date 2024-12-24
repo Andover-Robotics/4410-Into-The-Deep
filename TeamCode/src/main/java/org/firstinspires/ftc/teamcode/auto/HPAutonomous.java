@@ -32,7 +32,6 @@ public class HPAutonomous extends LinearOpMode {
 
         Bot.instance = null;
         bot = Bot.getInstance(this);
-
         gp1 = new GamepadEx(gamepad1);
         telemetry.setAutoClear(true);
 
@@ -63,46 +62,29 @@ public class HPAutonomous extends LinearOpMode {
 
         Action zoom = drive.actionBuilder(new Pose2d(-8, 36, Math.toRadians(-90)))
 
-
+                .afterDisp(24, bot.actionPushIntake())
                 .strafeToLinearHeading(new Vector2d(-37,36), Math.toRadians(-135))
-                .stopAndAdd(bot.actionPushIntake())
-                .stopAndAdd(new SleepAction(0.5))
-                .strafeToLinearHeading(new Vector2d(-37,48), Math.toRadians(-215))
+                .stopAndAdd(new SleepAction(0.2))
+                .strafeToLinearHeading(new Vector2d(-37,52), Math.toRadians(-225))
 
-                .stopAndAdd(bot.actionPickUp())
+                .stopAndAdd(new InstantAction(() -> bot.pivot.changeZ(5)))
 
-                .strafeToLinearHeading(new Vector2d(-44,36), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(-44,33), Math.toRadians(-135))
 
                 .stopAndAdd(new InstantAction(() -> bot.pivot.changeZ(-5)))
-                .stopAndAdd(new SleepAction(0.5))
                 .strafeToLinearHeading(new Vector2d(-44,52), Math.toRadians(-225))
 
-                .stopAndAdd(bot.actionFrontIntakeToStorage())
+                .afterTime(0.01, bot.actionFrontIntakeToStorage())
 
-//                .afterTime(0.1, bot.actionSecondClipStorage())
-//
-//                .strafeToLinearHeading(new Vector2d(-36, 40), Math.toRadians(-90))
-//
-//                .strafeToConstantHeading(new Vector2d(-36,16))
-//                .splineToConstantHeading(new Vector2d(-47,16),Math.toRadians(0))
-//                .strafeToConstantHeading(new Vector2d(-47,42))
-//
-//                //-45,33
-//                //.splineToConstantHeading(new Vector2d(-29,15),Math.toRadians(55))
-//                .splineToConstantHeading(new Vector2d(-57,14),Math.toRadians(-30))
-//                .strafeToConstantHeading(new Vector2d(-57,42))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-58,16),Math.toRadians(-90)), Math.toRadians(0))
 
-                .splineToLinearHeading(new Pose2d(new Vector2d(-56,16),Math.toRadians(-90)), Math.toRadians(45))
-                .splineToConstantHeading(new Vector2d(-70,10),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-64,52))
+                .splineToConstantHeading(new Vector2d(-68,10),Math.toRadians(-10))
+                .afterTime(0.01, bot.actionWallIntakeOpen())
+                .strafeToConstantHeading(new Vector2d(-69,52))
                 .build();
 
         Action threeSpecimens = drive.actionBuilder(new Pose2d(-65, 53, Math.toRadians(-90)))
 
-                //pick up from wall
-                .afterTime(0.01, bot.actionWallIntakeOpen())
-
-                .strafeToLinearHeading(new Vector2d(-44,51), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
                         new SleepAction(0.15)
@@ -110,16 +92,12 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-6,34), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(-6,30), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-6,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-55, 70))
+                //.strafeToLinearHeading(new Vector2d(-6,30), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipWall()
                 ))
-//
-//                .afterTime(0.05, new SequentialAction(
-//                        bot.actionWallIntakeOpen()
-//                ))
 
                 .strafeToLinearHeading(new Vector2d(-44,51), Math.toRadians(-90))
 
@@ -130,17 +108,13 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-4,34), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(-4,30), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-4,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-55, 70))
+//                .strafeToLinearHeading(new Vector2d(-4,30), Math.toRadians(-90))
 
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipWall()
                 ))
-//
-//                .afterTime(0.05, new SequentialAction(
-//                        bot.actionWallIntakeOpen()
-//                ))
 
                 .strafeToLinearHeading(new Vector2d(-44,51), Math.toRadians(-90))
 
@@ -151,17 +125,13 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-2,34), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(-2,30), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-2,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-55, 70))
+//                .strafeToLinearHeading(new Vector2d(-2,30), Math.toRadians(-90))
 
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipWall()
                 ))
-//
-//                .afterTime(0.05, new SequentialAction(
-//                        bot.actionWallIntakeOpen()
-//                ))
 
                 .strafeToLinearHeading(new Vector2d(-38,51), Math.toRadians(-90))
 
@@ -172,7 +142,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(0,36), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(0,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-55, 70))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionFirstClipStorage()

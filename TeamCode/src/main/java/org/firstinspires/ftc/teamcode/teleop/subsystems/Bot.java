@@ -44,6 +44,8 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
+    public static int detectionCounter;
+
     public SampleDetectionPipeline pipeline;
 
     double pickDownUpValue = 3.75; //TELEOP ONLY (not auton)
@@ -87,6 +89,7 @@ public class Bot {
 
     public void openPipeline(boolean red, boolean blue, boolean yellow) {
         pipeline = new SampleDetectionPipeline(red, blue, yellow, opMode.hardwareMap);
+        detectionCounter = 0;
     }
 
     public void alignClaw() {
@@ -111,8 +114,13 @@ public class Bot {
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (sampleYPos != 0 && pipeline.getAngle() != -1) {
+            if (sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 6) {
                 return false;
+            } else if (sampleYPos != 0 && pipeline.getAngle() != -1) {
+                scan();
+                updateSampleDrive();
+                detectionCounter++;
+                return true;
             } else {
                 scan();
                 updateSampleDrive();
