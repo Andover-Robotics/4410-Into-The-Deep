@@ -48,7 +48,7 @@ public class HPAutonomous extends LinearOpMode {
                         bot.actionHighChamber()
                 ))
 
-                .strafeToLinearHeading(new Vector2d(-8, 36), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-8, 34.5), Math.toRadians(-90))
                 .stopAndAdd(new SequentialAction(
                         bot.actionFirstClipStorage(),
                         new SleepAction(0.3)
@@ -67,7 +67,7 @@ public class HPAutonomous extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-37,36), Math.toRadians(-135))
                 .stopAndAdd(bot.actionPushIntake())
                 .stopAndAdd(new SleepAction(0.5))
-                .strafeToLinearHeading(new Vector2d(-37,50), Math.toRadians(-215))
+                .strafeToLinearHeading(new Vector2d(-37,48), Math.toRadians(-215))
 
                 .stopAndAdd(bot.actionPickUp())
 
@@ -93,7 +93,7 @@ public class HPAutonomous extends LinearOpMode {
 //                .strafeToConstantHeading(new Vector2d(-57,42))
 
                 .splineToLinearHeading(new Pose2d(new Vector2d(-56,16),Math.toRadians(-90)), Math.toRadians(45))
-                .splineToConstantHeading(new Vector2d(-63,16),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-70,10),Math.toRadians(0))
                 .strafeToConstantHeading(new Vector2d(-64,52))
                 .build();
 
@@ -110,7 +110,8 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-6,33), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-6,34), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-6,30), Math.toRadians(-90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipWall()
@@ -129,7 +130,9 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-4,33), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-4,34), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-4,30), Math.toRadians(-90))
+
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipWall()
@@ -148,7 +151,9 @@ public class HPAutonomous extends LinearOpMode {
 
                 .stopAndAdd(bot.actionHighChamber())
 
-                .strafeToLinearHeading(new Vector2d(-2,33), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-2,34), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-2,30), Math.toRadians(-90))
+
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionClipWall()
