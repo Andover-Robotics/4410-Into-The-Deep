@@ -148,7 +148,7 @@ public class BucketAutonomous extends LinearOpMode {
                         new SleepAction(0.05),
                         bot.actionSubAutoIntake()
                 ))
-                .splineToLinearHeading(new Pose2d(new Vector2d(22, 2), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-15, 70))
+                .splineToLinearHeading(new Pose2d(new Vector2d(22, 2), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-12, 70))
 
                 .build();
 
