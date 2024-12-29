@@ -80,6 +80,7 @@ public class SampleDetectionPipeline
         portalBuilder.addProcessor(redLocator);
         portalBuilder.setCameraResolution(new Size(width, height));
         portalBuilder.setCamera(map.get(WebcamName.class, "Webcam 1"));
+        portalBuilder.setLiveViewContainerId(0);
         VisionPortal portal = portalBuilder.build();
 
         x = 0;
