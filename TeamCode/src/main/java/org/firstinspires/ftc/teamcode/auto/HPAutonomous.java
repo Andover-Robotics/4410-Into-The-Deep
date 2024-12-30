@@ -66,17 +66,34 @@ public class HPAutonomous extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(-40,40), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
                 .strafeToConstantHeading(new Vector2d(-38,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
                 .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-47,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+
+                .strafeToConstantHeading(new Vector2d(-45,50))
 
                 //-45,33
-                .splineToConstantHeading(new Vector2d(-36,15),Math.toRadians(55))
-                .splineToConstantHeading(new Vector2d(-55,14),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-55,48), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .splineToConstantHeading(new Vector2d(-45,13),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56,10),Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-56,50))
 
-                .splineToConstantHeading(new Vector2d(-44,16),Math.toRadians(45))
+                .splineToConstantHeading(new Vector2d(-56,13),Math.toRadians(180))
                 .afterTime(0.01, bot.actionWallIntakeOpen())
-                .splineToConstantHeading(new Vector2d(-65,10), Math.toRadians(-70))
-                .strafeToConstantHeading(new Vector2d(-65,50.1), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 80))
+                .splineToConstantHeading(new Vector2d(-60.6,10),Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-60.6,50), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 80))
+//
+//                .afterTime(0.1, bot.actionSecondClipStorage())
+//                .strafeToConstantHeading(new Vector2d(-40,40), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+//                .strafeToConstantHeading(new Vector2d(-38,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+//                .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(0))
+//                .strafeToConstantHeading(new Vector2d(-47,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+//
+//                //-45,33
+//                .splineToConstantHeading(new Vector2d(-36,15),Math.toRadians(55))
+//                .splineToConstantHeading(new Vector2d(-55,14),Math.toRadians(0))
+//                .strafeToConstantHeading(new Vector2d(-55,48), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+//
+//                .splineToConstantHeading(new Vector2d(-44,16),Math.toRadians(45))
+//                .afterTime(0.01, bot.actionWallIntakeOpen())
+//                .splineToConstantHeading(new Vector2d(-65,10), Math.toRadians(-70))
+//                .strafeToConstantHeading(new Vector2d(-65,50.1), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 80))
                 .build();
 
         Action threeSpecimens = drive.actionBuilder(new Pose2d(-67, 51, Math.toRadians(-90)))
