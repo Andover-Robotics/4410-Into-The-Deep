@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -29,6 +30,7 @@ public class MainTeleOp extends LinearOpMode {
     private GamepadEx gp1, gp2;
     private boolean fieldCentric, intakeCancel, clipCancel;
     private Thread thread;
+    DigitalChannel breakBeam;
 
 
     @Override
@@ -46,6 +48,8 @@ public class MainTeleOp extends LinearOpMode {
         bot.state = Bot.BotState.STORAGE;
         //bot.storage();
 
+        breakBeam = hardwareMap.get(DigitalChannel.class, "BreakBeam");
+
         waitForStart();
 
         bot.storage();
@@ -54,7 +58,6 @@ public class MainTeleOp extends LinearOpMode {
 
             gp1.readButtons();
             gp2.readButtons();
-
 
 
             //STORAGE
@@ -115,7 +118,11 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
                     bot.pickUp();
                     sleep(250);
-                    bot.frontIntakeToStorage();
+                    if (!breakBeam.getState()) { // check if you actually picked it up
+                        bot.frontIntakeToStorage();
+                    } else { // else don't go back to storage cuz you still need a sample
+                        bot.frontIntake();
+                    }
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }
@@ -138,7 +145,12 @@ public class MainTeleOp extends LinearOpMode {
                     bot.gripper.close();
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-                    bot.storage();
+                    sleep(500);
+                    if (!breakBeam.getState()) { // Check if there is a specimen after picking
+                        bot.storage();
+                    } else { // Don't go back to storage if you don't have a darn specimen
+                        bot.gripper.open();
+                    }
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }

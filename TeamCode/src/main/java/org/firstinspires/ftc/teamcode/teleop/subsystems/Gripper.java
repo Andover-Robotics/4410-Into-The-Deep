@@ -6,12 +6,14 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Gripper {
     public OpMode opMode;
     public final Servo claw;
+    DigitalChannel breakBeam;
 
     public static double closed = 0.70, open = 0.37;
 
