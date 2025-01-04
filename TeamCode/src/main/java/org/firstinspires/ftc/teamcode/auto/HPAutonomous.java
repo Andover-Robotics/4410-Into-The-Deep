@@ -69,7 +69,7 @@ public class HPAutonomous extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(-47,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 
                 //-45,33
-                .splineToConstantHeading(new Vector2d(-36,15),Math.toRadians(55))
+                .splineToConstantHeading(new Vector2d(-34,15),Math.toRadians(55))
                 .splineToConstantHeading(new Vector2d(-55,14),Math.toRadians(0))
                 .strafeToConstantHeading(new Vector2d(-55,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 
@@ -106,7 +106,7 @@ public class HPAutonomous extends LinearOpMode {
                 .stopAndAdd(bot.actionHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-18,56), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .splineToConstantHeading(new Vector2d(1,35), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
+                .splineToConstantHeading(new Vector2d(1,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
@@ -122,7 +122,7 @@ public class HPAutonomous extends LinearOpMode {
                 .stopAndAdd(bot.actionHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-18,61), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .splineToConstantHeading(new Vector2d(3,35), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
+                .splineToConstantHeading(new Vector2d(3,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
@@ -138,7 +138,7 @@ public class HPAutonomous extends LinearOpMode {
                 .stopAndAdd(bot.actionHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-18,51), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .splineToConstantHeading(new Vector2d(5,35), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
+                .splineToConstantHeading(new Vector2d(5,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
 
                 .afterTime(0.1, bot.actionOpenGripper())
 

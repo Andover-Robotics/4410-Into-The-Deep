@@ -42,6 +42,10 @@ public class SampleDetectionPipeline
     ColorBlobLocatorProcessor.Blob bigBlob;
     Point center;
 
+    VisionPortal.Builder portalBuilder;
+
+    VisionPortal portal;
+
     private static double angle, x, y;
 
     public SampleDetectionPipeline(boolean red, boolean blue, boolean yellow, HardwareMap map) {
@@ -52,28 +56,24 @@ public class SampleDetectionPipeline
         blueLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))  // search central 1/4 of camera view
-                //.setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(2)                               // Smooth the transitions between different colors in image
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .build();
 
         redLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.RED)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))  // search central 1/4 of camera view
-                //.setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(2)                               // Smooth the transitions between different colors in image
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
+                .setBlurSize(2)
                 .build();
 
         yellowLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))  // search central 1/4 of camera view
-                //.setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(2)                               // Smooth the transitions between different colors in image
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
+                .setBlurSize(2)
                 .build();
 
-        VisionPortal.Builder portalBuilder = new VisionPortal.Builder();
+        portalBuilder = new VisionPortal.Builder();
 
         portalBuilder.addProcessor(blueLocator);
         portalBuilder.addProcessor(yellowLocator);
@@ -81,10 +81,14 @@ public class SampleDetectionPipeline
         portalBuilder.setCameraResolution(new Size(width, height));
         portalBuilder.setCamera(map.get(WebcamName.class, "Webcam 1"));
         portalBuilder.setLiveViewContainerId(0);
-        VisionPortal portal = portalBuilder.build();
+        portal = portalBuilder.build();
 
         x = 0;
         y = 0;
+    }
+
+    public void close() {
+        portal.close();
     }
 
     public void setRed(boolean red) {

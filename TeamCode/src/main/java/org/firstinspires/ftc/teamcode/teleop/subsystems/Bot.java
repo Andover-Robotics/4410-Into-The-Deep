@@ -490,9 +490,9 @@ public class Bot {
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(-7)),
-                new SleepAction(0.6),
-                new InstantAction(() -> pivot.changeZ(-3.2)),
                 new SleepAction(0.3),
+                new InstantAction(() -> pivot.changeZ(-3.2)),
+                new SleepAction(0.2),
                 new InstantAction(() -> gripper.close())
         );
     }
