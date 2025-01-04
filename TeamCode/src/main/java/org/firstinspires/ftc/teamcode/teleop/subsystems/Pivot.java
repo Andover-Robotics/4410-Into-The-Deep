@@ -81,7 +81,7 @@ public class Pivot {
     public static double bucketX = -4.5 * inches2mm,
             chamberX = 12 * inches2mm,
             highChamberTransferX = 2 * inches2mm,
-            frontIntakeX = 12.5 * inches2mm,
+            frontIntakeX = 17.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             wallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
@@ -131,9 +131,9 @@ public class Pivot {
     public void runManualIK(double joystick) {
         if (Math.abs(joystick) > 0.1) {
             if (joystick > 0 && targetX < xMax && targetX > xMin) {
-                slides.runManual(joystick * 0.7);
+                slides.runManual(Math.pow(joystick, 2));
             } else if (joystick < 0) {
-                slides.runManual(joystick * 0.7);
+                slides.runManual(-Math.pow(joystick, 2));
             } else {
                 slides.runManual(0);
             }

@@ -66,7 +66,7 @@ public class BucketAutonomous extends LinearOpMode {
                 .afterTime(0.01, bot.actionHighBucket())
                 .strafeToLinearHeading(new Vector2d(59.5,56), Math.toRadians(-135))
 
-                .waitSeconds(0.75)
+                .waitSeconds(0.66)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.01, new SequentialAction(
@@ -92,7 +92,7 @@ public class BucketAutonomous extends LinearOpMode {
 
                 .strafeToLinearHeading(new Vector2d(56,56), Math.toRadians(-135))
 
-                .waitSeconds(1.05)
+                .waitSeconds(0.95)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.01, new SequentialAction(
@@ -115,7 +115,7 @@ public class BucketAutonomous extends LinearOpMode {
 
                 .strafeToLinearHeading(new Vector2d(56,56), Math.toRadians(-135))
 
-                .waitSeconds(1.05)
+                .waitSeconds(0.95)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.01, new SequentialAction(
@@ -148,13 +148,13 @@ public class BucketAutonomous extends LinearOpMode {
                         new SleepAction(0.05),
                         bot.actionSubAutoIntake()
                 ))
-                .splineToLinearHeading(new Pose2d(new Vector2d(22, 2), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-12, 70))
+                .splineToLinearHeading(new Pose2d(new Vector2d(22, 2), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-12, 95))
 
                 .build();
 
         Action finalBucket = drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(-135)))
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.5),
+                        new SleepAction(0.43),
                         bot.actionBucketDrop(),
                         new SleepAction(0.1)
 
@@ -162,7 +162,7 @@ public class BucketAutonomous extends LinearOpMode {
                 .afterTime(0.01, bot.actionBucketToStorage())
                 .splineToLinearHeading(new Pose2d(new Vector2d(20, 2), Math.toRadians(180)), Math.toRadians(180))
                 .stopAndAdd(bot.actionSubPark())
-                .waitSeconds(1)
+                .waitSeconds(5)
                 .build();
 
         bot.openPipeline(true, false, true);

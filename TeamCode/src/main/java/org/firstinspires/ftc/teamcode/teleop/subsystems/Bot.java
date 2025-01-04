@@ -490,7 +490,7 @@ public class Bot {
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(-7)),
-                new SleepAction(0.3),
+                new SleepAction(0.2),
                 new InstantAction(() -> pivot.changeZ(-3.2)),
                 new SleepAction(0.2),
                 new InstantAction(() -> gripper.close())
@@ -563,6 +563,7 @@ public class Bot {
                 new InstantAction(() -> pivot.highBucket(true, false)),
                 new SleepAction(0.3),
                 new InstantAction(() -> pivot.highBucket(false, true)),
+                new InstantAction(() -> pivot.arm.outtakeUp()),
                 new SleepAction(1.15),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
@@ -626,9 +627,9 @@ public class Bot {
 
     public SequentialAction actionSecondClipStorage() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new InstantAction(() -> pivot.arm.outtakeHoriz()),
                 new InstantAction(() -> pivot.storage(false, true)),
-                new SleepAction(0.5),
+                new SleepAction(0.4),
                 new InstantAction(() -> pivot.storage(true, true)),
                 new InstantAction(() -> pivot.arm.storage())
                 );
