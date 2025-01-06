@@ -156,7 +156,7 @@ public class MainTeleOp extends LinearOpMode {
                     bot.storage();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    bot.clipDown();
+                    //bot.clipDown();
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
                     bot.clipStorage();

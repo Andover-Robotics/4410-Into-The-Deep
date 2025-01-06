@@ -528,7 +528,7 @@ public class Bot {
     public void wallIntakeOpen() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.wallIntake(true, true);
+                pivot.teleopWallIntake(true, true);
                 Thread.sleep(200);
                 pivot.arm.wallPickup();
                 gripper.open();
@@ -542,7 +542,7 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 gripper.close();
-                pivot.wallIntake(true, true);
+                pivot.teleopWallIntake(true, true);
                 Thread.sleep(200);
                 pivot.arm.wallPickup();
                 state = BotState.WALL_INTAKE;
@@ -643,10 +643,10 @@ public class Bot {
                 new SleepAction(0.1),
                 new InstantAction(() -> pivot.highChamberTransfer(true, false)),
                 new SleepAction(0.2),
-                new InstantAction(() -> pivot.wallIntake(false, true)),
+                new InstantAction(() -> pivot.autoWallIntake(false, true)),
                 new InstantAction(() -> pivot.arm.wallPickup()),
                 new SleepAction(0.2),
-                new InstantAction(() -> pivot.wallIntake(true, false)),
+                new InstantAction(() -> pivot.autoWallIntake(true, false)),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
         );
     }
@@ -738,7 +738,7 @@ public class Bot {
     public SequentialAction actionWallIntakeOpen() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
-                new InstantAction(() -> pivot.wallIntake(true, true)),
+                new InstantAction(() -> pivot.autoWallIntake(true, true)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.arm.wallPickup()),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
@@ -748,7 +748,7 @@ public class Bot {
     public SequentialAction actionWallIntakeClosed() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.close()),
-                new InstantAction(() -> pivot.wallIntake(true, true)),
+                new InstantAction(() -> pivot.autoWallIntake(true, true)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.arm.wallPickup()),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)

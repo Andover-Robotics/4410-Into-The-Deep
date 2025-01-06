@@ -13,7 +13,7 @@ public class Gripper {
     public OpMode opMode;
     public final Servo claw;
 
-    public static double closed = 0.44, open = 0.70;
+    public static double closed = 0.56, open = 0.875;
 
     public enum GripperState {
         CLOSED,

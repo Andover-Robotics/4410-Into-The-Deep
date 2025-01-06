@@ -63,7 +63,7 @@ public class HPAutonomous extends LinearOpMode {
         Action zoom = drive.actionBuilder(new Pose2d(-5, 34.5, Math.toRadians(-90)))
 
                 .afterTime(0.1, bot.actionSecondClipStorage())
-                .strafeToConstantHeading(new Vector2d(-40,40), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .strafeToConstantHeading(new Vector2d(-42,42), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
                 .strafeToConstantHeading(new Vector2d(-38,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
                 .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(0))
                 .strafeToConstantHeading(new Vector2d(-47,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
