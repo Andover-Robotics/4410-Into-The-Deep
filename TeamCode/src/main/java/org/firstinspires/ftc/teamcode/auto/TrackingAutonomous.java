@@ -42,7 +42,7 @@ public class TrackingAutonomous extends LinearOpMode {
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        bot.openPipeline(false, true, true);
+        bot.openPipeline(true, true, true);
 
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
@@ -53,6 +53,7 @@ public class TrackingAutonomous extends LinearOpMode {
 
         while(!isStarted()) {
             bot.pivot.periodic();
+            bot.scan();
 
             gp1.readButtons();
 
@@ -80,12 +81,11 @@ public class TrackingAutonomous extends LinearOpMode {
                         bot.actionPeriodic(),
                         new SequentialAction(
                                 bot.actionDetect(),
-                                new SleepAction(0.6),
                                 drive.actionBuilder(new Pose2d(20.5, 0, Math.toRadians(180)))
                                         .strafeToConstantHeading(new Vector2d(20.5, Bot.sampleYPos))
                                         .stopAndAdd(new SequentialAction(
                                                 bot.actionSubAutoPickDown(),
-                                                new SleepAction(0.8),
+                                                new SleepAction(0.3),
                                                 bot.actionSubAutoPickUp(),
                                                 new SleepAction(0.3),
                                                 bot.actionFrontIntakeToStorage(),

@@ -57,7 +57,7 @@ public class Pivot {
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 34.35 * inches2mm,
             lowBucketHeight = 24 * inches2mm,
-            highChamberHeight = 13.45 * inches2mm,
+            highChamberHeight = 14.4 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
             wallIntakeHeight = 2.7 * inches2mm,
@@ -68,18 +68,18 @@ public class Pivot {
 
     prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
-            postl2ClimbHeight = 5.6 * inches2mm,
+            postl2ClimbHeight = 5 * inches2mm,
 
     climbTransferHeight = 15 * inches2mm,
-            prel3ClimbHeight = 34 * inches2mm,
+            prel3ClimbHeight = 30.5 * inches2mm,
             midl3ClimbHeight = 25 * inches2mm,
             tiltedl3ClimbHeight = 10.5 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
-            postl3ClimbHeight = 11.8 * inches2mm;
+            postl3ClimbHeight = 5 * inches2mm;
 
     // distances forward from pivot for positions
-    public static double bucketX = -4.5 * inches2mm,
-            chamberX = 12 * inches2mm,
+    public static double bucketX = -5.25 * inches2mm,
+            chamberX = 16.5 * inches2mm,
             highChamberTransferX = 2 * inches2mm,
             frontIntakeX = 17.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
@@ -92,14 +92,14 @@ public class Pivot {
 
     prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
-            postl2ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl2ClimbHeight/inches2mm), 2)) * inches2mm,
+            postl2ClimbX = 7.5 * inches2mm,
 
-    climbTransferX = 0.01 * inches2mm,
-            prel3ClimbX = 0.3 * inches2mm,
-            midl3ClimbX = 3 * inches2mm,
+    climbTransferX = 1.6 * inches2mm,
+            prel3ClimbX = 0.1 * inches2mm,
+            midl3ClimbX = 6 * inches2mm,
             tiltedl3ClimbX = -10.5 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
-            postl3ClimbX = Math.sqrt(Math.pow(11.86, 2) - Math.pow((postl3ClimbHeight/inches2mm), 2)) * inches2mm;
+            postl3ClimbX = 0.5 * inches2mm;
 
 
 
@@ -107,7 +107,7 @@ public class Pivot {
     public double storageX = 4.5 * inches2mm, storageZ = 6 * inches2mm;
 
     //SUB PARK
-    public double subParkX = 9 * inches2mm, subParkZ = 11.7 * inches2mm;
+    public double subParkX = 10 * inches2mm, subParkZ = 11.7 * inches2mm;
 
     //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 
@@ -282,6 +282,13 @@ public class Pivot {
         manualRunTo(degreestoTicks(angle));
     }
 
+    public void goToResetPosition() {
+        targetX = 0.001; //millimeters
+        targetZ = 20; //millimeters
+        runPivotToIKPosition();
+        runSlidesToIKPosition();
+    }
+
     public void pushIntake(boolean pivot, boolean slides) {
         targetZ = pushIntakeHeight;
         targetX = pushIntakeX;
@@ -325,7 +332,7 @@ public class Pivot {
     }
 
     public void highChamberTransfer(boolean pivot, boolean slides) {
-        targetZ = highChamberHeight - 1;
+        targetZ = highChamberHeight + (0.5 * inches2mm);
         targetX = highChamberTransferX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
@@ -509,7 +516,7 @@ public class Pivot {
 
     public void resetEncoder() {
         pivotMotor.resetEncoder();
-        slides.resetEncoder();
+        slides.resetEncoders();
     }
 
     public double getDTerm() {

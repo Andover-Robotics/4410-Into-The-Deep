@@ -48,7 +48,7 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        bot.storage();
+        bot.initialize();
 
         while (opModeIsActive() && !isStopRequested()) {
 
@@ -207,6 +207,14 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
+            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                bot.pivot.goToResetPosition();
+            } if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                bot.shiftUp();
+            } if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                bot.shiftDown();
+            }
+
             // DRIVE
             drive();
 
@@ -219,11 +227,13 @@ public class MainTeleOp extends LinearOpMode {
             //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
             //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
             //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
-            //telemetry.addData("Pivot Power", bot.pivot.power);
+            telemetry.addData("Pivot Power", bot.pivot.power);
+
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
-            telemetry.addData("Slides IK Position (mm)", bot.pivot.slides.getIKmmPosition());
-            //telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getTarget());
-            //telemetry.addData("Slides Profiler", bot.pivot.slides.getProfilerTarget());
+            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getIKmmPosition());
+            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getControllerSetpoint());
+            telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
+            telemetry.addData("Slides Current", bot.pivot.slides.getCurrent());
             telemetry.addData("Slides Power", bot.pivot.slides.power);
             telemetry.addData("Target X", bot.pivot.targetX);
             telemetry.addData("Target Z", bot.pivot.targetZ);

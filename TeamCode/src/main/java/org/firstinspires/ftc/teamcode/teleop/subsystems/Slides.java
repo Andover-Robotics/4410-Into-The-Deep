@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
@@ -16,11 +17,13 @@ public class Slides {
 
     public final MotorEx motorLeft;
     public final MotorEx motorRight;
+    private final Servo shifter;
     private PIDFController controller;
 
-    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18-staticFOffset;
+    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18 - staticFOffset;
     public static double staticF = 0;
     public static double ikMMoffset = 200;
+    public static double neutral = 0.66, high = 0.77, low = 0.51;
 
     public boolean climbingPower = false;
     private final double tolerance = 10;
@@ -32,7 +35,8 @@ public class Slides {
 
     public static double coax = 0;
 
-    public double spoolRadius = 19;
+    public double spoolRadiusGear = 9, spoolRadius = 19;
+    public static double ticksPerRev = 145.1;
 
     public double power;
     private final OpMode opMode;
@@ -44,9 +48,19 @@ public class Slides {
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
     public boolean profiling;
 
+    public enum SlidesState {
+        HIGH,
+        HIGH2LOW,
+        LOW2HIGH,
+        LOW
+    }
+
+    public SlidesState state = SlidesState.HIGH;
+
     public Slides(OpMode opMode) {
-        motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_312);
-        motorRight = new MotorEx(opMode.hardwareMap, "slidesRight", Motor.GoBILDA.RPM_312);
+        motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_1150);
+        motorRight = new MotorEx(opMode.hardwareMap, "slidesRight", Motor.GoBILDA.RPM_1150);
+        shifter =  opMode.hardwareMap.servo.get("shifter");;
 
         motorRight.setInverted(true);
         motorLeft.setInverted(false);
@@ -70,7 +84,7 @@ public class Slides {
 
     private void adjustCoax(double pivotAngleRadians) {
         // Adjust coax based on the pivot angle
-        coax = -537.7 * ((Math.toDegrees(pivotAngleRadians) - Pivot.startingAngleOffsetDegrees) / 360); //forward of starting position is negative (front intake), back of it is positive (rear)
+        coax = -ticksPerRev * (getGearing()) * ((Math.toDegrees(pivotAngleRadians) - Pivot.startingAngleOffsetDegrees) / 360); //forward of starting position is negative (front intake), back of it is positive (rear)
     }
 
     public double getCoax() {
@@ -88,65 +102,12 @@ public class Slides {
         controller.setTolerance(tolerance);
         if (manualPower == 0) {
             resetProfiler();
-            profiler.init_new_profile(motorLeft.getCurrentPosition(), pos);
+            profiler.init_new_profile(getPosition(), pos);
             profile_init_time = opMode.time;
             profiling = true;
         }
         goingDown = pos > target;
         target = pos;
-    }
-
-    public void runManual(double manual) {
-        if (manual > powerMin || manual < -powerMin) {
-            manualPower = -manual;
-        } else {
-            manualPower = 0;
-        }
-    }
-
-    public void climbOn() {
-        climbingPower = true;
-    }
-
-    public void climbOff() {
-        climbingPower = false;
-    }
-
-    public void periodic(double pivotAngleRadians) {
-        motorRight.setInverted(false);
-        motorLeft.setInverted(true);
-        controller.setPIDF(p, i, d, f);
-        adjustStaticF(pivotAngleRadians);
-        adjustCoax(pivotAngleRadians);
-        double dt = opMode.time - profile_init_time;
-        if (!profiler.isOver()) {
-            controller.setSetPoint(profiler.motion_profile_pos(dt) + coax);
-            power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
-            if (goingDown) {
-                powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
-                power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
-            }
-        } else {
-            if (profiler.isDone()) {
-                resetProfiler();
-                profiling = false;
-            }
-            if (manualPower != 0) {
-                controller.setSetPoint(motorLeft.getCurrentPosition());
-                power = manualPower / manualDivide;
-                target = motorLeft.getCurrentPosition() - coax;
-            } else {
-                controller.setSetPoint(target + coax);
-                power = staticF * controller.calculate(motorLeft.getCurrentPosition());
-            }
-        }
-        if (climbingPower) {
-            motorLeft.set(1);
-            motorRight.set(1);
-        } else {
-            motorLeft.set(power);
-            motorRight.set(power);
-        }
     }
 
     public void runToIKMM(double posMM) {
@@ -160,33 +121,98 @@ public class Slides {
         runTo(convert2Ticks(posMM));
     }
 
+    public void runManual(double manual) {
+        if (manual > powerMin || manual < -powerMin) {
+            manualPower = -manual;
+        } else {
+            manualPower = 0;
+        }
+    }
+
+    public void periodic(double pivotAngleRadians) {
+        spoolRadiusGear = spoolRadius * (1.0 / getGearing());
+        if (state == SlidesState.HIGH || state == SlidesState.LOW) {
+            motorRight.setInverted(false);
+            motorLeft.setInverted(true);
+            controller.setPIDF(p, i, d, f);
+            adjustStaticF(pivotAngleRadians);
+            adjustCoax(pivotAngleRadians);
+            double dt = opMode.time - profile_init_time;
+            if (!profiler.isOver()) {
+                controller.setSetPoint(profiler.motion_profile_pos(dt) + coax);
+                power = powerUp * controller.calculate(getPosition());
+                if (goingDown) {
+                    powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
+                    power = powerDown * controller.calculate(getPosition());
+                }
+            } else {
+                if (profiler.isDone()) {
+                    resetProfiler();
+                    profiling = false;
+                }
+                if (manualPower != 0) {
+                    controller.setSetPoint(getPosition());
+                    power = manualPower / manualDivide;
+                    target = getPosition() - coax;
+                } else {
+                    controller.setSetPoint(target + coax);
+                    power = staticF * controller.calculate(getPosition());
+                }
+            }
+            setPower(power);
+        }
+    }
+
+    public void neutral() {
+        shifter.setPosition(neutral);
+    }
+
+    public void high() {
+        shifter.setPosition(high);
+    }
+
+    public void low() {
+        shifter.setPosition(low);
+    }
+
     public double getCurrent() {
         return motorLeft.motorEx.getCurrent(CurrentUnit.MILLIAMPS) + motorRight.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
-
     public double getPosition() {
-        return motorLeft.getCurrentPosition();
+        return (motorLeft.getCurrentPosition());
     }
 
     public double getmmPosition() {
-        return Math.toRadians(getPosition() * 360 / -537.7) * spoolRadius;
+        return Math.toRadians(getPosition() * 360 / -ticksPerRev) * spoolRadiusGear;
     }
 
     public double getIKmmPosition() {
-        return Math.toRadians(getPosition() * 360 / -537.7) * spoolRadius + ikMMoffset;
+        return Math.toRadians(getPosition() * 360 / -ticksPerRev) * spoolRadiusGear + ikMMoffset;
     }
 
     public double convert2MM(double ticks) {
-        return Math.toRadians(ticks * 360 / -537.7) * spoolRadius;
+        return Math.toRadians(ticks * 360 / -ticksPerRev) * spoolRadiusGear;
     }
 
     public double convert2Ticks(double mm) {
-        return Math.toDegrees(mm/spoolRadius) * -537.7 / 360;
+        return Math.toDegrees(mm/spoolRadiusGear) * -ticksPerRev / 360;
     }
 
     public double getTarget() {
         return target;
+    }
+
+    public double getTargetMM() {
+        return convert2MM(target);
+    }
+
+    public double getGearing() {
+        if (state == SlidesState.LOW || state == SlidesState.LOW2HIGH)
+            return -7.2;
+        else {
+            return 5.0 / 4.0;
+        }
     }
 
     public double getControllerSetpoint() {
@@ -197,11 +223,16 @@ public class Slides {
         return controller.getPositionError();
     }
 
+    public void setPower(double power) {
+        motorLeft.set(power);
+        motorRight.set(power);
+    }
+
     public void resetProfiler() {
         profiler = new MotionProfiler(maxVelo, maxAccel);
     }
 
-    public void resetEncoder() {
+    public void resetEncoders() {
         motorLeft.resetEncoder();
         motorRight.resetEncoder();
     }
