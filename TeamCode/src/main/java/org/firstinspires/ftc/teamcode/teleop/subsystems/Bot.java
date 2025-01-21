@@ -269,13 +269,13 @@ public class Bot {
                 Thread.sleep(75);
                 pivot.slides.setPower(0);
                 pivot.slides.low(); //Engage high
-                while (pivot.slides.getCurrent() < 1000) {
+                while (pivot.slides.getCurrent() < 4000) {
                     pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
                 }
-                Thread.sleep(200);
+                Thread.sleep(75);
                 pivot.slides.setPower(0.3);
                 Thread.sleep(100);
-                pivot.slides.setPower(-1); //run it into the ground
+                pivot.slides.setPower(-0.6); //run it into the ground
                 Thread.sleep(200);
                 pivot.slides.setPower(0);
                 pivot.slides.resetEncoders();
@@ -295,14 +295,14 @@ public class Bot {
                 pivot.slides.setPower(0);
                 pivot.slides.neutral();
                 Thread.sleep(300);
-                pivot.slides.setPower(0.1); //Upwards (for high) to help it disengage
+                pivot.slides.setPower(0.1); //Upwards (for low) to help it disengage
                 Thread.sleep(75);
                 pivot.slides.setPower(0);
                 pivot.slides.high(); //Engage high
-                while (pivot.slides.getCurrent() < 1000) {
-                    pivot.slides.setPower(0.1); //Downwards (for low) to help it engage
+                while (pivot.slides.getCurrent() < 2000) {
+                    pivot.slides.setPower(0.2); //Downwards (for high) to help it engage
                 }
-                Thread.sleep(200);
+                Thread.sleep(75);
                 pivot.slides.setPower(-0.3);
                 Thread.sleep(100);
                 pivot.slides.setPower(1); //run it into the ground
@@ -556,10 +556,12 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -6.1)),//7.1
-                new SleepAction(0.3),
-                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
-                new SleepAction(0.3),
+//                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -6.1)),//7.1
+//                new SleepAction(0.3),
+//                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
+//                new SleepAction(0.3),
+                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -10.6)),//7.1
+                new SleepAction(0.4),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.1)
         );

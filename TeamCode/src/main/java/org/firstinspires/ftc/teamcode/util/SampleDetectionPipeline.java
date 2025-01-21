@@ -94,7 +94,7 @@ public class SampleDetectionPipeline
                 .setTargetColorRange(YELLOW)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
-                .setBlurSize(3)
+                .setBlurSize(1)
                 .build();
 
         portalBuilder = new VisionPortal.Builder();
