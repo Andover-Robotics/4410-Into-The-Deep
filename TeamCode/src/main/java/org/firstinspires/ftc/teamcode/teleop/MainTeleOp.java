@@ -59,6 +59,15 @@ public class MainTeleOp extends LinearOpMode {
 
             //STORAGE
             if (bot.state == Bot.BotState.STORAGE) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                    bot.pivot.goToResetPosition();
+                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                    bot.shiftUp();
+                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    bot.shiftDown();
+                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
@@ -207,13 +216,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
-                bot.pivot.goToResetPosition();
-            } if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                bot.shiftUp();
-            } if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                bot.shiftDown();
-            }
+
 
             // DRIVE
             drive();

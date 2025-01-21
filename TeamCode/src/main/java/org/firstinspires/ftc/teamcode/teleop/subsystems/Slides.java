@@ -27,7 +27,7 @@ public class Slides {
 
     public boolean climbingPower = false;
     private final double tolerance = 10;
-    private final double powerUp = 0.1;
+    private final double powerUp = 0.13;
     private double powerDown = 0.05;
     private final double manualDivide = 2;
     private final double powerMin = 0.1;
@@ -142,7 +142,7 @@ public class Slides {
                 controller.setSetPoint(profiler.motion_profile_pos(dt) + coax);
                 power = powerUp * controller.calculate(getPosition());
                 if (goingDown) {
-                    powerDown = powerUp - (0.05 * Math.sin(pivotAngleRadians));
+                    powerDown = powerUp - (0.01 * Math.sin(pivotAngleRadians));
                     power = powerDown * controller.calculate(getPosition());
                 }
             } else {

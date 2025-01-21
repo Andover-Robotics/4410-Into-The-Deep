@@ -82,7 +82,7 @@ public class HPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
-                .strafeToConstantHeading(new Vector2d(-1, 50), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
+                .strafeToConstantHeading(new Vector2d(-1, 60), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
                 .strafeToConstantHeading(new Vector2d(-1,27), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 200))
                 .strafeToConstantHeading(new Vector2d(6,27), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 120))
 

@@ -55,7 +55,7 @@ public class Pivot {
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
     // Heights for positions millimeters higher than pivot point
-    public static double highBucketHeight = 34.35 * inches2mm,
+    public static double highBucketHeight = 35.4 * inches2mm,
             lowBucketHeight = 24 * inches2mm,
             highChamberHeight = 14.4 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
@@ -86,7 +86,7 @@ public class Pivot {
             teleopWallIntakeX = -7.1 * inches2mm,
             autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
-    frontAutoIntakeX = 17 * inches2mm,
+    frontAutoIntakeX = 19 * inches2mm,
     subAutoIntakeX = 13 * inches2mm,
     pushIntakeX = 21 * inches2mm,
 
@@ -448,6 +448,14 @@ public class Pivot {
         targetX = postl3ClimbX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
+    }
+
+
+
+    public void changeXZ(double x, double z) {
+        targetX += x * inches2mm;
+        targetZ += z * inches2mm;
+        runToIKPosition();
     }
 
     public void changeZ(double inches) {

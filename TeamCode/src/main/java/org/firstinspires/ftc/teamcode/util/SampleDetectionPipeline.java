@@ -29,7 +29,7 @@ public class SampleDetectionPipeline
 {
 
     public int height = 360, width = 640;
-    public static int minArea = 9500, maxArea = 24000;
+    public static int minArea = 7500, maxArea = 19500;
     public int rounds;
     public static int strafePixelsPerInch = -39;
     public static int slidesPixelsPerInch = 31;
@@ -79,21 +79,21 @@ public class SampleDetectionPipeline
         blueLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(BLUE)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.75, 1, -1))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .setBlurSize(3)
                 .build();
 
         redLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(RED)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.75, 1, -1))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .setBlurSize(3)
                 .build();
 
         yellowLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(YELLOW)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.75, 1, -1))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .setBlurSize(3)
                 .build();
 

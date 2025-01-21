@@ -44,7 +44,7 @@ public class Bot {
     public double heading = 0.0;
     private MecanumDrive drive;
 
-    public static int detectionCounter;
+    public static int detectionCounter, searchCounter;
 
     public SampleDetectionPipeline pipeline;
 
@@ -93,7 +93,7 @@ public class Bot {
     }
 
     public void alignClaw() {
-        pivot.arm.setRoll(pipeline.getAngle());
+        pivot.arm.setRollPitch(pipeline.getAngle(), pivot.arm.pitchGroundPickup);
     }
 
     public void scan() {
@@ -114,16 +114,19 @@ public class Bot {
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 4) {
+            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 4) || searchCounter > 9) {
+                searchCounter = 0;
                 return false;
             } else if (sampleYPos != 0 && pipeline.getAngle() != -1) {
                 scan();
                 updateSampleDrive();
                 detectionCounter++;
+                searchCounter++;
                 return true;
             } else {
                 scan();
                 updateSampleDrive();
+                searchCounter++;
                 return true;
             }
         }
@@ -145,7 +148,7 @@ public class Bot {
     public SequentialAction actionDetect() {
         return new SequentialAction(
                 new InstantAction(this::updateSampleDrive),
-                new InstantAction(this::updateSampleSlides),
+                //new InstantAction(this::updateSampleSlides),
                 new InstantAction(this::alignClaw)
         );
     }
@@ -553,11 +556,12 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(-7.1)),
-                new SleepAction(0.4),
-                new InstantAction(() -> pivot.changeZ(-3.5)),
+                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -6.1)),//7.1
                 new SleepAction(0.3),
-                new InstantAction(() -> gripper.close())
+                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
+                new SleepAction(0.3),
+                new InstantAction(() -> gripper.close()),
+                new SleepAction(0.1)
         );
     }
 
@@ -580,7 +584,7 @@ public class Bot {
                 new SleepAction(0.1),
                 new InstantAction(() -> pivot.subAutoIntake(true, true)),
                 new SleepAction(0.2),
-                new InstantAction(() -> pivot.arm.frontPickup())
+                new InstantAction(() -> pivot.arm.cv())
         );
     }
 
@@ -664,9 +668,9 @@ public class Bot {
     public SequentialAction actionPickDown() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(-4)),
-                new SleepAction(0.4),
+                new SleepAction(0.25),
                 new InstantAction(() -> gripper.close()),
-                new SleepAction(0.1)
+                new SleepAction(0.075)
         );
     }
 
@@ -758,10 +762,10 @@ public class Bot {
     public SequentialAction actionIntakeToHighBucket() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highBucket(true, false)),
-                new SleepAction(0.25),
+                new SleepAction(0.35),
                 new InstantAction(() -> pivot.highBucket(false, true)),
                 new InstantAction(() -> pivot.arm.outtakeUp()),
-                new SleepAction(0.5),
+                new SleepAction(0.55),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
@@ -824,7 +828,7 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
                 new SleepAction(0.1),
                 new InstantAction(() -> pivot.frontAutoIntake(true, false)),
-                new SleepAction(0.1),
+                new SleepAction(0.25),
                 new InstantAction(() -> pivot.frontAutoIntake(false, true)),
                 new SleepAction(0.3),
                 new InstantAction(() -> pivot.arm.frontPickup()),
