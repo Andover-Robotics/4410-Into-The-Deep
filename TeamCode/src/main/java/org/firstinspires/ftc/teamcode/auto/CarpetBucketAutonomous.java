@@ -54,11 +54,11 @@ public class CarpetBucketAutonomous extends LinearOpMode {
                         bot.actionBucketToFrontIntake()
                 ))
 
-                .strafeToLinearHeading(new Vector2d(46.5,45), Math.toRadians(-90)) //first intake pos
+                .strafeToLinearHeading(new Vector2d(46.5,41), Math.toRadians(-90)) //first intake pos
 
                 .build();
 
-        Action bucketAuto = drive.actionBuilder(new Pose2d(46.5, 45, -90))
+        Action bucketAuto = drive.actionBuilder(new Pose2d(46.5, 43, -90))
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown()
                 ))
