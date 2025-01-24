@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -56,6 +57,8 @@ public class Bot {
     public Gripper gripper;
     public Pivot pivot;
 
+    DigitalChannel breakBeam;
+
     // get bot instance
     public static Bot getInstance() {
         if (instance == null) {
@@ -85,6 +88,11 @@ public class Bot {
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
         sampleYPos = 0;
+        breakBeam = opMode.hardwareMap.get(DigitalChannel.class, "BreakBeam");
+    }
+
+    public boolean getBreakBeam() {
+        return breakBeam.getState();
     }
 
     public void openPipeline(boolean red, boolean blue, boolean yellow) {
@@ -494,10 +502,11 @@ public class Bot {
     public void frontIntakeToStorage() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.changeZ(2);
-                Thread.sleep(200);
+                pivot.changeZ(3.5);
+                Thread.sleep(125);
+                pivot.arm.outtakeHoriz();
+                Thread.sleep(75);
                 pivot.storage(false, true);
-                pivot.arm.frontPickupToStorage();
                 Thread.sleep(300);
                 pivot.storage(true, false);
                 Thread.sleep(300);
@@ -536,6 +545,17 @@ public class Bot {
                 pivot.changeZ(-pickDownUpValue);
                 Thread.sleep(200);
                 gripper.close();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void unPick() {
+        Thread thread = new Thread(() -> {
+            try {
+                gripper.open();
+                Thread.sleep(200);
+                pivot.changeZ(pickDownUpValue);
             } catch (InterruptedException ignored) {}
         });
         thread.start();
@@ -605,6 +625,10 @@ public class Bot {
             } catch (InterruptedException ignored) {}
         });
         thread.start();
+    }
+
+    public void openGripper() {
+        gripper.open();
     }
 
     public void wallIntakeClosed() {

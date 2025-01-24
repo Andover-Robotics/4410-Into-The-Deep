@@ -124,7 +124,11 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
                     bot.pickUp();
                     sleep(250);
-                    bot.frontIntakeToStorage();
+                    if (!bot.getBreakBeam()) {
+                        bot.frontIntakeToStorage();
+                    } else {
+                        bot.openGripper();
+                    }
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }
@@ -160,7 +164,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if (bot.state == Bot.BotState.HIGH_CHAMBER || bot.state == Bot.BotState.LOW_CHAMBER) {
-                bot.pivot.runManualIK(gp2.getLeftY());
+                bot.pivot.runManualIK(gp2.getLeftY() / 3);
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
@@ -242,6 +246,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Target Z", bot.pivot.targetZ);
             telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
             telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
+            telemetry.addData("\n\nHolding Sample:", bot.getBreakBeam());
             telemetry.update();
             bot.pivot.periodic();
         }
