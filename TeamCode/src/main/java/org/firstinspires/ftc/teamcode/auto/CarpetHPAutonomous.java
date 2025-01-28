@@ -46,7 +46,7 @@ public class CarpetHPAutonomous extends LinearOpMode {
                         bot.actionHighChamber()
                 ))
 
-                .strafeToLinearHeading(new Vector2d(1, 28), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 500))
+                .strafeToLinearHeading(new Vector2d(1, 28), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 100))
                 .stopAndAdd(new SequentialAction(
                         bot.actionFirstClipStorage(),
                         new SleepAction(0.1)
@@ -56,15 +56,15 @@ public class CarpetHPAutonomous extends LinearOpMode {
         Action zoom = drive.actionBuilder(new Pose2d(1, 28, Math.toRadians(-90)))
 
                 .afterTime(0.1, bot.actionSecondClipStorage())
-                .strafeToConstantHeading(new Vector2d(-42,42), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
-                .strafeToConstantHeading(new Vector2d(-38,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .strafeToConstantHeading(new Vector2d(-42,42), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 100))
+                .strafeToConstantHeading(new Vector2d(-38,16), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 100))
                 .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-47,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .strafeToConstantHeading(new Vector2d(-47,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 100))
 
                 //-45,33
                 .splineToConstantHeading(new Vector2d(-34,15),Math.toRadians(55))
                 .splineToConstantHeading(new Vector2d(-56,14),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-56,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .strafeToConstantHeading(new Vector2d(-56,48.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 100))
 
                 .splineToConstantHeading(new Vector2d(-44,16),Math.toRadians(45))
                 .afterTime(0.01, bot.actionWallIntakeOpen())
@@ -82,14 +82,14 @@ public class CarpetHPAutonomous extends LinearOpMode {
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-1, 60), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .strafeToConstantHeading(new Vector2d(-1,27), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 200))
-                .strafeToConstantHeading(new Vector2d(6,27), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 120))
+                .strafeToConstantHeading(new Vector2d(-1,27), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
+                .strafeToConstantHeading(new Vector2d(6,27), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 120))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
                 .afterTime(0.01, bot.actionClipWall())
 
-                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
+                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 100))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -99,13 +99,13 @@ public class CarpetHPAutonomous extends LinearOpMode {
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-10,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .splineToConstantHeading(new Vector2d(1,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 85))
+                .splineToConstantHeading(new Vector2d(1,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 85))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
                 .afterTime(0.01, bot.actionClipWall())
 
-                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 110))
+                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 100))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -115,13 +115,13 @@ public class CarpetHPAutonomous extends LinearOpMode {
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-10,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .splineToConstantHeading(new Vector2d(3,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
+                .splineToConstantHeading(new Vector2d(3,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 70))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
                 .afterTime(0.01, bot.actionClipWall())
 
-                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 110))
+                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 100))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -131,7 +131,7 @@ public class CarpetHPAutonomous extends LinearOpMode {
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
                 .strafeToConstantHeading(new Vector2d(-10,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-                .splineToConstantHeading(new Vector2d(5,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 70))
+                .splineToConstantHeading(new Vector2d(5,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 70))
 
                 .afterTime(0.1, bot.actionOpenGripper())
 
@@ -143,7 +143,7 @@ public class CarpetHPAutonomous extends LinearOpMode {
                         bot.actionSecondClipStorage()
                 ))
 
-                .strafeToLinearHeading(new Vector2d(-50,70),Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+                .strafeToLinearHeading(new Vector2d(-50,70),Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-80,500)) //PARK
 
                 .build();
 

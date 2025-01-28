@@ -25,7 +25,7 @@ import java.util.List;
 public class MainTeleOp extends LinearOpMode {
 
     private Bot bot;
-    private double driveSpeed = 1, driveMultiplier = 1;
+    private double driveSpeed = 1, driveMultiplier = 0.8;
     private GamepadEx gp1, gp2;
     private boolean fieldCentric, intakeCancel, clipCancel;
     private Thread thread;
