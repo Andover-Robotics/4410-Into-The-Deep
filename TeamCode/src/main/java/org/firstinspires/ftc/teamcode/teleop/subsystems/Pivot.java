@@ -35,6 +35,9 @@ public class Pivot {
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
 
 
+    int position;
+
+
     public double targetX, targetZ, slidesTarget, pivotIKTargetDegrees;
     public boolean pivotOff = false;
 
@@ -180,8 +183,9 @@ public class Pivot {
         runIKSlides();
     }
 
-    public void periodic() {
+    public void periodic(int position) {
         controller.setPID(p, i, d);
+        this.position = -position;
         int pivotPos = getPosition();
         double ff = calculateFeedForward();  // Calculate gravity compensation
         double dt = opMode.time - profile_init_time;
@@ -481,7 +485,7 @@ public class Pivot {
 
     public int getPosition() {
         // Get the current motor encoder position
-        return pivotMotor.getCurrentPosition();
+        return position;
     }
 
     public double getPivotAngleDegrees() {

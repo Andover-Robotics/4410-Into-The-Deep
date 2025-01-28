@@ -52,7 +52,7 @@ public class TrackingAutonomous extends LinearOpMode {
         );
 
         while(!isStarted()) {
-            bot.pivot.periodic();
+            bot.autoPeriodic();
             bot.scan();
 
             gp1.readButtons();

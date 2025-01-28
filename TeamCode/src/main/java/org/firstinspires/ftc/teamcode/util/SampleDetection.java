@@ -139,7 +139,7 @@ public class SampleDetection extends LinearOpMode
             telemetry.addData("area", bot.pipeline.getArea());
 
             telemetry.update();
-            bot.pivot.periodic();
+            bot.periodic();
         }
     }
 }

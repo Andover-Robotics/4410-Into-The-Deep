@@ -237,7 +237,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Pivot Power", bot.pivot.power);
 
             telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
-            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getIKmmPosition());
+            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getPosition());
             telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getControllerSetpoint());
             telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
             telemetry.addData("Slides Current", bot.pivot.slides.getCurrent());
@@ -248,7 +248,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
             telemetry.addData("\n\nHolding Sample:", bot.getBreakBeam());
             telemetry.update();
-            bot.pivot.periodic();
+            bot.periodic();
         }
     }
 

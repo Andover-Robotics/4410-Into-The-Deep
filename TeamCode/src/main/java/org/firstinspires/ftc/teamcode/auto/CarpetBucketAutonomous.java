@@ -164,7 +164,7 @@ public class CarpetBucketAutonomous extends LinearOpMode {
         bot.openPipeline(true, false, true);
 
         while(!isStarted()) {
-            bot.pivot.periodic();
+            bot.autoPeriodic();
 
             gp1.readButtons();
 

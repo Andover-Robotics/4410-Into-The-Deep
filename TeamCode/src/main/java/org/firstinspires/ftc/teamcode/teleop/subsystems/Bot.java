@@ -919,9 +919,17 @@ public class Bot {
     public class actionPeriodic implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            pivot.periodic();
+            pivot.periodic(fr.getCurrentPosition());
             return true;
         }
+    }
+
+    public void periodic() {
+        pivot.periodic(fr.getCurrentPosition());
+    }
+
+    public void autoPeriodic() {
+        pivot.periodic(-fr.getCurrentPosition());
     }
 
     public Action actionPeriodic() {

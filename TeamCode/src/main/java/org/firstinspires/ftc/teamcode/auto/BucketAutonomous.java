@@ -167,7 +167,7 @@ public class BucketAutonomous extends LinearOpMode {
         bot.openPipeline(true, false, true);
 
         while(!isStarted()) {
-            bot.pivot.periodic();
+            bot.autoPeriodic();
 
             gp1.readButtons();
 

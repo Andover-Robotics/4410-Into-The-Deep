@@ -50,7 +50,7 @@ public class DifferentialArmTester extends LinearOpMode {
             telemetry.addData("Current Pitch Position (dpad Up/Down)", bot.pivot.arm.pitchSetpoint);
 
             telemetry.update();
-            bot.pivot.periodic();
+            bot.periodic();
         }
     }
 

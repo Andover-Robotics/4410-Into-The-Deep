@@ -150,7 +150,7 @@ public class CarpetHPAutonomous extends LinearOpMode {
         //bot.openPipeline(true, false, false);
 
         while(!isStarted()) {
-            bot.pivot.periodic();
+            bot.autoPeriodic();
 
             gp1.readButtons();
 
