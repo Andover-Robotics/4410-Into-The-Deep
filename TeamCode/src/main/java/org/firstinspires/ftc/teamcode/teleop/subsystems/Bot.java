@@ -422,21 +422,21 @@ public class Bot {
         Thread thread = new Thread(() -> {
             try {
                 pivot.prel3Climb(true, false);
-                Thread.sleep(600);
+                Thread.sleep(200);
                 pivot.prel3Climb(false, true);
-                Thread.sleep(1700);
+                Thread.sleep(1500);
                 pivot.midl3Climb(true, false);
                 Thread.sleep(400);
                 pivot.arm.outtakeHoriz();
                 Thread.sleep(150);
                 pivot.midl3Climb(false, true);
-                Thread.sleep(1000);
+                Thread.sleep(250);
                 pivot.tiltedl3Climb(true, false);
                 Thread.sleep(800);
                 pivot.tiltedl3Climb(false, true);
                 Thread.sleep(1700);
                 pivot.backTiltedl3Climb(true, false);
-                Thread.sleep(1300);
+                Thread.sleep(1100);
                 pivot.postl3Climb(false, true);
                 Thread.sleep(1000);
                 pivot.postl3Climb(true, false);
@@ -788,10 +788,10 @@ public class Bot {
     public SequentialAction actionIntakeToHighBucket() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highBucket(true, false)),
-                new SleepAction(0.35),
+                new SleepAction(0.425),
                 new InstantAction(() -> pivot.highBucket(false, true)),
                 new InstantAction(() -> pivot.arm.outtakeUp()),
-                new SleepAction(0.55),
+                new SleepAction(0.65),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
@@ -919,7 +919,7 @@ public class Bot {
     public class actionPeriodic implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            pivot.periodic(fr.getCurrentPosition());
+            autoPeriodic();
             return true;
         }
     }

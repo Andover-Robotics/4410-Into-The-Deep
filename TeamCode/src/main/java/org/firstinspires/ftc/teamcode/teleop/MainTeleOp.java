@@ -123,7 +123,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
                     bot.pickUp();
-                    sleep(250);
+                    sleep(400);
                     if (!bot.getBreakBeam()) {
                         bot.frontIntakeToStorage();
                     } else {
@@ -247,6 +247,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
             telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
             telemetry.addData("\n\nHolding Sample:", bot.getBreakBeam());
+            telemetry.addData("\n\ndt current", bot.getMotorCurrent());
             telemetry.update();
             bot.periodic();
         }
