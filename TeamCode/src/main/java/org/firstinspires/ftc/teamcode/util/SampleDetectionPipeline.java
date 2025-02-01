@@ -31,7 +31,7 @@ public class SampleDetectionPipeline
     public int height = 360, width = 640;
     public static int minArea = 7500, maxArea = 19500;
     public int rounds;
-    public static int strafePixelsPerInch = -39;
+    public static int strafePixelsPerInch = -42;
     public static int slidesPixelsPerInch = 30;
     public static int slidesRescaledMax = 270;
     public static int strafeRescaledMax = 570;

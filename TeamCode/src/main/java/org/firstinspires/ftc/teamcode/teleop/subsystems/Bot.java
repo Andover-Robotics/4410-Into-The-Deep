@@ -491,6 +491,7 @@ public class Bot {
     public void bucketDrop() {
         Thread thread = new Thread(() -> {
             try {
+                pivot.arm.bucketDrop();
                 gripper.open();
                 Thread.sleep(400);
                 storage();
@@ -594,7 +595,8 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickUp() {
         return new SequentialAction(
-                new InstantAction(this::subAutoPickUp)
+                new InstantAction(this::subAutoPickUp),
+                new SleepAction(0.1)
         );
     }
 
@@ -677,7 +679,7 @@ public class Bot {
     public SequentialAction actionWallToHighChamber() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highChamber(true, false)),
-                new SleepAction(0.6),
+                new SleepAction(0.8),
                 new InstantAction(() -> pivot.highChamber(false, true)),
                 new SleepAction(0.05),
                 new InstantAction(() -> pivot.arm.outtakeUp()),
@@ -755,9 +757,10 @@ public class Bot {
 
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
+                new InstantAction(() -> pivot.arm.bucketDrop()),
                 new InstantAction(() -> gripper.open()),
                 new SleepAction(0.20),
-                new InstantAction(() -> pivot.arm.outtakeUp())
+                new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }
 
@@ -788,10 +791,11 @@ public class Bot {
     public SequentialAction actionIntakeToHighBucket() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highBucket(true, false)),
+                new InstantAction(() -> pivot.storage(false, true)),
                 new SleepAction(0.425),
                 new InstantAction(() -> pivot.highBucket(false, true)),
-                new InstantAction(() -> pivot.arm.outtakeUp()),
-                new SleepAction(0.65),
+                new InstantAction(() -> pivot.arm.outtakeDown()),
+                new SleepAction(0.70),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
@@ -804,8 +808,21 @@ public class Bot {
                 new InstantAction(() -> pivot.frontAutoIntake(false, true)),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new SleepAction(0.2),
-                new InstantAction(() -> pivot.frontAutoIntake(true, true)),
+                new InstantAction(() -> pivot.frontAutoIntake(true, false)),
                 new SleepAction(0.2),
+                new InstantAction(() -> state = BotState.FRONT_INTAKE)
+        );
+    }
+
+    public SequentialAction actionBucketToCVPosition() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.arm.frontPickup()),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.subAutoIntake(true, true)),
+                new SleepAction(0.3),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }
