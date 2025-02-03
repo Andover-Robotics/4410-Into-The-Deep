@@ -46,7 +46,7 @@ public class Pivot {
     // Constants for gravity compensation
     public static double STATIC_FF = 0.21; // main ff constant of the non-extending part
     public static double EXTENSION_FF = 0.000135; // main ff constant of the extending part
-    public static double GRAVITY = 9.81; // gravity :)
+    public static double GRAVITY = 9.81; // gravity :) jerry from lazer says that why do u need this lmao
     public static double ARM_LENGTH = 0.3; // m, length of the non extendo pivoting arm
     public static double EXTENSION_OFFSET = 0.05; // Extension starts from 0.15m
 
@@ -60,7 +60,7 @@ public class Pivot {
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 35.4 * inches2mm,
             lowBucketHeight = 24 * inches2mm,
-            highChamberHeight = 14.8 * inches2mm,
+            highChamberHeight = 14.4 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
             wallIntakeHeight = 2.7 * inches2mm,
@@ -71,7 +71,7 @@ public class Pivot {
 
     prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
-            postl2ClimbHeight = 5 * inches2mm,
+            postl2ClimbHeight = 4.5 * inches2mm,
 
     climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 30.5 * inches2mm,
@@ -95,7 +95,7 @@ public class Pivot {
 
     prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
-            postl2ClimbX = 7.5 * inches2mm,
+            postl2ClimbX = 6.84 * inches2mm,
 
     climbTransferX = 1.6 * inches2mm,
             prel3ClimbX = 0.1 * inches2mm,
@@ -169,13 +169,13 @@ public class Pivot {
     }
 
     public void runToIKPosition() { //runTo - NOT MANUAL IK
-        double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
+        pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
         runToDeg(pivotIKTargetDegrees);
         runIKSlides();
     }
 
     public void runPivotToIKPosition() { //runTo - NOT MANUAL IK
-        double pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
+        pivotIKTargetDegrees = calculateDegXZ(targetX, targetZ);
         runToDeg(pivotIKTargetDegrees);
     }
 

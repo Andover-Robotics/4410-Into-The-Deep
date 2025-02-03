@@ -60,7 +60,7 @@ public class MainTeleOp extends LinearOpMode {
             //STORAGE
             if (bot.state == Bot.BotState.STORAGE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
-                    bot.pivot.goToResetPosition();
+                    bot.goToReset();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     bot.shiftUp();
@@ -116,19 +116,19 @@ public class MainTeleOp extends LinearOpMode {
                     bot.frontIntakeToStorage();
                 }
 
-                bot.pivot.runManualIK(gp2.getLeftY());
-
+                bot.pivot.runManualIK(gp2.getLeftY() / 1.15);
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     bot.pickDown();
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
                     bot.pickUp();
-                    sleep(400);
-                    if (!bot.getBreakBeam()) {
-                        bot.frontIntakeToStorage();
-                    } else {
-                        bot.openGripper();
-                    }
+                    sleep(250);
+                    bot.frontIntakeToStorage();
+//                    if (!bot.getBreakBeam()) {
+//                        bot.frontIntakeToStorage();
+//                    } else {
+//                        bot.openGripper();
+//                    }
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }
@@ -164,7 +164,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if (bot.state == Bot.BotState.HIGH_CHAMBER || bot.state == Bot.BotState.LOW_CHAMBER) {
-                bot.pivot.runManualIK(gp2.getLeftY() / 3);
+                bot.pivot.runManualIK(gp2.getLeftY() / 1.15);
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     bot.storage();
                 }
@@ -179,6 +179,9 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
                     clipCancel = true;
                     bot.clipCancel();
+                }
+                if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2 ) {
+                    bot.openGripper();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                     bot.lowChamber();
@@ -219,7 +222,14 @@ public class MainTeleOp extends LinearOpMode {
                     bot.lowBucket();
                 }
             }
-
+            if (bot.state == Bot.BotState.RESETTING) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                    bot.resetSlides();
+                }
+                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                    bot.pivotStorage();
+                }
+            }
 
 
             // DRIVE

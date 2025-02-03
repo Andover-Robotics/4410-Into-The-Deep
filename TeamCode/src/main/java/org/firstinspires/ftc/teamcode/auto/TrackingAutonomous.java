@@ -82,8 +82,10 @@ public class TrackingAutonomous extends LinearOpMode {
                         new SequentialAction(
                                 bot.actionDetect(),
                                 drive.actionBuilder(new Pose2d(20.5, 0, Math.toRadians(180)))
-                                        .strafeToConstantHeading(new Vector2d(20.5, Bot.sampleYPos))
+                                        //.stopAndAdd(()-> )
+                                        .strafeToLinearHeading(new Vector2d(20.5, Bot.sampleYPos), Math.toRadians(Bot.angleOffset+180))
                                         .stopAndAdd(new SequentialAction(
+                                                new SleepAction(0.25),
                                                 bot.actionSubAutoPickDown(),
                                                 new SleepAction(0.25),
                                                 bot.actionSubAutoPickUp(),

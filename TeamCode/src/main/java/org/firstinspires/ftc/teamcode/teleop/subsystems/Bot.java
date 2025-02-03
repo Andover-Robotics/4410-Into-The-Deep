@@ -29,11 +29,11 @@ public class Bot {
         LOW_BUCKET, //low bucket
         HIGH_CHAMBER, //high chamber
         LOW_CHAMBER, //low chamber
-        REAR_INTAKE, //rear intake
         FRONT_INTAKE, //front intake
         WALL_INTAKE, //specimen intake from wall
         STORAGE, //starting config (18x18x18)
-        CLIMBING
+        CLIMBING,
+        RESETTING
     }
 
     public boolean first, second, third, fourth, fifth;
@@ -52,6 +52,7 @@ public class Bot {
     double pickDownUpValue = 3.75; //TELEOP ONLY (not auton)
 
     public static double sampleYPos = 0;
+    public static int angleOffset = 0;
 
     // Define subsystem objects
     public Gripper gripper;
@@ -110,10 +111,12 @@ public class Bot {
 
     public void resetSampleDrive() {
         sampleYPos = 0; //camera is sideways so X is Y
+        angleOffset = 0;
     }
 
     public void updateSampleDrive() {
         sampleYPos = pipeline.getX(); //camera is sideways so X is Y
+        angleOffset = (int) Math.round(-sampleYPos / 2.5);
     }
 
     public void updateSampleSlides() {
@@ -161,6 +164,15 @@ public class Bot {
         );
     }
 
+    public void goToReset() {
+        pivot.goToResetPosition();
+        state = BotState.RESETTING;
+    }
+
+    public void resetSlides() {
+        pivot.slides.resetEncoders();
+    }
+
     public void subAutoIntake() {
         Thread thread = new Thread(() -> {
             try {
@@ -185,6 +197,11 @@ public class Bot {
     public void initialize() {
         storage();
         pivot.slides.high();
+    }
+
+    public void pivotStorage() {
+        pivot.storage(true, true);
+        state = BotState.STORAGE;
     }
 
     public void storage() {
@@ -409,7 +426,7 @@ public class Bot {
                 pivot.postl2Climb(true, false);
                 Thread.sleep(175);
                 pivot.postl2Climb(false, true);
-                Thread.sleep(1650);
+                Thread.sleep(2150);
                 pivot.climbTransfer(true, false);
                 Thread.sleep(750);
                 pivot.climbTransfer(false, true);
@@ -436,7 +453,7 @@ public class Bot {
                 pivot.tiltedl3Climb(false, true);
                 Thread.sleep(1700);
                 pivot.backTiltedl3Climb(true, false);
-                Thread.sleep(1100);
+                Thread.sleep(500);
                 pivot.postl3Climb(false, true);
                 Thread.sleep(1000);
                 pivot.postl3Climb(true, false);
@@ -581,8 +598,8 @@ public class Bot {
 //                new SleepAction(0.3),
 //                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
 //                new SleepAction(0.3),
-                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -10.6)),//7.1
-                new SleepAction(0.4),
+                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -11)),//7.1
+                new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.1)
         );
@@ -668,7 +685,7 @@ public class Bot {
     public SequentialAction actionHighChamber() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highChamber(true, false)),
-                new SleepAction(0.3),
+                new SleepAction(0.25),
                 new InstantAction(() -> pivot.highChamber(false, true)),
                 new SleepAction(0.05),
                 new InstantAction(() -> pivot.arm.outtakeUp()),
@@ -698,7 +715,7 @@ public class Bot {
                 new InstantAction(() -> pivot.changeZ(-4)),
                 new SleepAction(0.25),
                 new InstantAction(() -> gripper.close()),
-                new SleepAction(0.075)
+                new SleepAction(0.125)
         );
     }
 
