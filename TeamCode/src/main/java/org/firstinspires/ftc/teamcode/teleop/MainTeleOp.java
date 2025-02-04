@@ -66,43 +66,44 @@ public class MainTeleOp extends LinearOpMode {
                     bot.teleopGoToReset();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                    bot.teleopShiftUp();
+                    runningActions.add(bot.teleopShiftUp());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    bot.teleopShiftDown();
+                    runningActions.add(bot.teleopShiftDown());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
-                    bot.teleopStorage();
+                    runningActions.add(bot.teleopStorage());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                    bot.teleopPrel2Climb();
+                    runningActions.add(bot.teleopPrel2Climb());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    bot.teleopFrontIntake();
+                    runningActions.add(bot.teleopFrontIntake());
                     intakeCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
-                        bot.teleopWallIntakeClosed();
+                        runningActions.add(bot.teleopWallIntakeClosed());
                     } else {
-                        bot.teleopWallIntakeOpen();
+                        runningActions.add(bot.teleopWallIntakeOpen());
                     }
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    bot.teleopLowChamber();
+                    runningActions.add(bot.teleopLowChamber());
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.teleopHighChamber();
+                    runningActions.add(bot.teleopHighChamber());
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    bot.teleopHighBucket();
+                    runningActions.add(bot.teleopHighBucket());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    bot.teleopLowBucket();
+                    runningActions.add(bot.teleopLowBucket());
                 }
             }
+
             if (bot.state == Bot.BotState.CLIMBING) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
                     runningActions.add(bot.teleopL2Climb());
@@ -117,7 +118,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if (bot.state == Bot.BotState.FRONT_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
-                    runningActions.add(bot.teleopFrontIntakeToStorage(false));
+                    runningActions.add(bot.teleopFrontIntakeToStorage());
                 }
 
                 bot.pivot.runManualIK(gp2.getLeftY() / 1.15);
@@ -125,7 +126,7 @@ public class MainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopPickDown());
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-                    runningActions.add(bot.teleopFrontIntakeToStorage(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
+                    runningActions.add(bot.teleopPickupFrontIntakeToStorage(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }

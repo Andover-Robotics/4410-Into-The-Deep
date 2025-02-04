@@ -508,7 +508,7 @@ public class Bot {
         return new SequentialAction(actions);
     }
 
-    public SequentialAction teleopFrontIntakeToStorage(boolean trigger) {
+    public SequentialAction teleopPickupFrontIntakeToStorage(boolean trigger) {
         List<Action> actions = new ArrayList<>();
         actions.add(teleopPickUp());
         actions.add(new SleepAction(0.325));
@@ -526,6 +526,23 @@ public class Bot {
         } else {
             actions.add(teleopOpenGripper());
         }
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopFrontIntakeToStorage() {
+        List<Action> actions = new ArrayList<>();
+        actions.add(teleopPickUp());
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> pivot.changeZ(3.5)));
+        actions.add(new SleepAction(0.125));
+        actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+        actions.add(new SleepAction(0.075));
+        actions.add(new InstantAction(() -> pivot.storage(false, true)));
+        actions.add(new SleepAction(0.3));
+        actions.add(new InstantAction(() -> pivot.storage(true, false)));
+        actions.add(new SleepAction(0.3));
+        actions.add(new InstantAction(() -> pivot.arm.storage()));
+        actions.add(new InstantAction(this::storage));
 
         return new SequentialAction(actions);
     }
