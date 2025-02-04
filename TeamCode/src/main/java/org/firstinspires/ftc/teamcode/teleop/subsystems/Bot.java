@@ -22,6 +22,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 
 import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Bot {
     public enum BotState {
@@ -96,6 +99,8 @@ public class Bot {
         return breakBeam.getState();
     }
 
+    //SAMPLE DETECTION
+
     public void openPipeline(boolean red, boolean blue, boolean yellow) {
         pipeline = new SampleDetectionPipeline(red, blue, yellow, opMode.hardwareMap);
         detectionCounter = 0;
@@ -161,6 +166,449 @@ public class Bot {
                 new InstantAction(this::updateSampleDrive),
                 //new InstantAction(this::updateSampleSlides),
                 new InstantAction(this::alignClaw)
+        );
+    }
+
+    //TELEOP ACTIONS
+
+    public void teleopGoToReset() {
+        pivot.goToResetPosition();
+        state = BotState.RESETTING;
+    }
+
+    public void teleopResetSlides() {
+        pivot.slides.resetEncoders();
+    }
+
+    public void teleopInitialize() {
+        teleopStorage();
+        pivot.slides.high();
+    }
+
+    public void teleopPivotStorage() {
+        pivot.storage(true, true);
+        state = BotState.STORAGE;
+    }
+
+    public SequentialAction teleopStorage() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> gripper.close()));
+
+        if (state == BotState.FRONT_INTAKE) {
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+        } else if (state == BotState.WALL_INTAKE) {
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new SleepAction(0.25));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else if (state == BotState.HIGH_BUCKET) {
+            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.45));
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else if (state == BotState.HIGH_CHAMBER) {
+            actions.add(new InstantAction(() -> pivot.highChamberTransfer(false, true)));
+            actions.add(new SleepAction(0.05));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+            actions.add(new InstantAction(() -> pivot.highChamberTransfer(true, false)));
+            actions.add(new SleepAction(0.4));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.5));
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else {
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.4));
+            actions.add(new InstantAction(() -> pivot.storage(true, false)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        }
+
+        actions.add(new InstantAction(() -> state = BotState.STORAGE));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopStorageOpenGripper() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> gripper.open()));
+
+        if (state == BotState.FRONT_INTAKE) {
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+        } else if (state == BotState.WALL_INTAKE) {
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new SleepAction(0.25));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else if (state == BotState.HIGH_BUCKET) {
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.9));
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else if (state == BotState.HIGH_CHAMBER) {
+            actions.add(new InstantAction(() -> pivot.highChamberTransfer(false, true)));
+            actions.add(new SleepAction(0.05));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+            actions.add(new InstantAction(() -> pivot.highChamberTransfer(true, false)));
+            actions.add(new SleepAction(0.4));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.5));
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else {
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.4));
+            actions.add(new InstantAction(() -> pivot.storage(true, false)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        }
+
+        actions.add(new InstantAction(() -> state = BotState.STORAGE));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopShiftDown() {
+        List<Action> actions = new ArrayList<>();
+
+        if (pivot.slides.state == Slides.SlidesState.HIGH) {
+            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.HIGH2LOW));
+            actions.add(new InstantAction(() -> pivot.goToResetPosition()));
+            actions.add(new SleepAction(0.25));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
+            actions.add(new InstantAction(() -> pivot.slides.neutral()));
+            actions.add(new SleepAction(0.3));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(-0.1)));
+            actions.add(new SleepAction(0.075));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
+            actions.add(new InstantAction(() -> pivot.slides.low()));
+            actions.add(new InstantAction(() -> {
+                while (pivot.slides.getCurrent() < 4000) {
+                    pivot.slides.setPower(-0.5);
+                }
+            }));
+            actions.add(new SleepAction(0.075));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0.3)));
+            actions.add(new SleepAction(0.1));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(-0.6)));
+            actions.add(new SleepAction(0.2));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
+            actions.add(new InstantAction(() -> pivot.slides.resetEncoders()));
+            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.LOW));
+        }
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopShiftUp() {
+        List<Action> actions = new ArrayList<>();
+
+        if (pivot.slides.state == Slides.SlidesState.LOW) {
+            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.LOW2HIGH));
+            actions.add(new InstantAction(() -> pivot.goToResetPosition()));
+            actions.add(new SleepAction(0.25));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
+            actions.add(new InstantAction(() -> pivot.slides.neutral()));
+            actions.add(new SleepAction(0.3));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0.1)));
+            actions.add(new SleepAction(0.075));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
+            actions.add(new InstantAction(() -> pivot.slides.high()));
+            actions.add(new InstantAction(() -> {
+                while (pivot.slides.getCurrent() < 2000) {
+                    pivot.slides.setPower(0.2);
+                }
+            }));
+            actions.add(new SleepAction(0.075));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(-0.3)));
+            actions.add(new SleepAction(0.1));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(1)));
+            actions.add(new SleepAction(0.1));
+            actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
+            actions.add(new InstantAction(() -> pivot.slides.resetEncoders()));
+            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.HIGH));
+        }
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopLowBucket() {
+        List<Action> actions = new ArrayList<>();
+
+        if (state == BotState.HIGH_BUCKET || state == BotState.HIGH_CHAMBER) {
+            actions.add(new InstantAction(() -> pivot.arm.vertical()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.25));
+        }
+
+        actions.add(new InstantAction(() -> pivot.lowBucket(true, false)));
+        actions.add(new SleepAction(0.3));
+        actions.add(new InstantAction(() -> pivot.lowBucket(false, true)));
+        actions.add(new SleepAction(0.125));
+        actions.add(new InstantAction(() -> pivot.arm.bucket()));
+        actions.add(new InstantAction(() -> state = BotState.LOW_BUCKET));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopHighBucket() {
+        List<Action> actions = new ArrayList<>();
+
+        if (state == BotState.LOW_BUCKET) {
+            actions.add(new InstantAction(() -> pivot.arm.vertical()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
+            actions.add(new SleepAction(0.25));
+        } else {
+            actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
+            actions.add(new SleepAction(0.3));
+        }
+
+        actions.add(new InstantAction(() -> pivot.highBucket(false, true)));
+        actions.add(new SleepAction(0.65));
+        actions.add(new InstantAction(() -> pivot.arm.bucket()));
+        actions.add(new InstantAction(() -> state = BotState.HIGH_BUCKET));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopLowChamber() {
+        List<Action> actions = new ArrayList<>();
+
+        if (state == BotState.HIGH_CHAMBER) {
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.4));
+        } else if (state == BotState.HIGH_BUCKET) {
+            actions.add(new InstantAction(this::storage));
+            actions.add(new SleepAction(0.6));
+        }
+
+        actions.add(new InstantAction(() -> pivot.lowChamber(true, false)));
+        actions.add(new SleepAction(0.25));
+        actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+        actions.add(new InstantAction(() -> pivot.lowChamber(false, true)));
+        actions.add(new InstantAction(() -> state = BotState.LOW_CHAMBER));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopHighChamber() {
+        List<Action> actions = new ArrayList<>();
+
+        if (state == BotState.LOW_CHAMBER) {
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.4));
+        } else if (state == BotState.HIGH_BUCKET) {
+            actions.add(new InstantAction(this::storage));
+            actions.add(new SleepAction(0.6));
+        }
+
+        actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+        actions.add(new InstantAction(() -> pivot.highChamber(true, false)));
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> pivot.highChamber(false, true)));
+        actions.add(new InstantAction(() -> state = BotState.HIGH_CHAMBER));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopPrel2Climb() {
+        List<Action> actions = new ArrayList<>();
+
+        if (state != BotState.STORAGE) {
+            actions.add(new InstantAction(this::storage));
+            actions.add(new SleepAction(0.5));
+        }
+
+        actions.add(new InstantAction(() -> pivot.arm.bucket()));
+        actions.add(new InstantAction(() -> pivot.prel2Climb(true, false)));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.prel2Climb(false, true)));
+        actions.add(new InstantAction(() -> state = BotState.CLIMBING));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopL2Climb() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> pivot.midl2Climb(false, true)));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.postl2Climb(true, false)));
+        actions.add(new SleepAction(0.175));
+        actions.add(new InstantAction(() -> pivot.postl2Climb(false, true)));
+        actions.add(new SleepAction(2.15));
+        actions.add(new InstantAction(() -> pivot.climbTransfer(true, false)));
+        actions.add(new SleepAction(0.75));
+        actions.add(new InstantAction(() -> pivot.climbTransfer(false, true)));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopL3Climb() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> pivot.prel3Climb(true, false)));
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> pivot.prel3Climb(false, true)));
+        actions.add(new SleepAction(1.5));
+        actions.add(new InstantAction(() -> pivot.midl3Climb(true, false)));
+        actions.add(new SleepAction(0.4));
+        actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.midl3Climb(false, true)));
+        actions.add(new SleepAction(0.25));
+        actions.add(new InstantAction(() -> pivot.tiltedl3Climb(true, false)));
+        actions.add(new SleepAction(0.8));
+        actions.add(new InstantAction(() -> pivot.tiltedl3Climb(false, true)));
+        actions.add(new SleepAction(1.7));
+        actions.add(new InstantAction(() -> pivot.backTiltedl3Climb(true, false)));
+        actions.add(new SleepAction(0.5));
+        actions.add(new InstantAction(() -> pivot.postl3Climb(false, true)));
+        actions.add(new SleepAction(1));
+        actions.add(new InstantAction(() -> pivot.postl3Climb(true, false)));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopClipCancel() {
+        List<Action> actions = new ArrayList<>();
+        actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopClipDown() {
+        List<Action> actions = new ArrayList<>();
+        actions.add(new InstantAction(() -> pivot.arm.outtakeDown()));
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopClipStorage() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> gripper.open()));
+        actions.add(new SleepAction(0.35));
+        actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+        actions.add(teleopStorageOpenGripper());
+        actions.add(new SleepAction(0.3));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopBucketDrop() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> pivot.arm.bucketDrop()));
+        actions.add(new InstantAction(() -> gripper.open()));
+        actions.add(new SleepAction(0.4));
+        actions.add(new InstantAction(this::storage));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopFrontIntakeToStorage(boolean trigger) {
+        List<Action> actions = new ArrayList<>();
+        actions.add(teleopPickUp());
+        actions.add(new SleepAction(0.325));
+        if (!getBreakBeam() || trigger) {
+            actions.add(new InstantAction(() -> pivot.changeZ(3.5)));
+            actions.add(new SleepAction(0.125));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+            actions.add(new SleepAction(0.075));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.3));
+            actions.add(new InstantAction(() -> pivot.storage(true, false)));
+            actions.add(new SleepAction(0.3));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+            actions.add(new InstantAction(this::storage));
+        } else {
+            actions.add(teleopOpenGripper());
+        }
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopFrontIntake() {
+        List<Action> actions = new ArrayList<>();
+
+        if (state == BotState.LOW_CHAMBER || state == BotState.HIGH_CHAMBER) {
+            actions.add(new InstantAction(this::storage));
+            actions.add(new SleepAction(0.225));
+        }
+        actions.add(new InstantAction(() -> gripper.open()));
+        actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+        actions.add(new SleepAction(0.1));
+        actions.add(new InstantAction(() -> pivot.frontIntakeStorage(true, false)));
+        actions.add(new SleepAction(0.1));
+        actions.add(new InstantAction(() -> pivot.frontIntake(true, true)));
+        actions.add(new SleepAction(0.3));
+        actions.add(new InstantAction(() -> pivot.arm.frontPickup()));
+        actions.add(new InstantAction(() -> state = BotState.FRONT_INTAKE));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopPickDown() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> pivot.changeZ(-pickDownUpValue)));
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> gripper.close()));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopUnPick() {
+        List<Action> actions = new ArrayList<>();
+
+        actions.add(new InstantAction(() -> gripper.open()));
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> pivot.changeZ(pickDownUpValue)));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopPickUp() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.changeZ(pickDownUpValue))
+        );
+    }
+
+    public SequentialAction teleopWallIntakeOpen() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.teleopWallIntake(true, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> {
+                    pivot.arm.wallPickup();
+                    gripper.open();
+                    state = BotState.WALL_INTAKE;
+                })
+        );
+    }
+
+    public SequentialAction teleopOpenGripper() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open())
+        );
+    }
+
+    public SequentialAction teleopCloseGripper() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close())
+        );
+    }
+
+    public SequentialAction teleopWallIntakeClosed() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.teleopWallIntake(true, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> {
+                    pivot.arm.wallPickup();
+                    state = BotState.WALL_INTAKE;
+                })
         );
     }
 
@@ -401,6 +849,26 @@ public class Bot {
         thread.start();
     }
 
+    public void highChamber() {
+        Thread thread = new Thread(() -> {
+            try {
+                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
+                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+                    Thread.sleep(400);
+                } else if (state == BotState.HIGH_BUCKET) {
+                    storage();
+                    Thread.sleep(600);
+                }
+                pivot.arm.outtakeUp();
+                pivot.highChamber(true, false);
+                Thread.sleep(200);
+                pivot.highChamber(false, true);
+                state = BotState.HIGH_CHAMBER;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
     public void prel2Climb() {
         Thread thread = new Thread(() -> {
             try {
@@ -461,27 +929,6 @@ public class Bot {
         });
         thread.start();
     }
-
-    public void highChamber() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
-                    pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(400);
-                } else if (state == BotState.HIGH_BUCKET) {
-                    storage();
-                    Thread.sleep(600);
-                }
-                pivot.arm.outtakeUp();
-                pivot.highChamber(true, false);
-                Thread.sleep(200);
-                pivot.highChamber(false, true);
-                state = BotState.HIGH_CHAMBER;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
 
     public void clipCancel() {
         pivot.arm.outtakeUp();
@@ -592,41 +1039,8 @@ public class Bot {
         thread.start();
     }
 
-    public SequentialAction actionSubAutoPickDown() {
-        return new SequentialAction(
-//                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -6.1)),//7.1
-//                new SleepAction(0.3),
-//                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
-//                new SleepAction(0.3),
-                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -11)),//7.1
-                new SleepAction(0.55),
-                new InstantAction(() -> gripper.close()),
-                new SleepAction(0.1)
-        );
-    }
-
     public void subAutoPickUp() {
         pivot.changeZ(4);
-    }
-
-
-    public SequentialAction actionSubAutoPickUp() {
-        return new SequentialAction(
-                new InstantAction(this::subAutoPickUp),
-                new SleepAction(0.1)
-        );
-    }
-
-    public SequentialAction actionSubAutoIntake() {
-        return new SequentialAction(
-                new InstantAction(() -> gripper.open()),
-                new InstantAction(() -> pivot.arm.frontPickupToStorage()),
-                new InstantAction(() -> pivot.frontIntakeStorage(true, false)),
-                new SleepAction(0.1),
-                new InstantAction(() -> pivot.subAutoIntake(true, true)),
-                new SleepAction(0.2),
-                new InstantAction(() -> pivot.arm.cv())
-        );
     }
 
     public void pickUp() {
@@ -661,6 +1075,40 @@ public class Bot {
             } catch (InterruptedException ignored) {}
         });
         thread.start();
+    }
+
+    //FOR AUTONOMOUS
+
+    public SequentialAction actionSubAutoPickDown() {
+        return new SequentialAction(
+//                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -6.1)),//7.1
+//                new SleepAction(0.3),
+//                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
+//                new SleepAction(0.3),
+                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -11)),//7.1
+                new SleepAction(0.55),
+                new InstantAction(() -> gripper.close()),
+                new SleepAction(0.1)
+        );
+    }
+
+    public SequentialAction actionSubAutoPickUp() {
+        return new SequentialAction(
+                new InstantAction(this::subAutoPickUp),
+                new SleepAction(0.1)
+        );
+    }
+
+    public SequentialAction actionSubAutoIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.arm.frontPickupToStorage()),
+                new InstantAction(() -> pivot.frontIntakeStorage(true, false)),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.subAutoIntake(true, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.arm.cv())
+        );
     }
 
     public SequentialAction actionSubPark() {
