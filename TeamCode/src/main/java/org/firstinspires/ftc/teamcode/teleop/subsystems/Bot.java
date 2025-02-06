@@ -62,6 +62,7 @@ public class Bot {
     public Pivot pivot;
 
     DigitalChannel breakBeam;
+    public boolean holding;
 
     // get bot instance
     public static Bot getInstance() {
@@ -96,7 +97,15 @@ public class Bot {
     }
 
     public boolean getBreakBeam() {
+        return !breakBeam.getState();
+    }
+
+    public boolean isEmpty() {
         return breakBeam.getState();
+    }
+
+    public void saveBreakBeam() {
+        holding = getBreakBeam();
     }
 
     //SAMPLE DETECTION
@@ -512,7 +521,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         actions.add(teleopPickUp());
         actions.add(new SleepAction(0.325));
-        if (!getBreakBeam() || trigger) {
+        if (getBreakBeam() || trigger) {
             actions.add(new InstantAction(() -> pivot.changeZ(3.5)));
             actions.add(new SleepAction(0.125));
             actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
@@ -1098,10 +1107,6 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-//                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -6.1)),//7.1
-//                new SleepAction(0.3),
-//                new InstantAction(() -> pivot.changeZ(-4.5)),//3.5
-//                new SleepAction(0.3),
                 new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -11)),//7.1
                 new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
