@@ -38,7 +38,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
         bot.state = Bot.BotState.STORAGE;
         bot.storage();
 
-        Pose2d initialPose = new Pose2d(9, 63, Math.toRadians(-90));
+        Pose2d initialPose = new Pose2d(9, 63, Math.toRadians(-90)); //TODO NEED TO CHANGE TO ONE TILE OVER
 
         Pose2d firstSample = new Pose2d(47.3, 47, Math.toRadians(-90));
         Pose2d secondSample = new Pose2d(61, 44.25, Math.toRadians(-88));
