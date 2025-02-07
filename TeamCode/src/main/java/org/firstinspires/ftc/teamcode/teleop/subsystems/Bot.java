@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -97,11 +98,13 @@ public class Bot {
     }
 
     public boolean getBreakBeam() {
-        return !breakBeam.getState();
+//        return !breakBeam.getState(); //TODO uncomment when bb is fixed
+        return false; //hardcoded holding
     }
 
     public boolean isEmpty() {
-        return breakBeam.getState();
+        //return breakBeam.getState(); //TODO uncomment when bb is fixed
+        return false; //hardcoded holding
     }
 
     public void saveBreakBeam() {
@@ -1518,5 +1521,11 @@ public class Bot {
 
     public void setHeading (double heading) {
         this.heading = heading;
+    }
+
+    public static double vectorDiff(Vector2d v1, Vector2d v2) {
+        double dx = v1.x - v2.x;
+        double dy = v1.y - v2.y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }
