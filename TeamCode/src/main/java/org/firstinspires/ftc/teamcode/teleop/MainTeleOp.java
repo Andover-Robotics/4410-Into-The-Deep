@@ -93,7 +93,8 @@ public class MainTeleOp extends LinearOpMode {
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    runningActions.add(bot.teleopHighChamber());
+//                    runningActions.add(bot.teleopHighChamber());// TODO: TEST SLIDES CLIPPING
+                    runningActions.add(bot.teleopSlidesHighChamber());
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
@@ -121,7 +122,7 @@ public class MainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                 }
 
-                bot.pivot.runManualIK(gp2.getLeftY() / 1.15);
+                bot.pivot.runManualIK(gp2.getLeftY() / 1.1);
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopPickDown());
                 }
@@ -168,17 +169,29 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+//                    // runningActions.add(bot.teleopClipDown()); // Uncomment if needed
+//                }
+//                if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
+//                    runningActions.add(bot.teleopClipStorage());
+//                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
+//                    clipCancel = false;
+//                }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
+//                    clipCancel = true;
+//                    runningActions.add(bot.teleopClipCancel());
+//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    // runningActions.add(bot.teleopClipDown()); // Uncomment if needed
+                    runningActions.add(bot.teleopSlidesClipDown());
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
-                    runningActions.add(bot.teleopClipStorage());
+                    runningActions.add(bot.teleopSlidesClipStorage());
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
                     clipCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
                     clipCancel = true;
-                    runningActions.add(bot.teleopClipCancel());
+                    runningActions.add(bot.teleopSlidesClipCancel());
                 }
                 if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
                     runningActions.add(bot.teleopOpenGripper());

@@ -57,6 +57,8 @@ public class Pivot {
     public boolean manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
+    public static double slidesClippingHeightDelta = 7;
+
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 35.4 * inches2mm,
             lowBucketHeight = 24 * inches2mm,
@@ -64,6 +66,8 @@ public class Pivot {
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
             wallIntakeHeight = 2.7 * inches2mm,
+
+    slidesHighChamberHeight = 20.5 * inches2mm,
 
     frontAutoIntakeHeight = 5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm,
@@ -75,7 +79,7 @@ public class Pivot {
 
     climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 30.5 * inches2mm,
-            midl3ClimbHeight = 25 * inches2mm,
+            midl3ClimbHeight = 22 * inches2mm,
             tiltedl3ClimbHeight = 10.5 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 5 * inches2mm;
@@ -89,6 +93,8 @@ public class Pivot {
             teleopWallIntakeX = -7.1 * inches2mm,
             autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
+    slidesHighChamberX = 3.5 * inches2mm,
+
     frontAutoIntakeX = 19 * inches2mm,
     subAutoIntakeX = 13 * inches2mm,
     pushIntakeX = 21 * inches2mm,
@@ -99,7 +105,7 @@ public class Pivot {
 
     climbTransferX = 1.6 * inches2mm,
             prel3ClimbX = 0.1 * inches2mm,
-            midl3ClimbX = 6 * inches2mm,
+            midl3ClimbX = 5.1 * inches2mm,
             tiltedl3ClimbX = -10.5 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
             postl3ClimbX = 0.5 * inches2mm;
@@ -284,6 +290,21 @@ public class Pivot {
 
     public void manualRunToDeg(double angle) {
         manualRunTo(degreestoTicks(angle));
+    }
+
+    public void slidesHighChamber(boolean pivot, boolean slides) {
+        targetZ = slidesHighChamberHeight;
+        targetX = slidesHighChamberX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void slidesClip() {
+        changeZ(-slidesClippingHeightDelta);
+    }
+
+    public void slidesUnClip() {
+        changeZ(slidesClippingHeightDelta);
     }
 
     public void goToResetPosition() {

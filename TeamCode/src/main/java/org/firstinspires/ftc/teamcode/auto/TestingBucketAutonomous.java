@@ -214,6 +214,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                 new ActionHelpersJava.RaceParallelCommand(
                         bot.actionPeriodic(),
                         new SequentialAction(
+                                bot.actionResetPipeline(),
                                 preloadSample,
                                 firstSamplePickup
                         )
@@ -224,6 +225,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
             Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
                     bot.actionPeriodic(),
                     new SequentialAction(
+                            bot.actionResetPipeline(),
                             firstSampleCVPickup,
                             bot.actionDetectWait()
                     )
@@ -282,6 +284,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
             Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
                     bot.actionPeriodic(),
                     new SequentialAction(
+                            bot.actionResetPipeline(),
                             secondSampleCVPickup,
                             bot.actionDetectWait()
                     )
@@ -325,6 +328,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
         Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
                 bot.actionPeriodic(),
                 new SequentialAction(
+                        bot.actionResetPipeline(),
                         thirdSampleToSub,
                         bot.actionDetectWait()
                 )
@@ -369,6 +373,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
                                         .build(),
                                 backToSub,
+                                bot.actionResetPipeline(),
                                 bot.actionDetectWait()
                         ),
                         telemetryPacket -> {
@@ -383,6 +388,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                 new ActionHelpersJava.RaceParallelCommand(
                         bot.actionPeriodic(),
                         new SequentialAction(
+                                bot.actionResetPipeline(),
                                 bot.actionDetectWait()
                         )
                 )
