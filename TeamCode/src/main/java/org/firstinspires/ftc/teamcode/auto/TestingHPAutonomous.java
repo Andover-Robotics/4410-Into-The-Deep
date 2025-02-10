@@ -115,6 +115,8 @@ public class TestingHPAutonomous extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(0,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
                 .splineToConstantHeading(new Vector2d(3,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 80))
 
+                .strafeToConstantHeading(new Vector2d(0,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
+
                 .stopAndAdd(bot.actionOpenGripper())
 
                 .afterTime(0.01, bot.actionClipWall())

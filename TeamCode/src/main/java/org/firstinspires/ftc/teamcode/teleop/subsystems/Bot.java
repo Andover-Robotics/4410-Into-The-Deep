@@ -142,7 +142,7 @@ public class Bot {
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 8) || searchCounter > 9) {
+            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 8) || searchCounter > 14) {
                 searchCounter = 0;
                 return false;
             } else if (sampleYPos != 0 && pipeline.getAngle() != -1) {

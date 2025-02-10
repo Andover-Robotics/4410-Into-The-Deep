@@ -227,6 +227,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             firstSampleCVPickup,
+                            new SleepAction(0.8),
                             bot.actionDetectWait()
                     )
 
@@ -286,6 +287,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             secondSampleCVPickup,
+                            new SleepAction(0.8),
                             bot.actionDetectWait()
                     )
 
