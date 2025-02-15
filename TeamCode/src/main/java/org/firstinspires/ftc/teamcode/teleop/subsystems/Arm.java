@@ -109,7 +109,7 @@ public class Arm {
     }
 
     public void cv() {
-        setRollPitch(rollVertical, pitchGroundPickup-3);
+        setRollPitch(rollVertical, pitchGroundPickup-6);
     }
 
     public void rearPickup() {

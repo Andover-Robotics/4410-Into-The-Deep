@@ -20,14 +20,14 @@ public class Slides {
     private final Servo shifter;
     private PIDFController controller;
 
-    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.18 - staticFOffset;
+    public static double p = 0.09, i = 0, d = 0.0032, f = 0, staticFOffset = 0.07, gComp = 0.18 - staticFOffset;
     public static double staticF = 0;
     public static double ikMMoffset = 200;
     public static double neutral = 0.645, high = 0.77, low = 0.51;
 
     public boolean climbingPower = false;
     private final double tolerance = 10;
-    private final double powerUp = 0.13;
+    private final double powerUp = 0.16;
     private double powerDown = 0.05;
     private final double manualDivide = 2;
     private final double powerMin = 0.1;
@@ -41,10 +41,10 @@ public class Slides {
     public double power;
     private final OpMode opMode;
     private double target = 0;
-    private boolean goingDown = false;
+    public boolean goingDown = false;
     private double profile_init_time = 0;
 
-    public static double maxVelo = 30000, maxAccel = 20000;
+    public static double maxVelo = 40000, maxAccel = 20000;
     private MotionProfiler profiler = new MotionProfiler(maxVelo, maxAccel);
     public boolean profiling;
 
@@ -142,7 +142,7 @@ public class Slides {
                 controller.setSetPoint(profiler.motion_profile_pos(dt) + coax);
                 power = powerUp * controller.calculate(getPosition());
                 if (goingDown) {
-                    powerDown = powerUp - (0.01 * Math.sin(pivotAngleRadians));
+                    powerDown = (powerUp) - (0.01 * Math.sin(pivotAngleRadians));
                     power = powerDown * controller.calculate(getPosition());
                 }
             } else {
@@ -155,8 +155,12 @@ public class Slides {
                     power = manualPower / manualDivide;
                     target = getPosition() - coax;
                 } else {
-                    controller.setSetPoint(target + coax);
-                    power = staticF * controller.calculate(getPosition());
+                    if (getTargetMM() < 0.5 && getTargetMM() > -0.5) {
+                        power = 0;
+                    } else {
+                        controller.setSetPoint(target + coax);
+                        power = staticF * controller.calculate(getPosition());
+                    }
                 }
             }
             setPower(power);

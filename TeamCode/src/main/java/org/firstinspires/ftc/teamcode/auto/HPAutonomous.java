@@ -73,7 +73,7 @@ public class HPAutonomous extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(-63,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 80))
                 .build();
 
-        Action threeSpecimens = drive.actionBuilder(new Pose2d(-62.5, 53, Math.toRadians(-90)))
+        Action threeSpecimens = drive.actionBuilder(new Pose2d(-63, 53, Math.toRadians(-90)))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper()

@@ -98,13 +98,13 @@ public class Bot {
     }
 
     public boolean getBreakBeam() {
-//        return !breakBeam.getState(); //TODO uncomment when bb is fixed
-        return true; //hardcoded empty
+        return !breakBeam.getState(); //TODO uncomment when bb is fixed
+//        return true; //hardcoded empty
     }
 
     public boolean isEmpty() {
-        //return breakBeam.getState(); //TODO uncomment when bb is fixed
-        return true; //hardcoded empty
+        return breakBeam.getState(); //TODO uncomment when bb is fixed
+//        return true; //hardcoded empty
     }
 
     public void saveBreakBeam() {
@@ -1235,6 +1235,44 @@ public class Bot {
         );
     }
 
+    public SequentialAction actionWallToSlidesHighChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.slidesHighChamber(true, false)),
+                new SleepAction(0.4),
+                new InstantAction(() -> pivot.slidesHighChamber(false, true)),
+                new InstantAction(() -> pivot.arm.outtakeHoriz()),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction actionSlidesClipWall() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.arm.vertical()),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.autoWallIntake(false, true)),
+                new InstantAction(() -> pivot.arm.wallPickup()),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.autoWallIntake(true, false)),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction actionSlidesClipDown() {
+        List<Action> actions = new ArrayList<>();
+        actions.add(new InstantAction(() -> pivot.slidesClip()));
+        actions.add(new SleepAction(0.3));
+        actions.add(new InstantAction(() -> gripper.open()));
+        actions.add(new SleepAction(0.1));
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction actionSlidesClipStorage() {
+        List<Action> actions = new ArrayList<>();
+        actions.add(teleopStorageOpenGripper());
+        return new SequentialAction(actions);
+    }
+
     public SequentialAction actionPickUp() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(5))
@@ -1353,10 +1391,10 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.outtakeUp()),
                 new InstantAction(() -> gripper.open()),
-                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
+                new InstantAction(() -> pivot.storage(false, true)),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new SleepAction(0.2),
-                new InstantAction(() -> pivot.frontAutoIntake(true, false)),
+                new InstantAction(() -> pivot.frontAutoIntake(true, true)),
                 new SleepAction(0.2),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
@@ -1417,11 +1455,10 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
-                new SleepAction(0.1),
                 new InstantAction(() -> pivot.frontAutoIntake(true, false)),
-                new SleepAction(0.25),
+                new SleepAction(0.55),
                 new InstantAction(() -> pivot.frontAutoIntake(false, true)),
-                new SleepAction(0.3),
+                new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );

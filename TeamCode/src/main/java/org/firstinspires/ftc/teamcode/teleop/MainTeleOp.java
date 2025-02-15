@@ -276,6 +276,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
             telemetry.addData("Slides Current", bot.pivot.slides.getCurrent());
             telemetry.addData("Slides Power", bot.pivot.slides.power);
+            telemetry.addData("Going Down", bot.pivot.slides.goingDown);
             telemetry.addData("Target X", bot.pivot.targetX);
             telemetry.addData("Target Z", bot.pivot.targetZ);
             telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
