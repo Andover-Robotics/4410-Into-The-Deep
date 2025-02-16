@@ -491,7 +491,7 @@ public class Bot {
             actions.add(new SleepAction(0.6));
         }
 
-        actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+        actions.add(new InstantAction(() -> pivot.arm.chamberHoriz()));
         actions.add(new InstantAction(() -> pivot.slidesHighChamber(true, false)));
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> pivot.slidesHighChamber(false, true)));
@@ -1240,7 +1240,7 @@ public class Bot {
                 new InstantAction(() -> pivot.autoSlidesHighChamber(true, false)),
                 new SleepAction(0.4),
                 new InstantAction(() -> pivot.autoSlidesHighChamber(false, true)),
-                new InstantAction(() -> pivot.arm.outtakeHoriz()),
+                new InstantAction(() -> pivot.arm.chamberHoriz()),
                 new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
     }
