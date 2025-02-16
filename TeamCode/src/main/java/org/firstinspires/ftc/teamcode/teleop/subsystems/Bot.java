@@ -1237,9 +1237,9 @@ public class Bot {
 
     public SequentialAction actionWallToSlidesHighChamber() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.slidesHighChamber(true, false)),
+                new InstantAction(() -> pivot.autoSlidesHighChamber(true, false)),
                 new SleepAction(0.4),
-                new InstantAction(() -> pivot.slidesHighChamber(false, true)),
+                new InstantAction(() -> pivot.autoSlidesHighChamber(false, true)),
                 new InstantAction(() -> pivot.arm.outtakeHoriz()),
                 new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
@@ -1249,10 +1249,10 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.vertical()),
-                new SleepAction(0.2),
+                new SleepAction(0.05),
                 new InstantAction(() -> pivot.autoWallIntake(false, true)),
                 new InstantAction(() -> pivot.arm.wallPickup()),
-                new SleepAction(0.2),
+                new SleepAction(0.1),
                 new InstantAction(() -> pivot.autoWallIntake(true, false)),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
         );
@@ -1261,15 +1261,19 @@ public class Bot {
     public SequentialAction actionSlidesClipDown() {
         List<Action> actions = new ArrayList<>();
         actions.add(new InstantAction(() -> pivot.slidesClip()));
-        actions.add(new SleepAction(0.3));
+        actions.add(new SleepAction(0.4));
         actions.add(new InstantAction(() -> gripper.open()));
-        actions.add(new SleepAction(0.1));
+        actions.add(new SleepAction(0.05));
         return new SequentialAction(actions);
     }
 
     public SequentialAction actionSlidesClipStorage() {
         List<Action> actions = new ArrayList<>();
-        actions.add(teleopStorageOpenGripper());
+        actions.add(new InstantAction(()-> pivot.storage(false, true)));
+        actions.add(new InstantAction(()-> pivot.highChamberTransfer(true, false)));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(()-> pivot.storage(true, false)));
+        actions.add(new InstantAction(()-> pivot.arm.storage()));
         return new SequentialAction(actions);
     }
 

@@ -25,23 +25,23 @@ public class MeepMeepTesting {
                 //-23, 46
                         .strafeToLinearHeading(new Vector2d(4, 28), Math.toRadians(-90))
 
+//                .setReversed(true)
+//                .splineToConstantHeading(new Vector2d(-38, 26), Math.toRadians(-90))
 
-//                .strafeToConstantHeading(new Vector2d(-41,42))
-//                .strafeToConstantHeading(new Vector2d(-38,10))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-38, 26), Math.toRadians(-90))
-                        .setReversed(false)
-                .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(180))
-                .strafeToConstantHeading(new Vector2d(-46.9,53))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-41, 20), Math.toRadians(-90))
 
-                //-45,33
-                .splineToConstantHeading(new Vector2d(-26,18),Math.toRadians(100))
-                .splineToConstantHeading(new Vector2d(-56,14),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-56,53))
+                        .splineToConstantHeading(new Vector2d(-47,10), Math.toRadians(180))
+                        .strafeToConstantHeading(new Vector2d(-46.9,55))//aultVelConstraint, new ProfileAccelConstraint(-200, 300))
 
-                .splineToConstantHeading(new Vector2d(-44,16),Math.toRadians(45))
-                .splineToConstantHeading(new Vector2d(-62,10), Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-62.5,53))
+                        //-45,33
+                        .splineToConstantHeading(new Vector2d(-26,18),Math.toRadians(100))
+                        .splineToConstantHeading(new Vector2d(-58,14),Math.toRadians(0))//180
+                        .strafeToConstantHeading(new Vector2d(-58,58))//aultVelConstraint, new ProfileAccelConstraint(-200, 300))
+
+                        .splineToConstantHeading(new Vector2d(-40,14),Math.toRadians(100))
+                        .splineToConstantHeading(new Vector2d(-62,10), Math.toRadians(0))//-75
+                        .strafeToConstantHeading(new Vector2d(-62.5,52))//aultVelConstraint, new ProfileAccelConstraint(-25, 100))
 
                         .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-80))
 

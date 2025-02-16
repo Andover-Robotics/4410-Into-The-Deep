@@ -57,7 +57,7 @@ public class Pivot {
     public boolean manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
-    public static double slidesClippingHeightDelta = 7;
+    public static double slidesClippingHeightDelta = 7.5;
 
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 35.4 * inches2mm,
@@ -65,9 +65,9 @@ public class Pivot {
             highChamberHeight = 14.4 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
-            wallIntakeHeight = 2.7 * inches2mm,
+            wallIntakeHeight = 3 * inches2mm,
 
-    slidesHighChamberHeight = 20.5 * inches2mm,
+    slidesHighChamberHeight = 18.5 * inches2mm,
 
     frontAutoIntakeHeight = 4.25 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm,
@@ -93,7 +93,8 @@ public class Pivot {
             teleopWallIntakeX = -7.1 * inches2mm,
             autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
-    slidesHighChamberX = 3.5 * inches2mm,
+    slidesHighChamberX = 3.75 * inches2mm,
+    autoSlidesHighChamberX = 7.5 * inches2mm,
 
     frontAutoIntakeX = 19 * inches2mm,
     subAutoIntakeX = 13 * inches2mm,
@@ -295,6 +296,13 @@ public class Pivot {
     public void slidesHighChamber(boolean pivot, boolean slides) {
         targetZ = slidesHighChamberHeight;
         targetX = slidesHighChamberX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void autoSlidesHighChamber(boolean pivot, boolean slides) {
+        targetZ = slidesHighChamberHeight;
+        targetX = autoSlidesHighChamberX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }

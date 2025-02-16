@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -58,32 +59,56 @@ public class TestingHPAutonomous extends LinearOpMode {
 //                .strafeToConstantHeading(new Vector2d(-41,42), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 //                .strafeToConstantHeading(new Vector2d(-38,10), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 //                .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(0))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-41, 20), Math.toRadians(-90))
 
-                .splineToConstantHeading(new Vector2d(-47,10), Math.toRadians(180))
-                .strafeToConstantHeading(new Vector2d(-46.9,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+
+//                .setReversed(true)
+//                .splineToConstantHeading(new Vector2d(-40, 30), Math.toRadians(-70))
+//
+//                .splineToConstantHeading(new Vector2d(-47,12), Math.toRadians(180))
+//                .strafeToConstantHeading(new Vector2d(-46.9,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+//
+//                .splineToConstantHeading(new Vector2d(-30,18),Math.toRadians(-100))
+//                .splineToConstantHeading(new Vector2d(-56,14),Math.toRadians(90))
+//                .strafeToConstantHeading(new Vector2d(-56,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+//
+//                .splineToConstantHeading(new Vector2d(-40,16),Math.toRadians(-100))
+//                .splineToConstantHeading(new Vector2d(-62,10), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 80))
+//                .afterTime(0.01, bot.actionWallIntakeOpen())
+//                .strafeToConstantHeading(new Vector2d(-62.5,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-20, 80))
+
+
+//                .setReversed(true)
+//                .splineToConstantHeading(new Vector2d(-41, 24), Math.toRadians(-90))
+//
+//                .splineToConstantHeading(new Vector2d(-47,10), Math.toRadians(180))
+
+//                .setReversed(true)
+                .strafeToConstantHeading(new Vector2d(-42, 44))
+                .splineToConstantHeading(new Vector2d(-42, 20), Math.toRadians(-90))
+
+                .splineToConstantHeading(new Vector2d(-46,14), Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(-46,56.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 
                 //-45,33
                 .splineToConstantHeading(new Vector2d(-26,18),Math.toRadians(100))
-                .splineToConstantHeading(new Vector2d(-56,14),Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-56,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .splineToConstantHeading(new Vector2d(-58,14),Math.toRadians(0))//180
+                .strafeToConstantHeading(new Vector2d(-58,56), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 
-                .splineToConstantHeading(new Vector2d(-44,16),Math.toRadians(45))
-                .splineToConstantHeading(new Vector2d(-62,10), Math.toRadians(-75))
+                .splineToConstantHeading(new Vector2d(-40,14),Math.toRadians(100))
+                .splineToConstantHeading(new Vector2d(-63.8,10), Math.toRadians(0))//-75
                 .afterTime(0.01, bot.actionWallIntakeOpen())
-                .strafeToConstantHeading(new Vector2d(-62.5,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-20, 80))
+                .strafeToConstantHeading(new Vector2d(-64,52), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 100))
                 .build();
 
-        Action threeSpecimens = drive.actionBuilder(new Pose2d(-62.5, 53, Math.toRadians(-90)))
+        Action threeSpecimens = drive.actionBuilder(new Pose2d(-62.5, 52, Math.toRadians(-90)))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper()
                 ))
 
-                .afterTime(0.5, bot.actionWallToSlidesHighChamber())
-                .strafeTo(new Vector2d(-10, 45))
-                .splineToConstantHeading(new Vector2d(0,27.5), Math.toRadians(-85), drive.defaultVelConstraint, new ProfileAccelConstraint(-75, 110))
+                .afterTime(0.1, bot.actionWallToSlidesHighChamber())
+                .strafeTo(new Vector2d(-10, 48), drive.defaultVelConstraint, new ProfileAccelConstraint(-95, 150))
+                .splineToConstantHeading(new Vector2d(6,27), Math.toRadians(-85), drive.defaultVelConstraint, new ProfileAccelConstraint(-95, 140))
 
                 .stopAndAdd(bot.actionSlidesClipDown())
 
@@ -92,7 +117,8 @@ public class TestingHPAutonomous extends LinearOpMode {
 //                .setReversed(true)
 
 //                .splineToConstantHeading(new Vector2d(-43,49), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
-                .strafeToConstantHeading(new Vector2d(-43,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
+//                .strafeToConstantHeading(new Vector2d(-0,30), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 150))
+                .strafeToConstantHeading(new Vector2d(-43,53.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 150))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -101,7 +127,7 @@ public class TestingHPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionWallToSlidesHighChamber())
 
-                .splineToConstantHeading(new Vector2d(0,27.5), Math.toRadians(-85), drive.defaultVelConstraint, new ProfileAccelConstraint(-75, 110))
+                .splineToConstantHeading(new Vector2d(5.5,27), Math.toRadians(-95), drive.defaultVelConstraint, new ProfileAccelConstraint(-95, 130))
 
                 .stopAndAdd(bot.actionSlidesClipDown())
 
@@ -110,7 +136,8 @@ public class TestingHPAutonomous extends LinearOpMode {
 //                .setReversed(true)
 
 //                .splineToConstantHeading(new Vector2d(-43,49), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
-                .strafeToConstantHeading(new Vector2d(-43,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
+//                .strafeToConstantHeading(new Vector2d(5,30), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 150))
+                .strafeToConstantHeading(new Vector2d(-43,54), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 150))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -119,7 +146,7 @@ public class TestingHPAutonomous extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionWallToSlidesHighChamber())
 
-                .splineToConstantHeading(new Vector2d(0,27.5), Math.toRadians(-85), drive.defaultVelConstraint, new ProfileAccelConstraint(-75, 110))
+                .splineToConstantHeading(new Vector2d(5,27), Math.toRadians(-95), drive.defaultVelConstraint, new ProfileAccelConstraint(-95, 130))
 
                 .stopAndAdd(bot.actionSlidesClipDown())
 
@@ -128,7 +155,8 @@ public class TestingHPAutonomous extends LinearOpMode {
 //                .setReversed(true)
 
 //                .splineToConstantHeading(new Vector2d(-43,49), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
-                .strafeToConstantHeading(new Vector2d(-43,53), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
+//                .strafeToConstantHeading(new Vector2d(3,30), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 150))
+                .strafeToConstantHeading(new Vector2d(-43,54.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 150))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -136,7 +164,7 @@ public class TestingHPAutonomous extends LinearOpMode {
                 ))
                 .afterTime(0.01, bot.actionWallToSlidesHighChamber())
 
-                .splineToConstantHeading(new Vector2d(0,27.5), Math.toRadians(-85), drive.defaultVelConstraint, new ProfileAccelConstraint(-75, 110))
+                .splineToConstantHeading(new Vector2d(5,27), Math.toRadians(-95), drive.defaultVelConstraint, new ProfileAccelConstraint(-95, 130))
 
                 .stopAndAdd(bot.actionSlidesClipDown())
 
@@ -144,7 +172,7 @@ public class TestingHPAutonomous extends LinearOpMode {
                         bot.actionSlidesClipStorage()
                 ))
 
-                .strafeTo(new Vector2d(-50,70), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+                .strafeToLinearHeading(new Vector2d(-60,56), Math.toRadians(-45), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
 
                 .build();
 
