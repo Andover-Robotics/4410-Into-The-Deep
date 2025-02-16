@@ -35,6 +35,9 @@ public class SampleDetectionPipeline
     public static int slidesPixelsPerInch = 32;
     public static int slidesRescaledMax = 270;
     public static int strafeRescaledMax = 570;
+
+    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0./*334958 + 0.1*/, strafeMultiplier = 1.45;
+
     public static double pastStrafe = 0;
     public boolean red = false, blue = false, yellow = false;
     private final ColorBlobLocatorProcessor blueLocator;
@@ -172,12 +175,25 @@ public class SampleDetectionPipeline
 
     public double getX() {
         if (x != 0) {
-            double value = ((x + 320)/640.0 * strafeRescaledMax - (strafeRescaledMax-320))/strafePixelsPerInch;
-            value += Math.max(0, ((value - 3.5) * 0.5874 - 0.5));
+//            double value = ((x + 320)/640.0 * strafeRescaledMax - (strafeRescaledMax-320))/strafePixelsPerInch;
+//            value += Math.max(0, ((value - 3.5) * 0.5874 - 0.5));
+            double value = strafeA * x * x + strafeB * x + strafeC;
             return value; //NEEDS TO return in inches
         } else {
             return 0;
         }
+    }
+
+    public double getDriveX() {
+        return getX() * strafeMultiplier;
+    }
+
+    public double getXPixels() {
+        return x;
+    }
+
+    public double getYPixels() {
+        return y;
     }
 
     public double getY() {

@@ -87,7 +87,7 @@ public final class MecanumDrive {
         // path controller gains
         public double axialGain = 3;
         public double lateralGain = 3.0;
-        public double headingGain = 6.0; // shared with turn
+        public double headingGain = 6; // shared with turn
 
         public double axialVelGain = 0;
         public double lateralVelGain = 0.0;
@@ -492,6 +492,22 @@ public final class MecanumDrive {
                         1e-6,
                         new ProfileParams(
                                 0.25, 0.1, 1e-2
+                        )
+                ),
+                beginPose, 0.0,
+                defaultTurnConstraints,
+                defaultVelConstraint, defaultAccelConstraint
+        );
+    }
+
+    public TrajectoryActionBuilder actionBuilderPrecise(Pose2d beginPose) {
+        return new TrajectoryActionBuilder(
+                TurnAction::new,
+                FollowTrajectoryAction::new,
+                new TrajectoryBuilderParams(
+                        1e-6,
+                        new ProfileParams(
+                                0.12, 0.05, 1e-2
                         )
                 ),
                 beginPose, 0.0,

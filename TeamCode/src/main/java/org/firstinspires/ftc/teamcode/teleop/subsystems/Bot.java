@@ -58,12 +58,16 @@ public class Bot {
     public static double sampleYPos = 0;
     public static int angleOffset = 0;
 
+
     // Define subsystem objects
     public Gripper gripper;
     public Pivot pivot;
 
     DigitalChannel breakBeam;
     public boolean holding;
+
+    public Pose2d storedPosition = null;
+    public Vector2d targetPosition = null;
 
     // get bot instance
     public static Bot getInstance() {
@@ -132,13 +136,26 @@ public class Bot {
     }
 
     public void updateSampleDrive() {
-        sampleYPos = pipeline.getX(); //camera is sideways so X is Y
-        angleOffset = (int) Math.round(-sampleYPos / 2.5);
+        sampleYPos = pipeline.getDriveX(); //camera is sideways so X is Y
+        angleOffset = (int) 0;//Math.round(-sampleYPos / 2.5);
     }
 
     public void updateSampleSlides() {
         pivot.changeX(pipeline.getY()); //camera is sideways so Y is X
     }
+
+    public void savePosition(Pose2d current) {
+        storedPosition = current;
+        double refAngle = Math.toDegrees(current.component2().toDouble()) % 180;
+        double x = Math.sin(Math.toRadians(refAngle)) * sampleYPos;
+        double y = Math.cos(Math.toRadians(refAngle)) * sampleYPos;
+        targetPosition = new Vector2d(storedPosition.component1().x + x, storedPosition.component1().y + y);
+    }
+
+    public Vector2d getTargetPosition() {
+        return targetPosition;
+    }
+
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {

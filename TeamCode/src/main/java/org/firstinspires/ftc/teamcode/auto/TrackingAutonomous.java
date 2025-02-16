@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -62,6 +63,10 @@ public class TrackingAutonomous extends LinearOpMode {
             telemetry.addData("current slides inch offset", bot.pipeline.getY());
             telemetry.addData("current drive inch offset", Bot.sampleYPos);
             telemetry.addData("current getx", bot.pipeline.getX());
+            telemetry.addLine("");
+            telemetry.addData("strafe value", bot.pipeline.getDriveX());
+//            telemetry.addData("strafe pixels", bot.pipeline.getXPixels());
+            telemetry.addData("slides pixels", bot.pipeline.getYPixels());
             telemetry.addData("rounds", bot.pipeline.rounds);
             telemetry.addData("area", bot.pipeline.getArea());
             telemetry.update();
@@ -80,10 +85,12 @@ public class TrackingAutonomous extends LinearOpMode {
                 new ActionHelpersJava.RaceParallelCommand(
                         bot.actionPeriodic(),
                         new SequentialAction(
+//                                bot.actionFrontIntakeToStorage(),
+//                                new SleepAction(0.6),
                                 bot.actionDetect(),
-                                drive.actionBuilder(new Pose2d(20.5, 0, Math.toRadians(180)))
+                                drive.actionBuilderPrecise(new Pose2d(20.5, 0, Math.toRadians(180)))
                                         //.stopAndAdd(()-> )
-                                        .strafeToLinearHeading(new Vector2d(20.5, Bot.sampleYPos), Math.toRadians(Bot.angleOffset+180))
+                                        .strafeToLinearHeading(new Vector2d(20.5, Bot.sampleYPos), Math.toRadians(Bot.angleOffset+180), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
                                         .stopAndAdd(new SequentialAction(
                                                 new SleepAction(0.25),
                                                 bot.actionSubAutoPickDown(),
