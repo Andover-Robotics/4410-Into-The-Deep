@@ -36,8 +36,8 @@ public class SampleDetectionPipeline
     public static int slidesRescaledMax = 270;
     public static int strafeRescaledMax = 570;
 
-    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0./*334958 + 0.1*/, strafeMultiplier = 1.45;
-    public static double slidesA = 0.0193807, slidesB = 1.5, slidesMultiplier = 1.15;
+    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0.1/*334958 + 0.1*/, strafeMultiplier = 1.57;
+    public static double slidesA = 0.0193807, slidesB = 1.4, slidesMultiplier = 1.2;
 
     public static double pastStrafe = 0;
     public boolean red = false, blue = false, yellow = false;

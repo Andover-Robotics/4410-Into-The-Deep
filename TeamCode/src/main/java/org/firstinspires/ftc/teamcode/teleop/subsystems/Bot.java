@@ -107,8 +107,8 @@ public class Bot {
     }
 
     public boolean isEmpty() {
-//        return breakBeam.getState(); //TODO uncomment when bb is fixed
-        return false; //hardcoded holding
+        return breakBeam.getState(); //TODO uncomment when bb is fixed
+//        return false; //hardcoded holding
     }
 
     public void saveBreakBeam() {
@@ -163,7 +163,7 @@ public class Bot {
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 6) || searchCounter > 14) {
+            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 5) || searchCounter > 14) {
                 searchCounter = 0;
                 return false;
             } else if (sampleYPos != 0 && pipeline.getAngle() != -1) {
@@ -1148,7 +1148,7 @@ public class Bot {
     }
 
     public void subAutoPickUp() {
-        pivot.changeZ(4);
+        pivot.changeZ(6);
     }
 
     public void pickUp() {
@@ -1189,7 +1189,8 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -12, true, true)),//7.1
+                new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -13, true, true)),//7.1
+                new InstantAction(() -> pivot.arm.pitchPickup()),
                 new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.1)
@@ -1371,7 +1372,7 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.bucketDrop()),
                 new SleepAction(0.05),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.1),
+                new SleepAction(0.11),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }
