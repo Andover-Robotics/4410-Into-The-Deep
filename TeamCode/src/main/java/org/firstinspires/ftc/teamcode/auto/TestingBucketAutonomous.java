@@ -58,7 +58,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
         Pose2d firstSubDrop = new Pose2d(50, 57, Math.toRadians(-135));
         Pose2d secondSubDrop = new Pose2d(50, 57, Math.toRadians(-135));
 
-        Pose2d subDropRam = new Pose2d(44, 5, Math.toRadians(180));
+        Pose2d subDropRam = new Pose2d(56, 5, Math.toRadians(180));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -368,10 +368,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                                         .splineToLinearHeading(new Pose2d(44, 8, Math.toRadians(180)), Math.toRadians(0), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
                                         .splineToSplineHeading(firstSubDrop, Math.toRadians(-150), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 300))
 
-                                        .build(),
-                                backToSub,
-                                bot.actionResetPipeline(),
-                                bot.actionDetectWait()
+                                        .build()
                         ),
                         telemetryPacket -> {
                             telemetry.addData("sample y val", Bot.sampleYPos);
@@ -382,38 +379,65 @@ public class TestingBucketAutonomous extends LinearOpMode {
         );
 
 //        // TODO position failsafes (ramming if position is blocked)
-//        drive.updatePoseEstimate();
-//        if (Bot.vectorDiff(drive.pose.position, firstSubDrop.component1()) > 18) {
-//            Actions.runBlocking(
-//                    new ActionHelpersJava.RaceParallelCommand(
-//                            bot.actionPeriodic(),
-//                            new SequentialAction(
-//                                    bot.actionBucketToStorage()
-//                            )
-//                    ));
-//            while(Bot.vectorDiff(drive.pose.position, subDropRam.component1()) > 3) {
-//                drive.updatePoseEstimate();
-//                bot.savePosition(drive.pose);
-//                Actions.runBlocking(
-//                        new ActionHelper.RaceParallelCommand(
-//                                bot.actionPeriodic(),
-//                                new SequentialAction(
-//                                        drive.actionBuilder(bot.storedPosition)
-//                                                .strafeToConstantHeading(firstSub.position)
-//                                                .strafeToConstantHeading(subDropRam.position, drive.defaultVelConstraint, new ProfileAccelConstraint(-300, 300))
-//                                                .build()
+        drive.updatePoseEstimate();
+        if (Bot.vectorDiff(drive.pose.position, firstSubDrop.component1()) > 18) {
+            Actions.runBlocking(
+                    new ActionHelpersJava.RaceParallelCommand(
+                            bot.actionPeriodic(),
+                            new SequentialAction(
+                                    bot.actionBucketToStorage()
+                            )
+                    ));
+            while(Bot.vectorDiff(drive.pose.position, subDropRam.component1()) > 7) {
+                drive.updatePoseEstimate();
+                bot.savePosition(drive.pose);
+                Actions.runBlocking(
+                        new ActionHelper.RaceParallelCommand(
+                                bot.actionPeriodic(),
+                                new SequentialAction(
+                                        drive.actionBuilder(bot.storedPosition)
+                                                .strafeToLinearHeading(firstSub.position, Math.toRadians(180))
+                                                .strafeToLinearHeading(subDropRam.position, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 300))
+                                                .build()
+
+                                )
+                        )
+                );
+            }
+
+            drive.updatePoseEstimate();
+            bot.savePosition(drive.pose);
+
+            Actions.runBlocking(
+                    new ActionHelpersJava.RaceParallelCommand(
+                            bot.actionPeriodic(),
+                            new SequentialAction(
+                                    drive.actionBuilderPrecise(bot.storedPosition)
 //
-//                                )
-//                        )
-//                );
-//            }
-//        }
+                                            .afterTime(0.01, new SequentialAction(
+                                                    bot.actionHighBucket()
+                                            ))
+                                            .setReversed(true)
+                                            .splineToSplineHeading(firstSubDrop, Math.toRadians(-150), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 300))
+                                            .build()
+                            ),
+                            telemetryPacket -> {
+                                telemetry.addData("sample y val", Bot.sampleYPos);
+                                telemetry.update();
+                                return true;
+                            }
+                    )
+            );
+        }
+
+
 
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
                         bot.actionPeriodic(),
                         new SequentialAction(
-                                new SleepAction(0.5),
+                                backToSub,
+                                new SleepAction(0.4),
                                 bot.actionResetPipeline(),
                                 bot.actionDetectWait()
                         )
@@ -456,6 +480,23 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             }
                     )
             );
+
+//        // TODO position failsafes (ramming if position is blocked)
+            drive.updatePoseEstimate();
+            bot.savePosition(drive.pose);
+            if (Bot.vectorDiff(drive.pose.position, secondSubDrop.component1()) > 18) {
+                Actions.runBlocking(
+                        new ActionHelpersJava.RaceParallelCommand(
+                                bot.actionPeriodic(),
+                                new SequentialAction(
+                                        bot.actionBucketToStorage(),
+                                        drive.actionBuilder(bot.storedPosition)
+                                                .strafeTo(secondSub.position)
+                                                .build()
+                                )
+                        ));
+            }
+
         } else {
             Actions.runBlocking(
                     new ActionHelpersJava.RaceParallelCommand(
