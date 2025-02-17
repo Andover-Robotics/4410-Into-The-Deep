@@ -39,7 +39,7 @@ public class TrackingAutonomous extends LinearOpMode {
         bot.state = Bot.BotState.STORAGE;
         bot.storage();
 
-        Pose2d initialPose = new Pose2d(20.5, startingY, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(20.5, startingY, Math.toRadians(150));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -62,24 +62,20 @@ public class TrackingAutonomous extends LinearOpMode {
             telemetry.addData("current angle", bot.pipeline.getAngle());
             telemetry.addData("current slides inch offset", bot.pipeline.getY());
             telemetry.addData("current drive inch offset", Bot.sampleYPos);
-            telemetry.addData("current getx", bot.pipeline.getX());
             telemetry.addLine("");
+            telemetry.addData("current getx", bot.pipeline.getX());
             telemetry.addData("strafe value", bot.pipeline.getDriveX());
-//            telemetry.addData("strafe pixels", bot.pipeline.getXPixels());
-            telemetry.addData("slides pixels", bot.pipeline.getYPixels());
+            telemetry.addLine("");
+            telemetry.addData("current gety", bot.pipeline.getY());
+            telemetry.addData("slides value", bot.pipeline.getSlidesY());
             telemetry.addData("rounds", bot.pipeline.rounds);
             telemetry.addData("area", bot.pipeline.getArea());
             telemetry.update();
         }
 
-        Actions.runBlocking(
-                new ActionHelpersJava.RaceParallelCommand(
-                        bot.actionPeriodic(),
-                        bot.actionDetectWait()
-                )
-        );
-
         bot.updateSampleDrive();
+        drive.updatePoseEstimate();
+        bot.savePosition(drive.pose);
 
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
@@ -88,9 +84,9 @@ public class TrackingAutonomous extends LinearOpMode {
 //                                bot.actionFrontIntakeToStorage(),
 //                                new SleepAction(0.6),
                                 bot.actionDetect(),
-                                drive.actionBuilderPrecise(new Pose2d(20.5, 0, Math.toRadians(180)))
+                                drive.actionBuilderPrecise(bot.storedPosition)
                                         //.stopAndAdd(()-> )
-                                        .strafeToLinearHeading(new Vector2d(20.5, Bot.sampleYPos), Math.toRadians(Bot.angleOffset+180), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                        .strafeToConstantHeading(bot.getTargetPosition(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
                                         .stopAndAdd(new SequentialAction(
                                                 new SleepAction(0.25),
                                                 bot.actionSubAutoPickDown(),
@@ -105,6 +101,9 @@ public class TrackingAutonomous extends LinearOpMode {
                         telemetryPacket -> {
                             telemetry.addData("sample y val", Bot.sampleYPos);
                             telemetry.addData("rounds", bot.pipeline.rounds);
+                            telemetry.addData("pose", bot.storedPosition);
+                            telemetry.addData("refAngle", bot.refAngle);
+                            telemetry.addData("target vector", bot.targetPosition);
                             telemetry.update();
                             return true;
                         }

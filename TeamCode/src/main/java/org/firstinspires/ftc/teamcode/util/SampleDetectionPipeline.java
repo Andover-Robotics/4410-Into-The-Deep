@@ -37,6 +37,7 @@ public class SampleDetectionPipeline
     public static int strafeRescaledMax = 570;
 
     public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0./*334958 + 0.1*/, strafeMultiplier = 1.45;
+    public static double slidesA = 0.0193807, slidesB = 1.5, slidesMultiplier = 1.15;
 
     public static double pastStrafe = 0;
     public boolean red = false, blue = false, yellow = false;
@@ -197,7 +198,17 @@ public class SampleDetectionPipeline
     }
 
     public double getY() {
-            return ((y + 180)/360.0 * slidesRescaledMax - (slidesRescaledMax-180))/slidesPixelsPerInch; //NEEDS To return in inches
+        if (y != 0) {
+            double value = slidesA * y + slidesB;
+            return value; //NEEDS TO return in inches
+        } else {
+            return 0;
+        }
+//            return ((y + 180)/360.0 * slidesRescaledMax - (slidesRescaledMax-180))/slidesPixelsPerInch; //NEEDS To return in inches OLD VERSIOn
+    }
+
+    public double getSlidesY() {
+        return getY() * slidesMultiplier;
     }
 
     public int getArea() {

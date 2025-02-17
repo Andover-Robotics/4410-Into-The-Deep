@@ -57,7 +57,7 @@ public class Bot {
 
     public static double sampleYPos = 0;
     public static int angleOffset = 0;
-
+    public double refAngle = 0, x = 0, y = 0;
 
     // Define subsystem objects
     public Gripper gripper;
@@ -107,8 +107,8 @@ public class Bot {
     }
 
     public boolean isEmpty() {
-        return breakBeam.getState(); //TODO uncomment when bb is fixed
-//        return true; //hardcoded empty
+//        return breakBeam.getState(); //TODO uncomment when bb is fixed
+        return false; //hardcoded holding
     }
 
     public void saveBreakBeam() {
@@ -123,7 +123,7 @@ public class Bot {
     }
 
     public void alignClaw() {
-        pivot.arm.setRollPitch(pipeline.getAngle(), pivot.arm.pitchGroundPickup);
+        pivot.arm.setRollPitch(((pipeline.getAngle() - 180) * 1.13) + 180, pivot.arm.pitchGroundPickup);
     }
 
     public void scan() {
@@ -141,15 +141,19 @@ public class Bot {
     }
 
     public void updateSampleSlides() {
-        pivot.changeX(pipeline.getY()); //camera is sideways so Y is X
+        pivot.changeX(pipeline.getSlidesY()); //camera is sideways so Y is X
     }
 
     public void savePosition(Pose2d current) {
         storedPosition = current;
-        double refAngle = Math.toDegrees(current.component2().toDouble()) % 180;
-        double x = Math.sin(Math.toRadians(refAngle)) * sampleYPos;
-        double y = Math.cos(Math.toRadians(refAngle)) * sampleYPos;
+        refAngle = Math.toDegrees(current.component2().toDouble()) % 180;
+        x = Math.sin(Math.toRadians(refAngle)) * sampleYPos;
+        y = -Math.cos(Math.toRadians(refAngle)) * sampleYPos;
         targetPosition = new Vector2d(storedPosition.component1().x + x, storedPosition.component1().y + y);
+    }
+
+    public Pose2d getCurrentPosition() {
+        return storedPosition;
     }
 
     public Vector2d getTargetPosition() {
@@ -159,7 +163,7 @@ public class Bot {
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 8) || searchCounter > 14) {
+            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 6) || searchCounter > 14) {
                 searchCounter = 0;
                 return false;
             } else if (sampleYPos != 0 && pipeline.getAngle() != -1) {
@@ -1185,7 +1189,7 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeXZ(pipeline.getY(), -11)),//7.1
+                new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -12, true, true)),//7.1
                 new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.1)
@@ -1204,9 +1208,9 @@ public class Bot {
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
                 new InstantAction(() -> pivot.frontIntakeStorage(true, false)),
-                new SleepAction(0.1),
-                new InstantAction(() -> pivot.subAutoIntake(true, true)),
                 new SleepAction(0.2),
+                new InstantAction(() -> pivot.subAutoIntake(true, true)),
+                new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.cv())
         );
     }
@@ -1365,8 +1369,9 @@ public class Bot {
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.bucketDrop()),
+                new SleepAction(0.05),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.20),
+                new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }
@@ -1415,8 +1420,10 @@ public class Bot {
                 new InstantAction(() -> pivot.storage(false, true)),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new SleepAction(0.2),
-                new InstantAction(() -> pivot.frontAutoIntake(true, true)),
-                new SleepAction(0.2),
+                new InstantAction(() -> pivot.frontAutoIntake(true, false)),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
+                new SleepAction(0.1),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }

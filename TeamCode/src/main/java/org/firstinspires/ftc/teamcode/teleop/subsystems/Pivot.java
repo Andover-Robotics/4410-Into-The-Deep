@@ -483,7 +483,12 @@ public class Pivot {
         if (slides) runSlidesToIKPosition();
     }
 
-
+    public void changeXZ(double x, double z, boolean pivot, boolean slides) {
+        targetX += x * inches2mm;
+        targetZ += z * inches2mm;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
 
     public void changeXZ(double x, double z) {
         targetX += x * inches2mm;
