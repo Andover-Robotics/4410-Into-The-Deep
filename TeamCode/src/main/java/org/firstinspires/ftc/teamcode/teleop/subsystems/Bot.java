@@ -319,7 +319,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
 
         if (pivot.slides.state == Slides.SlidesState.HIGH) {
-            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.HIGH2LOW));
+            actions.add(new InstantAction(() -> pivot.slides.setState(Slides.SlidesState.HIGH2LOW)));
             actions.add(new InstantAction(() -> pivot.goToResetPosition()));
             actions.add(new SleepAction(0.25));
             actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
@@ -341,7 +341,7 @@ public class Bot {
             actions.add(new SleepAction(0.2));
             actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
             actions.add(new InstantAction(() -> pivot.slides.resetEncoders()));
-            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.LOW));
+            actions.add(new InstantAction(() -> pivot.slides.setState(Slides.SlidesState.LOW)));
         }
 
         return new SequentialAction(actions);
@@ -351,7 +351,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
 
         if (pivot.slides.state == Slides.SlidesState.LOW) {
-            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.LOW2HIGH));
+            actions.add(new InstantAction(() -> pivot.slides.setState(Slides.SlidesState.LOW2HIGH)));
             actions.add(new InstantAction(() -> pivot.goToResetPosition()));
             actions.add(new SleepAction(0.25));
             actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
@@ -373,7 +373,7 @@ public class Bot {
             actions.add(new SleepAction(0.1));
             actions.add(new InstantAction(() -> pivot.slides.setPower(0)));
             actions.add(new InstantAction(() -> pivot.slides.resetEncoders()));
-            actions.add(new InstantAction(() -> pivot.slides.state = Slides.SlidesState.HIGH));
+            actions.add(new InstantAction(() -> pivot.slides.setState(Slides.SlidesState.HIGH)));
         }
 
         return new SequentialAction(actions);
@@ -407,12 +407,13 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
             actions.add(new SleepAction(0.25));
         } else {
+            actions.add(new InstantAction(() -> pivot.arm.vertical()));
             actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
             actions.add(new SleepAction(0.3));
         }
 
         actions.add(new InstantAction(() -> pivot.highBucket(false, true)));
-        actions.add(new SleepAction(0.65));
+        actions.add(new SleepAction(0.70));
         actions.add(new InstantAction(() -> pivot.arm.bucket()));
         actions.add(new InstantAction(() -> state = BotState.HIGH_BUCKET));
 
@@ -580,7 +581,7 @@ public class Bot {
         actions.add(new InstantAction(() -> pivot.tiltedl3Climb(false, true)));
         actions.add(new SleepAction(1.7));
         actions.add(new InstantAction(() -> pivot.backTiltedl3Climb(true, false)));
-        actions.add(new SleepAction(0.5));
+        actions.add(new SleepAction(1.05));
         actions.add(new InstantAction(() -> pivot.postl3Climb(false, true)));
         actions.add(new SleepAction(1));
         actions.add(new InstantAction(() -> pivot.postl3Climb(true, false)));
@@ -624,8 +625,6 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         actions.add(teleopPickUp());
         actions.add(new SleepAction(0.2));
-        actions.add(new InstantAction(() -> pivot.changeZ(3.5)));
-        actions.add(new SleepAction(0.125));
         actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
         actions.add(new SleepAction(0.075));
         actions.add(new InstantAction(() -> pivot.storage(false, true)));
@@ -646,13 +645,12 @@ public class Bot {
             actions.add(new SleepAction(0.225));
         }
         actions.add(new InstantAction(() -> gripper.open()));
-        actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+        //actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
         actions.add(new SleepAction(0.1));
-        actions.add(new InstantAction(() -> pivot.frontIntakeStorage(true, false)));
-        actions.add(new SleepAction(0.1));
-        actions.add(new InstantAction(() -> pivot.frontIntake(true, true)));
-        actions.add(new SleepAction(0.3));
+        actions.add(new InstantAction(() -> pivot.frontIntake(true, false)));
         actions.add(new InstantAction(() -> pivot.arm.frontPickup()));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.frontIntake(false, true)));
         actions.add(new InstantAction(() -> state = BotState.FRONT_INTAKE));
 
         return new SequentialAction(actions);
@@ -661,7 +659,7 @@ public class Bot {
     public SequentialAction teleopPickDown() {
         List<Action> actions = new ArrayList<>();
 
-        actions.add(new InstantAction(() -> pivot.changeZ(-pickDownUpValue)));
+        actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue)));
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> gripper.close()));
 
@@ -840,7 +838,7 @@ public class Bot {
     public void shiftDown() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.slides.state = Slides.SlidesState.HIGH2LOW;
+                pivot.slides.setState(Slides.SlidesState.HIGH2LOW);
                 pivot.goToResetPosition();
                 Thread.sleep(250);
                 pivot.slides.setPower(0);
@@ -860,7 +858,7 @@ public class Bot {
                 Thread.sleep(200);
                 pivot.slides.setPower(0);
                 pivot.slides.resetEncoders();
-                pivot.slides.state = Slides.SlidesState.LOW;
+                pivot.slides.setState(Slides.SlidesState.LOW);
             } catch (InterruptedException ignored) {}
         });
         if (pivot.slides.state == Slides.SlidesState.HIGH)
@@ -870,7 +868,7 @@ public class Bot {
     public void shiftUp() {
         Thread thread = new Thread(() -> {
             try {
-                pivot.slides.state = Slides.SlidesState.LOW2HIGH;
+                pivot.slides.setState(Slides.SlidesState.LOW2HIGH);
                 pivot.goToResetPosition();
                 Thread.sleep(250);
                 pivot.slides.setPower(0);
@@ -890,7 +888,7 @@ public class Bot {
                 Thread.sleep(100);
                 pivot.slides.setPower(0);
                 pivot.slides.resetEncoders();
-                pivot.slides.state = Slides.SlidesState.HIGH;
+                pivot.slides.setState(Slides.SlidesState.HIGH);
             } catch (InterruptedException ignored) {}
         });
         if (pivot.slides.state == Slides.SlidesState.LOW)
@@ -1307,7 +1305,7 @@ public class Bot {
 
     public SequentialAction actionPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(-4)),
+                new InstantAction(() -> pivot.changeZ(-5.2)),
                 new SleepAction(0.25),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.125)
@@ -1422,9 +1420,9 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.frontAutoIntake(true, false)),
-                new SleepAction(0.1),
+                new SleepAction(0.2),
                 new InstantAction(() -> pivot.frontAutoIntake(false, true)),
-                new SleepAction(0.1),
+                new SleepAction(0.075),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }

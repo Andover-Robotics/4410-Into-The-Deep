@@ -20,10 +20,10 @@ public class Slides {
     private final Servo shifter;
     private PIDFController controller;
 
-    public static double p = 0.09, i = 0, d = 0.0032, f = 0, staticFOffset = 0.07, gComp = 0.18 - staticFOffset;
+    public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.22;
     public static double staticF = 0;
     public static double ikMMoffset = 200;
-    public static double neutral = 0.645, high = 0.77, low = 0.51;
+    public static double neutral = 0.645, high = 0.78, low = 0.51;
 
     public boolean climbingPower = false;
     private final double tolerance = 10;
@@ -155,7 +155,7 @@ public class Slides {
                     power = manualPower / manualDivide;
                     target = getPosition() - coax;
                 } else {
-                    if (getTargetMM() < 0.5 && getTargetMM() > -0.5) {
+                    if ((getTargetMM() < 0.5 && getTargetMM() > -0.5 && state != SlidesState.LOW)) {
                         power = 0;
                     } else {
                         controller.setSetPoint(target + coax);
@@ -216,6 +216,21 @@ public class Slides {
             return -7.2;
         else {
             return 5.0 / 4.0;
+        }
+    }
+
+    public void setState(SlidesState state) {
+        this.state = state;
+        if (state == SlidesState.LOW) {
+            p = 0.04;
+            d = 0.0012;
+            controller.setP(p);
+            controller.setD(d);
+        } else {
+            p = 0.04;
+            d = 0.0012;
+            controller.setP(p);
+            controller.setD(d);
         }
     }
 

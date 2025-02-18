@@ -121,7 +121,6 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                 }
-
                 bot.pivot.runManualIK(gp2.getLeftY() / 1.1);
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopPickDown());
@@ -196,14 +195,14 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
                     runningActions.add(bot.teleopOpenGripper());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    runningActions.add(bot.teleopLowChamber());
-                    clipCancel = false;
-                }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    runningActions.add(bot.teleopHighChamber());
-                    clipCancel = false;
-                }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+//                    runningActions.add(bot.teleopLowChamber());
+//                    clipCancel = false;
+//                }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+//                    runningActions.add(bot.teleopHighChamber());
+//                    clipCancel = false;
+//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     runningActions.add(bot.teleopHighBucket());
                 }
@@ -264,7 +263,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
             telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
-            //telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+            telemetry.addData("Pivot FF", bot.pivot.calculateFeedForward());
             //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
             //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
             //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());

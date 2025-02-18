@@ -60,27 +60,27 @@ public class Pivot {
     public static double slidesClippingHeightDelta = 7.75; //todo greyson
 
     // Heights for positions millimeters higher than pivot point
-    public static double highBucketHeight = 35.4 * inches2mm,
-            lowBucketHeight = 24 * inches2mm,
+    public static double highBucketHeight = 37.8 * inches2mm,
+            lowBucketHeight = 21 * inches2mm,
             highChamberHeight = 14 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
-            wallIntakeHeight = 3 * inches2mm,
+            wallIntakeHeight = 3.4 * inches2mm,
 
     slidesHighChamberHeight = 19.8 * inches2mm,//todo greyson
 
-    frontAutoIntakeHeight = 4.75 * inches2mm,
+    frontAutoIntakeHeight = 5.5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm, //12
     pushIntakeHeight = 0.3 * inches2mm,
 
     prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
-            postl2ClimbHeight = 4.5 * inches2mm,
+            postl2ClimbHeight = 3.5 * inches2mm,
 
     climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 30.5 * inches2mm,
             midl3ClimbHeight = 22 * inches2mm,
-            tiltedl3ClimbHeight = 10.5 * inches2mm,
+            tiltedl3ClimbHeight = 9 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 5 * inches2mm;
 
@@ -102,12 +102,12 @@ public class Pivot {
 
     prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
-            postl2ClimbX = 6.84 * inches2mm,
+            postl2ClimbX = 5 * inches2mm,
 
     climbTransferX = 1.6 * inches2mm,
             prel3ClimbX = 0.1 * inches2mm,
             midl3ClimbX = 5.1 * inches2mm,
-            tiltedl3ClimbX = -10.5 * inches2mm,
+            tiltedl3ClimbX = -9 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
             postl3ClimbX = 0.5 * inches2mm;
 
@@ -198,7 +198,10 @@ public class Pivot {
         double dt = opMode.time - profile_init_time;
         if (!manualIK) {
             if (!profiler.isOver()) {
-                profilerTarget = profiler.motion_profile_pos(dt);
+                double proTar = profiler.motion_profile_pos(dt);
+                if (!Double.isNaN(proTar)) {
+                    profilerTarget = proTar;
+                }
                 double pid = controller.calculate(pivotPos, profilerTarget);  // PID calculation
                 power = pid;
             } else {
