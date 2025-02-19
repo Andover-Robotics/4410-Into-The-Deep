@@ -65,7 +65,7 @@ public class Pivot {
             highChamberHeight = 14 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
-            wallIntakeHeight = 3.4 * inches2mm,
+            wallIntakeHeight = 3 * inches2mm,
 
     slidesHighChamberHeight = 19.8 * inches2mm,//todo greyson
 
@@ -80,7 +80,7 @@ public class Pivot {
     climbTransferHeight = 15 * inches2mm,
             prel3ClimbHeight = 30.5 * inches2mm,
             midl3ClimbHeight = 22 * inches2mm,
-            tiltedl3ClimbHeight = 9 * inches2mm,
+            tiltedl3ClimbHeight = 9.5 * inches2mm,
             backTiltedl3ClimbHeight = 8 * inches2mm,
             postl3ClimbHeight = 5 * inches2mm;
 
@@ -107,7 +107,7 @@ public class Pivot {
     climbTransferX = 1.6 * inches2mm,
             prel3ClimbX = 0.1 * inches2mm,
             midl3ClimbX = 5.1 * inches2mm,
-            tiltedl3ClimbX = -9 * inches2mm,
+            tiltedl3ClimbX = -9.5 * inches2mm,
             backTiltedl3ClimbX = 6 * inches2mm,
             postl3ClimbX = 0.5 * inches2mm;
 

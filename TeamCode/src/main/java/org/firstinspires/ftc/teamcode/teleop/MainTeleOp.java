@@ -88,10 +88,10 @@ public class MainTeleOp extends LinearOpMode {
                         runningActions.add(bot.teleopWallIntakeOpen());
                     }
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    runningActions.add(bot.teleopLowChamber());
-                    clipCancel = false;
-                }
+//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+//                    runningActions.add(bot.teleopLowChamber());
+//                    clipCancel = false;
+//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
 //                    runningActions.add(bot.teleopHighChamber());// TODO: TEST SLIDES CLIPPING
                     runningActions.add(bot.teleopSlidesHighChamber());
@@ -126,8 +126,12 @@ public class MainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopPickDown());
                 }
                 if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-                    runningActions.add(bot.teleopPickupFrontIntakeToStorage(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
-                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                    if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
+                        runningActions.add(bot.teleopPickupFrontIntakeToWallIntake(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
+                    } else {
+                        runningActions.add(bot.teleopPickupFrontIntakeToStorage(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
+                    }
+                    } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
@@ -192,7 +196,7 @@ public class MainTeleOp extends LinearOpMode {
                     clipCancel = true;
                     runningActions.add(bot.teleopSlidesClipCancel());
                 }
-                if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
                     runningActions.add(bot.teleopOpenGripper());
                 }
 //                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {

@@ -190,12 +190,13 @@ public class TestingBucketAutonomous extends LinearOpMode {
                         bot.actionResetPipeline()
                 ))
                 .afterTime(0.01, new SequentialAction(
-                        bot.actionBucketToStorage(),
-                        new SleepAction(0.05),
-                        bot.actionSubPark()
+                        bot.actionBucketToStorage()
+//                        new SleepAction(0.05),
+//                        bot.actionSubPark()
                 ))
                 .splineToSplineHeading(new Pose2d(new Vector2d(secondSub.component1().x + 10, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
                 .splineToLinearHeading(secondSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 350))
+                .stopAndAdd(bot.actionSubPark())
                 .build();
 
         Action finalBucket = drive.actionBuilder(secondSubDrop)
@@ -212,7 +213,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
 //                .waitSeconds(5)
                 .build();
 
-        bot.openPipeline(true, false, true);
+        bot.openPipeline(false, false, true);
 
         while (!isStarted()) {
             bot.autoPeriodic();
@@ -221,8 +222,8 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
             if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
                 redAlliance = !redAlliance;
-                bot.pipeline.setBlue(!redAlliance);
-                bot.pipeline.setRed(redAlliance);
+//                bot.pipeline.setBlue(!redAlliance);
+//                bot.pipeline.setRed(redAlliance);
             }
 
             if (redAlliance) {
@@ -258,14 +259,16 @@ public class TestingBucketAutonomous extends LinearOpMode {
             ));
 
             bot.updateSampleDrive();
+            drive.updatePoseEstimate();
+            bot.savePosition(drive.pose);
 
             Actions.runBlocking(
                     new ActionHelpersJava.RaceParallelCommand(
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionDetect(),
-                                    drive.actionBuilderPrecise(firstCVSample)
-                                            .strafeToConstantHeading(new Vector2d(firstCVSample.component1().x - Bot.sampleYPos, firstCVSample.component1().y), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                    drive.actionBuilderPrecise(bot.storedPosition)
+                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
@@ -313,14 +316,16 @@ public class TestingBucketAutonomous extends LinearOpMode {
             ));
 
             bot.updateSampleDrive();
+            drive.updatePoseEstimate();
+            bot.savePosition(drive.pose);
 
             Actions.runBlocking(
                     new ActionHelpersJava.RaceParallelCommand(
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionDetect(),
-                                    drive.actionBuilderPrecise(secondCVSample)
-                                            .strafeToConstantHeading(new Vector2d(secondCVSample.component1().x - Bot.sampleYPos, secondCVSample.component1().y), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                    drive.actionBuilderPrecise(bot.storedPosition)
+                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
