@@ -70,6 +70,7 @@ public class TrackingAutonomous extends LinearOpMode {
             telemetry.addData("slides value", bot.pipeline.getSlidesY());
             telemetry.addData("rounds", bot.pipeline.rounds);
             telemetry.addData("area", bot.pipeline.getArea());
+            telemetry.addData("aspect ratio", bot.pipeline.getAspectRatio());
             telemetry.update();
         }
 

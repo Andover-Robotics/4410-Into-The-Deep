@@ -1395,7 +1395,7 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.bucketDrop()),
                 new SleepAction(0.05),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.11),
+                new SleepAction(0.15),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }
@@ -1439,13 +1439,13 @@ public class Bot {
 
     public SequentialAction actionBucketToFrontIntake() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new InstantAction(() -> pivot.arm.outtakeDown()),
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.storage(false, true)),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.frontAutoIntake(true, false)),
-                new SleepAction(0.2),
+                new SleepAction(0.3),
                 new InstantAction(() -> pivot.frontAutoIntake(false, true)),
                 new SleepAction(0.075),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
@@ -1619,9 +1619,10 @@ public class Bot {
 
     // DRIVE METHODS
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
-        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.15 : 1.03;
-        if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.2;
-        double rearWheelModifier = (state == BotState.WALL_INTAKE || state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.15 : 1;
+        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.2 : 1.02;
+        if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.06;
+        double rearWheelModifier = (state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.15 : 1;
+        if (state == BotState.WALL_INTAKE) rearWheelModifier = 1.2;
         double[] speeds = {
                 (forwardBackSpeed - strafeSpeed - turnSpeed) * frontWheelModifier,
                 (forwardBackSpeed + strafeSpeed + turnSpeed) * frontWheelModifier,

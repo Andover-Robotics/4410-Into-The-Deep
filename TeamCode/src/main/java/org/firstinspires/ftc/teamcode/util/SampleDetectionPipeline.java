@@ -38,8 +38,11 @@ public class SampleDetectionPipeline
 
     public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0.1/*334958 + 0.1*/, strafeMultiplier = 1.57;
     public static double slidesA = 0.0193807, slidesB = 1.3, slidesMultiplier = 1.2;
+    public static double lowAR = 1.7, highAR = 2.8;
 
     public static double pastStrafe = 0;
+    public double aspectRatio = 0, side1 = 0, side2 = 0;
+    private int iterCounter = 0;
     public boolean red = false, blue = false, yellow = false;
     private final ColorBlobLocatorProcessor blueLocator;
     private final ColorBlobLocatorProcessor redLocator;
@@ -150,22 +153,34 @@ public class SampleDetectionPipeline
 //        ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, badBlobs);
 
         if (!blobs.isEmpty()) {
-            bigBlob = blobs.get(0);
-            boxFit = bigBlob.getBoxFit();
+            for (ColorBlobLocatorProcessor.Blob myBlob : blobs) {
+                bigBlob = myBlob;
+                boxFit = bigBlob.getBoxFit();
 
-            center = boxFit.center;
-            x = (double) center.x - (double) width / 2;
-            y = (double) center.y - (double) height / 2;
-            angle = ((int) ((boxFit.angle + 90) % 180));
-            Point[] myBoxCorners = new Point[4];
-            boxFit.points(myBoxCorners);
-            if ((Math.sqrt(Math.pow((myBoxCorners[0].x) - (myBoxCorners[1].x), 2) + Math.pow((myBoxCorners[0].y) - (myBoxCorners[1].y), 2))) >
-                    (Math.sqrt(Math.pow((myBoxCorners[1].x) - (myBoxCorners[2].x), 2) + Math.pow((myBoxCorners[1].y) - (myBoxCorners[2].y), 2)))) {
-                angle = ((int) ((boxFit.angle) % 180));
-            } else {
-                angle = (int) ((boxFit.angle + 90) % 180);
+                center = boxFit.center;
+                x = (double) center.x - (double) width / 2;
+                y = (double) center.y - (double) height / 2;
+                angle = ((int) ((boxFit.angle + 90) % 180));
+                Point[] myBoxCorners = new Point[4];
+                boxFit.points(myBoxCorners);
+                if ((Math.sqrt(Math.pow((myBoxCorners[0].x) - (myBoxCorners[1].x), 2) + Math.pow((myBoxCorners[0].y) - (myBoxCorners[1].y), 2))) >
+                        (Math.sqrt(Math.pow((myBoxCorners[1].x) - (myBoxCorners[2].x), 2) + Math.pow((myBoxCorners[1].y) - (myBoxCorners[2].y), 2)))) {
+                    angle = ((int) ((boxFit.angle) % 180));
+                    side1 = (Math.sqrt(Math.pow((myBoxCorners[0].x) - (myBoxCorners[1].x), 2) + Math.pow((myBoxCorners[0].y) - (myBoxCorners[1].y), 2)));
+                    side2 = (Math.sqrt(Math.pow((myBoxCorners[1].x) - (myBoxCorners[2].x), 2) + Math.pow((myBoxCorners[1].y) - (myBoxCorners[2].y), 2)));
+                } else {
+                    angle = (int) ((boxFit.angle + 90) % 180);
+                    side1 = (Math.sqrt(Math.pow((myBoxCorners[1].x) - (myBoxCorners[2].x), 2) + Math.pow((myBoxCorners[1].y) - (myBoxCorners[2].y), 2)));
+                    side2 = (Math.sqrt(Math.pow((myBoxCorners[0].x) - (myBoxCorners[1].x), 2) + Math.pow((myBoxCorners[0].y) - (myBoxCorners[1].y), 2)));
+                }
+                aspectRatio = side1 / side2;
+                if (aspectRatio > lowAR && aspectRatio < highAR) {
+                    break;
+                }
             }
         } else {
+            x = 2000;
+            y = 2000;
             angle = -1;
         }
     }
@@ -174,8 +189,12 @@ public class SampleDetectionPipeline
         return angle;
     }
 
+    public double getAspectRatio() {
+        return aspectRatio;
+    }
+
     public double getX() {
-        if (x != 0) {
+        if (x != 2000) {
 //            double value = ((x + 320)/640.0 * strafeRescaledMax - (strafeRescaledMax-320))/strafePixelsPerInch;
 //            value += Math.max(0, ((value - 3.5) * 0.5874 - 0.5));
             double value = strafeA * x * x + strafeB * x + strafeC;
@@ -198,7 +217,7 @@ public class SampleDetectionPipeline
     }
 
     public double getY() {
-        if (y != 0) {
+        if (y != 2000) {
             double value = slidesA * y + slidesB;
             return value; //NEEDS TO return in inches
         } else {
