@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
 
 import java.util.concurrent.atomic.AtomicReference;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
@@ -57,20 +58,18 @@ public class TrackingAutonomous extends LinearOpMode {
             bot.scan();
 
             gp1.readButtons();
-
-            telemetry.addData("current roll", bot.pivot.arm.rollSetpoint);
             telemetry.addData("current angle", bot.pipeline.getAngle());
-            telemetry.addData("current slides inch offset", bot.pipeline.getY());
-            telemetry.addData("current drive inch offset", Bot.sampleYPos);
             telemetry.addLine("");
             telemetry.addData("current getx", bot.pipeline.getX());
             telemetry.addData("strafe value", bot.pipeline.getDriveX());
+            telemetry.addData("AX value", bot.pipeline.getAX());
             telemetry.addLine("");
+            telemetry.addData("slides pixels", bot.pipeline.getYPixels());
             telemetry.addData("current gety", bot.pipeline.getY());
             telemetry.addData("slides value", bot.pipeline.getSlidesY());
-            telemetry.addData("rounds", bot.pipeline.rounds);
             telemetry.addData("area", bot.pipeline.getArea());
             telemetry.addData("aspect ratio", bot.pipeline.getAspectRatio());
+            telemetry.addData("density", bot.pipeline.getDensity());
             telemetry.update();
         }
 
@@ -87,7 +86,7 @@ public class TrackingAutonomous extends LinearOpMode {
                                 bot.actionDetect(),
                                 drive.actionBuilderPrecise(bot.storedPosition)
                                         //.stopAndAdd(()-> )
-                                        .strafeToConstantHeading(bot.getTargetPosition(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                        .strafeToConstantHeading(bot.getTargetPosition(), drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                         .stopAndAdd(new SequentialAction(
                                                 new SleepAction(0.25),
                                                 bot.actionSubAutoPickDown(),

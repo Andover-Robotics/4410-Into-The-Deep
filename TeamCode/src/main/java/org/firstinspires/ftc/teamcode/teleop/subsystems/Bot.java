@@ -67,7 +67,7 @@ public class Bot {
     public boolean holding;
 
     public Pose2d storedPosition = null;
-    public Vector2d targetPosition = null;
+    public static Vector2d targetPosition = null;
 
     // get bot instance
     public static Bot getInstance() {
@@ -103,7 +103,7 @@ public class Bot {
 
     public boolean getBreakBeam() {
         return !breakBeam.getState(); //TODO uncomment when bb is fixed
-//        return true; //hardcoded empty
+//        return true; //hardcoded holding
     }
 
     public boolean isEmpty() {
@@ -156,7 +156,7 @@ public class Bot {
         return storedPosition;
     }
 
-    public Vector2d getTargetPosition() {
+    public static Vector2d getTargetPosition() {
         return targetPosition;
     }
 
@@ -241,6 +241,12 @@ public class Bot {
             actions.add(new SleepAction(0.45));
             actions.add(new InstantAction(() -> pivot.storage(true, true)));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else if (state == BotState.LOW_BUCKET) {
+            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.25));
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
         } else if (state == BotState.HIGH_CHAMBER) {
 //            actions.add(new InstantAction(() -> pivot.highChamberTransfer(false, true)));
 //            actions.add(new SleepAction(0.05));
@@ -284,6 +290,12 @@ public class Bot {
         } else if (state == BotState.HIGH_BUCKET) {
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.9));
+            actions.add(new InstantAction(() -> pivot.storage(true, true)));
+            actions.add(new InstantAction(() -> pivot.arm.storage()));
+        } else if (state == BotState.LOW_BUCKET) {
+            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.25));
             actions.add(new InstantAction(() -> pivot.storage(true, true)));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
         } else if (state == BotState.HIGH_CHAMBER) {
@@ -427,7 +439,7 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.4));
         } else if (state == BotState.HIGH_BUCKET) {
-            actions.add(new InstantAction(this::storage));
+            actions.add(teleopStorage());
             actions.add(new SleepAction(0.6));
         }
 
@@ -447,7 +459,7 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.4));
         } else if (state == BotState.HIGH_BUCKET) {
-            actions.add(new InstantAction(this::storage));
+            actions.add(teleopStorage());
             actions.add(new SleepAction(0.6));
         }
 
@@ -464,7 +476,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
 
         if (state != BotState.STORAGE) {
-            actions.add(new InstantAction(this::storage));
+            actions.add(teleopStorage());
             actions.add(new SleepAction(0.5));
         }
 
@@ -509,7 +521,7 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.4));
         } else if (state == BotState.HIGH_BUCKET) {
-            actions.add(new InstantAction(this::storage));
+            actions.add(teleopStorage());
             actions.add(new SleepAction(0.6));
         }
 
@@ -595,7 +607,7 @@ public class Bot {
         actions.add(new InstantAction(() -> pivot.arm.bucketDrop()));
         actions.add(new InstantAction(() -> gripper.open()));
         actions.add(new SleepAction(0.5));
-        actions.add(new InstantAction(this::storage));
+        actions.add(teleopStorage());
 
         return new SequentialAction(actions);
     }
@@ -613,7 +625,7 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(true, false)));
             actions.add(new SleepAction(0.3));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
-            actions.add(new InstantAction(this::storage));
+            actions.add(teleopStorage());
         } else {
             actions.add(teleopOpenGripper());
         }
@@ -657,7 +669,7 @@ public class Bot {
         actions.add(new InstantAction(() -> pivot.storage(true, false)));
         actions.add(new SleepAction(0.3));
         actions.add(new InstantAction(() -> pivot.arm.storage()));
-        actions.add(new InstantAction(this::storage));
+        actions.add(teleopStorage());
 
         return new SequentialAction(actions);
     }
@@ -666,7 +678,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
 
         if (state == BotState.LOW_CHAMBER || state == BotState.HIGH_CHAMBER) {
-            actions.add(new InstantAction(this::storage));
+            actions.add(teleopStorage());
             actions.add(new SleepAction(0.225));
         }
         actions.add(new InstantAction(() -> gripper.open()));
@@ -684,7 +696,7 @@ public class Bot {
     public SequentialAction teleopPickDown() {
         List<Action> actions = new ArrayList<>();
 
-        actions.add(new InstantAction(() -> pivot.changeXZ(+0.3, -pickDownUpValue)));
+        actions.add(new InstantAction(() -> pivot.changeXZ(+0.5, -pickDownUpValue)));
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> gripper.close()));
 
@@ -794,6 +806,12 @@ public class Bot {
                     Thread.sleep(250);
                     pivot.arm.storage();
                 } else if (state == BotState.HIGH_BUCKET) {
+                    pivot.arm.outtakeUp();
+                    pivot.storage(false, true);
+                    Thread.sleep(450);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
+                } else if (state == BotState.LOW_BUCKET) {
                     pivot.arm.outtakeUp();
                     pivot.storage(false, true);
                     Thread.sleep(450);
@@ -1212,8 +1230,8 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -13, true, true)),//7.1
                 new InstantAction(() -> pivot.arm.pitchPickup()),
+                new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -13, true, true)),//7.1
                 new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.1)
@@ -1393,9 +1411,9 @@ public class Bot {
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.bucketDrop()),
-                new SleepAction(0.05),
+                new SleepAction(0.1),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.15),
+                new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }
@@ -1441,13 +1459,13 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.outtakeDown()),
                 new InstantAction(() -> gripper.open()),
-                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.frontAutoIntake(true, false)),
-                new SleepAction(0.3),
-                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
-                new SleepAction(0.075),
+//                new SleepAction(0.3),
+//                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
+//                new SleepAction(0.075),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }
@@ -1520,6 +1538,16 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.autoWallIntake(true, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.arm.wallPickup()),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction actionMoreWallIntakeOpen() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.autoMoreWallIntake(true, true)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.arm.wallPickup()),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
@@ -1621,8 +1649,8 @@ public class Bot {
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
         double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.2 : 1.02;
         if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.06;
-        double rearWheelModifier = (state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.15 : 1;
-        if (state == BotState.WALL_INTAKE) rearWheelModifier = 1.2;
+        double rearWheelModifier = (state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.07 : 1;
+        if (state == BotState.WALL_INTAKE) rearWheelModifier = 1.0;
         double[] speeds = {
                 (forwardBackSpeed - strafeSpeed - turnSpeed) * frontWheelModifier,
                 (forwardBackSpeed + strafeSpeed + turnSpeed) * frontWheelModifier,

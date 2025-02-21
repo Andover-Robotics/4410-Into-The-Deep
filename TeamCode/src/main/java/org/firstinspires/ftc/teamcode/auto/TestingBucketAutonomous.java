@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
@@ -42,9 +43,9 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
         Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
 
-        Pose2d firstSample = new Pose2d(47.7, 47.4, Math.toRadians(-90));
-        Pose2d secondSample = new Pose2d(60.9, 44.7, Math.toRadians(-90));
-        Pose2d thirdSample = new Pose2d(56.5, 38.8, Math.toRadians(-45));
+        Pose2d firstSample = new Pose2d(47.7, 47., Math.toRadians(-89));
+        Pose2d secondSample = new Pose2d(60.5, 44.7, Math.toRadians(-89));
+        Pose2d thirdSample = new Pose2d(56.5, 38.1, Math.toRadians(-45));
 
         Pose2d firstBucket = new Pose2d(56.5, 57, Math.toRadians(-135));
         Pose2d secondBucket = new Pose2d(56, 56.5, Math.toRadians(-135));
@@ -52,12 +53,12 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
         Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y - 2, Math.toRadians(-90));
         Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y - 2, Math.toRadians(-90));
-        Pose2d thirdCVSample = new Pose2d(48, 24, Math.toRadians(0));
+        Pose2d thirdCVSample = new Pose2d(51, 24, Math.toRadians(0));
 
         Pose2d firstSub = new Pose2d(21, 5, Math.toRadians(180));
         Pose2d secondSub = new Pose2d(21, 5, Math.toRadians(180));
-        Pose2d firstSubDrop = new Pose2d(50.5, 57, Math.toRadians(-135));
-        Pose2d secondSubDrop = new Pose2d(50.5, 57, Math.toRadians(-135));
+        Pose2d firstSubDrop = new Pose2d(51.5, 56, Math.toRadians(-135));
+        Pose2d secondSubDrop = new Pose2d(51.5, 56, Math.toRadians(-135));
 
         Pose2d subDropRam = new Pose2d(50, 6, Math.toRadians(180));
 
@@ -65,19 +66,18 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
         Action preloadSample = drive.actionBuilder(drive.pose)
                 .afterTime(0.01, bot.actionHighBucket())
-                .strafeToLinearHeading(new Vector2d(58.5, 53), Math.toRadians(-135), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 110))
+                .strafeToSplineHeading(new Vector2d(61, 52.5), Math.toRadians(-135), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 110))
 
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.05),
-                        bot.actionBucketDrop(),
-                        new SleepAction(0.07)
+                        new SleepAction(0.12),
+                        bot.actionBucketDrop()
                 ))
 
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToFrontIntake()
                 ))
 
-                .strafeToLinearHeading(firstSample.component1(), firstSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 50)) //first intake pos
+                .strafeToLinearHeading(firstSample.component1(), firstSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 50)) //first intake pos
 
                 .build();
 
@@ -86,7 +86,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                         bot.actionPickDown(),
                         new SleepAction(0.05),
                         bot.actionPickUp(),
-                        new SleepAction(0.25)
+                        new SleepAction(0.20)
                 ))
                 .build();
 
@@ -108,7 +108,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToFrontIntake()
                 ))
-                .strafeToLinearHeading(secondSample.component1(), secondSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 40))
+                .strafeToLinearHeading(secondSample.component1(), secondSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 40))
                 .build();
 
         Action secondSamplePickup = drive.actionBuilder(secondSample)
@@ -116,7 +116,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                         bot.actionPickDown(),
                         new SleepAction(0.15),
                         bot.actionPickUp(),
-                        new SleepAction(0.25)
+                        new SleepAction(0.20)
                 ))
                 .build();
 
@@ -156,7 +156,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                 .strafeToLinearHeading(thirdSample.component1(), thirdSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 40))
 
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.20),
+                        new SleepAction(0.1),
                         bot.actionPickDown(),
                         new SleepAction(0.2)
                 ))
@@ -180,9 +180,8 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
         Action thirdSamplePickup = drive.actionBuilder(thirdSample)
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.1),
                         bot.actionPickDown(),
-                        new SleepAction(0.2),
+                        new SleepAction(0.1),
                         bot.actionPickUp(),
                         new SleepAction(0.25)
                 ))
@@ -238,7 +237,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
 //                        bot.actionSubPark()
                 ))
                 .splineToSplineHeading(new Pose2d(new Vector2d(secondSub.component1().x + 10, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(secondSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
+                .splineToLinearHeading(new Pose2d(new Vector2d(secondSub.component1().x-4, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
                 .stopAndAdd(bot.actionSubPark())
                 .build();
 
@@ -295,7 +294,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             firstSampleCVPickup,
-                            new SleepAction(0.4),
+                            new SleepAction(0.5),
                             bot.actionDetectWait()
                     )
 
@@ -311,7 +310,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             new SequentialAction(
                                     bot.actionDetect(),
                                     drive.actionBuilderPrecise(bot.storedPosition)
-                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
@@ -352,7 +351,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             secondSampleCVPickup,
-                            new SleepAction(0.4),
+                            new SleepAction(0.5),
                             bot.actionDetectWait()
                     )
 
@@ -368,7 +367,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             new SequentialAction(
                                     bot.actionDetect(),
                                     drive.actionBuilderPrecise(bot.storedPosition)
-                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
@@ -419,7 +418,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             thirdSampleCVPickup,
-                            new SleepAction(0.4),
+                            new SleepAction(0.5),
                             bot.actionDetectWait()
                     )
 
@@ -435,7 +434,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             new SequentialAction(
                                     bot.actionDetect(),
                                     drive.actionBuilderPrecise(bot.storedPosition)
-                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
@@ -491,7 +490,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             new SequentialAction(
                                     bot.actionDetect(),
                                     drive.actionBuilderPrecise(bot.storedPosition)
-                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                            .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
@@ -593,7 +592,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                                 new SequentialAction(
                                         bot.actionDetect(),
                                         drive.actionBuilderPrecise(bot.storedPosition)
-                                                .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 55))
+                                                .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                                 .stopAndAdd(new SequentialAction(
                                                         bot.actionSubAutoPickDown(),
                                                         new SleepAction(0.25),
@@ -641,7 +640,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                                 bot.actionPeriodic(),
                                 new SequentialAction(
                                         backToSubPark,
-                                        new SleepAction(0.5)
+                                        new SleepAction(5)
                                 )
                         )
                 );
@@ -652,7 +651,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionSubPark(),
-                                    new SleepAction(0.5)
+                                    new SleepAction(5)
                             )
                     )
             );
