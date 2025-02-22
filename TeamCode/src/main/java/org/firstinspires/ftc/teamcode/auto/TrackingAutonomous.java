@@ -86,7 +86,7 @@ public class TrackingAutonomous extends LinearOpMode {
                                 bot.actionDetect(),
                                 drive.actionBuilderPrecise(bot.storedPosition)
                                         //.stopAndAdd(()-> )
-                                        .strafeToConstantHeading(bot.getTargetPosition(), drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
+                                        .strafeToConstantHeading(bot.targetPosition, drive.defaultVelConstraint, new ProfileAccelConstraint(SampleDetectionPipeline.decel, SampleDetectionPipeline.accel))
                                         .stopAndAdd(new SequentialAction(
                                                 new SleepAction(0.25),
                                                 bot.actionSubAutoPickDown(),

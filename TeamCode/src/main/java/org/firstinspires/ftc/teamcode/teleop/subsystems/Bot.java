@@ -67,7 +67,7 @@ public class Bot {
     public boolean holding;
 
     public Pose2d storedPosition = null;
-    public static Vector2d targetPosition = null;
+    public static Vector2d targetPosition = new Vector2d(0, 5);
 
     // get bot instance
     public static Bot getInstance() {
@@ -626,6 +626,29 @@ public class Bot {
             actions.add(new SleepAction(0.3));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
             actions.add(teleopStorage());
+        } else {
+            actions.add(teleopOpenGripper());
+        }
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopPickupFrontIntakeToHighBucket(boolean trigger) {
+        List<Action> actions = new ArrayList<>();
+        actions.add(teleopPickUp());
+        actions.add(new SleepAction(0.325));
+        if (getBreakBeam() || trigger) {
+            actions.add(new SleepAction(0.125));
+            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+            actions.add(new SleepAction(0.075));
+            actions.add(new InstantAction(() -> pivot.storage(false, true)));
+            actions.add(new SleepAction(0.3));
+            actions.add(new InstantAction(() -> pivot.arm.vertical()));
+            actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
+            actions.add(new SleepAction(0.5));
+            actions.add(new InstantAction(() -> pivot.highBucket(false, true)));
+            actions.add(new SleepAction(0.70));
+            actions.add(new InstantAction(() -> pivot.arm.bucket()));
+            actions.add(new InstantAction(() -> state = BotState.HIGH_BUCKET));
         } else {
             actions.add(teleopOpenGripper());
         }

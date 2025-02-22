@@ -24,7 +24,8 @@ public class TestingP2P extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;
 
-    public static double x = 0, y = 0, heading = 180;
+    public static double x = 0, y = 0, heading = 90, initHeading = 180;
+    public static double x2 = 0, y2 = 0, heading2 = 90;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,7 +38,7 @@ public class TestingP2P extends LinearOpMode {
 
         bot.state = Bot.BotState.STORAGE;
 
-        Pose2d initialPose = new Pose2d(20.5, 0, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(initHeading));
 
         boolean left = true;
 
@@ -48,7 +49,7 @@ public class TestingP2P extends LinearOpMode {
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
                     bot.actionPeriodic(),
-                    bot.teleopStorage()
+                    bot.actionSubAutoIntake()
                 )
         );
 
@@ -123,8 +124,9 @@ public class TestingP2P extends LinearOpMode {
             telemetry.update();
         }
 
-        bot.updateSampleDrive();
+        //bot.updateSampleDrive();
         drive.updatePoseEstimate();
+        bot.savePosition(drive.pose);
 
         while (opModeIsActive() && !isStopRequested()) {
             bot.autoPeriodic();
@@ -133,7 +135,7 @@ public class TestingP2P extends LinearOpMode {
                 left = !left;
             }
             if (left) {
-                controller.goToPosition(0, 0, Math.toRadians(180), 0.7);
+                controller.goToPosition(x2, y2, Math.toRadians(heading2), 0.7);
             } else {
                 controller.goToPosition(x, y, Math.toRadians(heading), 0.7);
             }
@@ -142,14 +144,30 @@ public class TestingP2P extends LinearOpMode {
             telemetry.addData("heading", Math.toDegrees(drive.pose.heading.toDouble()));
             telemetry.addLine("");
             telemetry.addData("left", left);
-            telemetry.addData("x", x);
-            telemetry.addData("y", y);
-            telemetry.addData("heading", heading);
+//            telemetry.addData("x", x);
+//            telemetry.addData("y", y);
+//            telemetry.addData("heading", heading);
             telemetry.addLine("");
-            telemetry.addData("x error", x - drive.pose.position.x);
-            telemetry.addData("y error", y - drive.pose.position.y);
-            telemetry.addData("heading error", heading - Math.toDegrees(drive.pose.heading.toDouble()));
+            telemetry.addData("x error", controller.getXError());
+            telemetry.addData("y error", controller.getYError());
+            telemetry.addData("heading error", controller.headingError);
             telemetry.update();
         }
+
+//        Actions.runBlocking(
+//                new ActionHelpersJava.RaceParallelCommand(
+//                        bot.actionPeriodic(),
+//                        controller.p2p(),
+//                        telemetryPacket -> {
+//                            telemetry.addData("x error", controller.getXError());
+//                            telemetry.addData("y error", controller.getYError());
+//                            telemetry.addData("heading error", controller.headingError);
+//                            telemetry.update();
+//                            return true;
+//                        }
+//                )
+//        );
+
+        sleep(5000);
     }
 }

@@ -38,12 +38,14 @@ public class SampleDetectionPipeline
 
     public static double decel = -25;
     public static double accel = 55;
-
-    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0/*334958 + 0.1*/, strafeMultiplier = 1.52;
+//
+//    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0/*334958 + 0.1*/, strafeMultiplier = 1.52;
 //    public static double slidesA = 0.0193807, slidesB = 1.3, slidesMultiplier = 1.2, strafingSlidesModifier = -0;
 
 //    public static double strafeA = -0.0, strafeB = -0.0195, strafeC = 0.23/*334958 + 0.1*/, strafeMultiplier = 1.5;
     public static double slidesA = 0.02301524, slidesB = 2.2, slidesMultiplier = 1.0, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
+
+    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC=0.334958, strafeMultiplier = 1.0;
 
     public static double lowAR = 1.2, highAR = 3.1, lowD = 0.4, highD = 1;
 
