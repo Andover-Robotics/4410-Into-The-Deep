@@ -96,21 +96,21 @@ public class SampleDetectionPipeline
         blueLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(BLUE)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .setBlurSize(2)
                 .build();
 
         redLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(RED)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .setBlurSize(2)
                 .build();
 
         yellowLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(YELLOW)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
                 .setBlurSize(2)
                 .build();
 
