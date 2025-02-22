@@ -7,19 +7,10 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 @Config
@@ -35,7 +26,7 @@ public class P2P {
     public Vector2d driveVector;
     public Pose2d target;
     public PoseVelocity2d off = new PoseVelocity2d(new Vector2d(0, 0), 0);
-    public int counter = 0, counterMax = 40;
+    public int counter = 0, counterMax = 35;
 
     public P2P(MecanumDrive drive) {
         this.drive = drive;
@@ -120,14 +111,26 @@ public class P2P {
         this.target = target;
     }
 
-    public class p2p implements Action {
+    public class cvp2p implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             return goToPosition(Bot.getTargetPosition().x, Bot.getTargetPosition().y, Bot.getCurrentPosition().heading.toDouble(), 0.7);
         }
     }
 
-    public Action p2p() {
+    public Action cvp2p() {
+        return new cvp2p();
+    }
+
+    public class p2p implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            return goToPosition(target.position.x, target.position.y, target.heading.toDouble(), 0.7);
+        }
+    }
+
+    public Action p2p(Pose2d newTarget) {
+        setTarget(newTarget);
         return new p2p();
     }
 }

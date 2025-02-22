@@ -18,7 +18,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
@@ -43,25 +42,26 @@ public class TestingBucketAutonomous extends LinearOpMode {
         int cv = 0;
 
         Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
-        Vector2d preloadDrop = new Vector2d(59.5, 53);
-        Pose2d firstSample = new Pose2d(48, 47., Math.toRadians(-89));
-        Pose2d secondSample = new Pose2d(60.5, 44.7, Math.toRadians(-89.5));
-        Pose2d thirdSample = new Pose2d(56.5, 38.1, Math.toRadians(-45));
+        Vector2d preloadDrop = new Vector2d(60, 53.5);
+        Pose2d firstSample = new Pose2d(48, 47, Math.toRadians(-89));
+        Pose2d secondSample = new Pose2d(60.5, 46.2, Math.toRadians(-89.5));
+        Pose2d thirdSample = new Pose2d(56.5, 38, Math.toRadians(-45));
 
         Pose2d firstBucket = new Pose2d(56.5, 57, Math.toRadians(-135));
-        Pose2d secondBucket = new Pose2d(56, 56.5, Math.toRadians(-135));
+        Pose2d secondBucket = new Pose2d(56, 56, Math.toRadians(-135));
         Pose2d thirdBucket = new Pose2d(54, 54.5, Math.toRadians(-135));
 
         Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y - 2, Math.toRadians(-90));
         Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y - 2, Math.toRadians(-90));
-        Pose2d thirdCVSample = new Pose2d(51, 24, Math.toRadians(0));
+        Pose2d thirdCVSample = new Pose2d(52.5, 24, Math.toRadians(0));
 
-        Pose2d firstSub = new Pose2d(21, 5, Math.toRadians(180));
-        Pose2d secondSub = new Pose2d(21, 5, Math.toRadians(180));
+        Pose2d firstSub = new Pose2d(21, 3.5, Math.toRadians(180));
+        Pose2d secondSub = new Pose2d(21, 6, Math.toRadians(180));
         Pose2d firstSubDrop = new Pose2d(52.5, 55, Math.toRadians(-135));
         Pose2d secondSubDrop = new Pose2d(52.5, 55, Math.toRadians(-135));
 
-        Pose2d subDropRam = new Pose2d(50, 6, Math.toRadians(180));
+        Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
+        Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -105,7 +105,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
                 .strafeToLinearHeading(firstBucket.component1(), firstBucket.component2())
 
-                .waitSeconds(0.25)
+                .waitSeconds(0.30)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.01, new SequentialAction(
@@ -135,14 +135,15 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
                 .strafeToLinearHeading(secondBucket.component1(), secondBucket.component2())
 
-                .waitSeconds(0.25)
+                .waitSeconds(0.30)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),
                         new SleepAction(0.1),
                         bot.actionDiagFrontIntake(),
-                        bot.actionRotateClaw()
+                        bot.actionRotateClaw(),
+                        bot.actionOpenGripper()
                 ))
 
                 .strafeToLinearHeading(thirdSample.component1(), thirdSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 40))
@@ -151,6 +152,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
 
         Action thirdSamplePickup = drive.actionBuilder(thirdSample)
                 .stopAndAdd(new SequentialAction(
+                        new SleepAction(0.1),
                         bot.actionPickDown(),
                         new SleepAction(0.1),
                         bot.actionPickUp(),
@@ -280,7 +282,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionDetect(),
-                                    controller.p2p(),
+                                    controller.cvp2p(),
                                     new InstantAction(() -> bot.savePosition(drive.pose)),
                                     drive.actionBuilderPrecise(bot.storedPosition)
                                             .stopAndAdd(new SequentialAction(
@@ -338,7 +340,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionDetect(),
-                                    controller.p2p(),
+                                    controller.cvp2p(),
                                     new InstantAction(() -> bot.savePosition(drive.pose)),
                                     drive.actionBuilderPrecise(bot.storedPosition)
                                             .stopAndAdd(new SequentialAction(
@@ -406,7 +408,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionDetect(),
-                                    controller.p2p(),
+                                    controller.cvp2p(),
                                     new InstantAction(() -> bot.savePosition(drive.pose)),
                                     drive.actionBuilderPrecise(bot.storedPosition)
                                             .stopAndAdd(new SequentialAction(
@@ -463,7 +465,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     bot.actionDetect(),
-                                    controller.p2p(),
+                                    controller.cvp2p(),
                                     new InstantAction(() -> bot.savePosition(drive.pose)),
                                     drive.actionBuilderPrecise(bot.storedPosition)
                                             .stopAndAdd(new SequentialAction(
@@ -500,13 +502,15 @@ public class TestingBucketAutonomous extends LinearOpMode {
                                         bot.actionBucketToStorage()
                                 )
                         ));
-                while (Bot.vectorDiff(drive.pose.position, subDropRam.component1()) > 7) {
+                while (Bot.vectorDiff(drive.pose.position, subDropRam.component1()) > 4) {
                     drive.updatePoseEstimate();
                     bot.savePosition(drive.pose);
                     Actions.runBlocking(
                             new ActionHelper.RaceParallelCommand(
                                     bot.actionPeriodic(),
                                     new SequentialAction(
+//                                            controller.p2p(unRam),
+//                                            controller.p2p(subDropRam)
                                             drive.actionBuilder(bot.storedPosition)
                                                     .strafeToLinearHeading(firstSub.position, Math.toRadians(180))
                                                     .splineTo(subDropRam.position, Math.toRadians(0), drive.defaultVelConstraint, new ProfileAccelConstraint(-300, 300))
@@ -566,7 +570,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
                                 bot.actionPeriodic(),
                                 new SequentialAction(
                                         bot.actionDetect(),
-                                        controller.p2p(),
+                                        controller.cvp2p(),
                                         new InstantAction(() -> bot.savePosition(drive.pose)),
                                         drive.actionBuilderPrecise(bot.storedPosition)
                                                 .stopAndAdd(new SequentialAction(

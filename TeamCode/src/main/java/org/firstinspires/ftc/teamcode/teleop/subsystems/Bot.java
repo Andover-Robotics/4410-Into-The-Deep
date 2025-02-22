@@ -608,7 +608,7 @@ public class Bot {
 
         actions.add(new InstantAction(() -> pivot.arm.bucketDrop()));
         actions.add(new InstantAction(() -> gripper.open()));
-        actions.add(new SleepAction(0.5));
+        actions.add(new SleepAction(0.4));
         actions.add(teleopStorage());
 
         return new SequentialAction(actions);
@@ -616,7 +616,7 @@ public class Bot {
 
     public SequentialAction teleopPickupFrontIntakeToStorage(boolean trigger) {
         List<Action> actions = new ArrayList<>();
-        actions.add(teleopPickUp());
+        actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
         if (getBreakBeam() || trigger) {
             actions.add(new SleepAction(0.125));
@@ -636,7 +636,7 @@ public class Bot {
 
     public SequentialAction teleopPickupFrontIntakeToHighBucket(boolean trigger) {
         List<Action> actions = new ArrayList<>();
-        actions.add(teleopPickUp());
+        actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
         if (getBreakBeam() || trigger) {
             actions.add(new SleepAction(0.125));
@@ -659,7 +659,7 @@ public class Bot {
 
     public SequentialAction teleopPickupFrontIntakeToWallIntake(boolean trigger) {
         List<Action> actions = new ArrayList<>();
-        actions.add(teleopPickUp());
+        actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
         if (getBreakBeam() || trigger) {
             actions.add(new SleepAction(0.125));
@@ -741,6 +741,12 @@ public class Bot {
     public SequentialAction teleopPickUp() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(pickDownUpValue))
+        );
+    }
+
+    public SequentialAction teleopPickUpMore() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.changeZ(pickDownUpValue + 1))
         );
     }
 
@@ -1438,7 +1444,7 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.bucketDrop()),
                 new SleepAction(0.15),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.075),
+                new SleepAction(0.12),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }

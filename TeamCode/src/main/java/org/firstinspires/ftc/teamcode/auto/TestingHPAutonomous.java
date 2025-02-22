@@ -61,7 +61,7 @@ public class TestingHPAutonomous extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-39.5, 24.5), Math.toRadians(-90))//-41
 
                 .splineToConstantHeading(new Vector2d(-43.1,10), Math.toRadians(126))//140
-                .strafeToConstantHeading(new Vector2d(-44,57.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
+                .strafeToConstantHeading(new Vector2d(-45,57.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
 
                 //-45,33
                 .splineToConstantHeading(new Vector2d(-26,18),Math.toRadians(100))

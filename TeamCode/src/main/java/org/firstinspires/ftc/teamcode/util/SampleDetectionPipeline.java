@@ -43,12 +43,12 @@ public class SampleDetectionPipeline
 //    public static double slidesA = 0.0193807, slidesB = 1.3, slidesMultiplier = 1.2, strafingSlidesModifier = -0;
 
 //    public static double strafeA = -0.0, strafeB = -0.0195, strafeC = 0.23/*334958 + 0.1*/, strafeMultiplier = 1.5;
-    public static double slidesA = 0.02001524, slidesB = 1.2, slidesMultiplier = 1.0, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
+    public static double slidesA = 0.02101524, slidesB = 1.0, slidesMultiplier = 1.0, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
 
     public static double strafeA = -0.00000156672, strafeB = -0.02, strafeC=0.304958, strafeMultiplier = 1.0;
 //    public static double strafeA = 0.00000156672, strafeB = 0.02, strafeC=-0.004958, strafeMultiplier = 1.0;
 
-    public static double lowAR = 1.2, highAR = 3.1, lowD = 0.4, highD = 1;
+    public static double lowAR = 1, highAR = 3.1, lowD = 0.3, highD = 1, maxSide1 = 220, maxSide2 = 105;
 
     public static double pastStrafe = 0;
     public double aspectRatio = 0, side1 = 0, side2 = 0, boxArea = 0, blobArea = 0, density = 0;
@@ -96,22 +96,22 @@ public class SampleDetectionPipeline
         blueLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(BLUE)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
-                .setBlurSize(2)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.85, 1, -1))
+                .setBlurSize(1)
                 .build();
 
         redLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(RED)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
-                .setBlurSize(2)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.85, 1, -1))
+                .setBlurSize(1)
                 .build();
 
         yellowLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(YELLOW)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.7, 1, -1))
-                .setBlurSize(2)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0.85, 1, -1))
+                .setBlurSize(1)
                 .build();
 
         portalBuilder = new VisionPortal.Builder();
@@ -191,16 +191,16 @@ public class SampleDetectionPipeline
                 } catch (Exception e) {
                     density = 0;
                 }
-                if (aspectRatio > lowAR && aspectRatio < highAR && density > lowD && density < highD) {
+                if (aspectRatio > lowAR && aspectRatio < highAR && density > lowD && density < highD && side1 < maxSide1 && side2 < maxSide2) {
                     break;
-                } else {
-                    x = 2000;
-                    y = 2000;
-                    angle = -1;
-                    blobArea = 0;
-                    boxArea = 0;
-                    density = 0;
-                    aspectRatio = 0;
+//                } else {
+//                    x = 2000;
+//                    y = 2000;
+//                    angle = -1;
+//                    blobArea = 0;
+//                    boxArea = 0;
+//                    density = 0;
+//                    aspectRatio = 0;
                 }
             }
         } else {
@@ -269,6 +269,14 @@ public class SampleDetectionPipeline
 
     public double getDensity() {
         return density;
+    }
+
+    public double getSide1() {
+        return side1;
+    }
+
+    public double getSide2() {
+        return side2;
     }
 
 }

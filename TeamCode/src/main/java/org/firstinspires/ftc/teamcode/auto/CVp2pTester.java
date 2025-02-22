@@ -1,28 +1,21 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
-import org.firstinspires.ftc.teamcode.auto.P2P;
 
 
 @Config
-@Autonomous(name = "p2p tester")
-public class TestingP2P extends LinearOpMode {
+@Autonomous(name = "cvp2p cv")
+public class CVp2pTester extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;
 
@@ -74,6 +67,8 @@ public class TestingP2P extends LinearOpMode {
             telemetry.addData("area", bot.pipeline.getArea());
             telemetry.addData("aspect ratio", bot.pipeline.getAspectRatio());
             telemetry.addData("density", bot.pipeline.getDensity());
+            telemetry.addData("side1", bot.pipeline.getSide1());
+            telemetry.addData("side2", bot.pipeline.getSide2());
             telemetry.update();
         }
 
@@ -112,7 +107,7 @@ public class TestingP2P extends LinearOpMode {
                         bot.actionPeriodic(),
                         new SequentialAction(
                                 bot.actionDetect(),
-                                controller.p2p(),
+                                controller.cvp2p(),
                                 new SequentialAction(
                                         new SleepAction(0.4),
                                         bot.actionSubAutoPickDown(),
