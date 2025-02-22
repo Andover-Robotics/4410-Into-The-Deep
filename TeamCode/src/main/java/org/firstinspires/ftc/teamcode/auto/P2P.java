@@ -26,13 +26,16 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 public class P2P {
     public double integral = 0, lastErrorHeading = 0, lastErrorDrive = 0, lastErrorStrafe = 0;
     MecanumDrive drive;
-    public static double hP = 2.1, hI = 0, hD = 4.2;
+    public static double hP = 2.2, hI = 0, hD = 3.9;
     public static double dP = -0.15, dD = -0.38;
     public static double sP = -0.46, sD = -0.95;
+    public static double dThr = 0.15, sThr = 0.15, tThr = 0.1;
     public double headingError = 0;
     public double inputTurn = 0, driveCorrection = 0, strafeCorrection = 0;
     public Vector2d driveVector;
     public Pose2d target;
+    public PoseVelocity2d off = new PoseVelocity2d(new Vector2d(0, 0), 0);
+    public int counter = 0, counterMax = 40;
 
     public P2P(MecanumDrive drive) {
         this.drive = drive;
@@ -70,6 +73,7 @@ public class P2P {
 
     public boolean goToPosition(double targetX, double targetY, double targetH, double speed) {
         drive.updatePoseEstimate();
+        counter++;
         driveVector = new Vector2d(targetX - drive.pose.component1().x, targetY - drive.pose.component1().y);
         double heading = drive.pose.heading.toDouble();
 
@@ -79,8 +83,17 @@ public class P2P {
         driveCorrection = pfdDrive(dP, dD, 0, rotatedVector.x);
         strafeCorrection = pfdStrafe(sP, sD, 0, rotatedVector.y);
 
-        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn));
-        return !(((Math.abs(driveVector.x)) < 0.35) && (Math.abs(driveVector.y) < 0.35) && (Math.abs(targetH - heading) < 0.4));
+        PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
+        boolean stopped = (Math.abs(driveCorrection) < dThr) && (Math.abs(strafeCorrection) < sThr) && (Math.abs(inputTurn) < tThr);
+        boolean atPos = ((Math.abs(driveVector.x)) < 0.35) && (Math.abs(driveVector.y) < 0.35) && (Math.abs(targetH - heading) < Math.toRadians(2));
+
+        if ((atPos && stopped) || counter > counterMax) {
+            drive.setDrivePowers(off);
+            return false;
+        } else {
+            drive.setDrivePowers(botVel);
+            return true;
+        }
     }
 
     public double getXError() {
@@ -95,8 +108,10 @@ public class P2P {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
 
-        double newX = -v.x * cosA - v.y * sinA;// +-  0-1, (90), (0), -1+0
-        double newY = v.x * sinA - v.y * cosA;// ++  1+0, (90), (0), 0+1
+        double newX = -v.x * cosA - v.y * sinA;// +-
+        double newY = v.x * sinA - v.y * cosA;// ++
+//        double newX = -v.x * cosA - v.y * sinA;// +-
+
 
         return new Vector2d(newX, newY);
     }
@@ -108,7 +123,7 @@ public class P2P {
     public class p2p implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            return goToPosition(Bot.getTargetPosition().x, Bot.getTargetPosition().y, drive.pose.heading.toDouble(), 0.7);
+            return goToPosition(Bot.getTargetPosition().x, Bot.getTargetPosition().y, Bot.getCurrentPosition().heading.toDouble(), 0.7);
         }
     }
 

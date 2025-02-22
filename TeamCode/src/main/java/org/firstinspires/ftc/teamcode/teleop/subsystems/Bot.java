@@ -57,6 +57,8 @@ public class Bot {
 
     public static double sampleYPos = 0;
     public static int angleOffset = 0;
+    public static double ySign = -1;
+    public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
 
     // Define subsystem objects
@@ -66,7 +68,7 @@ public class Bot {
     DigitalChannel breakBeam;
     public boolean holding;
 
-    public Pose2d storedPosition = null;
+    public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
 
     // get bot instance
@@ -146,13 +148,13 @@ public class Bot {
 
     public void savePosition(Pose2d current) {
         storedPosition = current;
-        refAngle = Math.toDegrees(current.component2().toDouble()) % 180;
-        x = Math.sin(Math.toRadians(refAngle)) * sampleYPos;
-        y = -Math.cos(Math.toRadians(refAngle)) * sampleYPos;
+        refAngle = Math.toDegrees(current.component2().toDouble()) % 360;
+        x = Math.sin(Math.toRadians(refAngle)) * sampleYPos * xSign;
+        y = Math.cos(Math.toRadians(refAngle)) * sampleYPos * ySign;
         targetPosition = new Vector2d(storedPosition.component1().x + x, storedPosition.component1().y + y);
     }
 
-    public Pose2d getCurrentPosition() {
+    public static Pose2d getCurrentPosition() {
         return storedPosition;
     }
 
@@ -1434,9 +1436,9 @@ public class Bot {
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.bucketDrop()),
-                new SleepAction(0.1),
+                new SleepAction(0.15),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.1),
+                new SleepAction(0.075),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }

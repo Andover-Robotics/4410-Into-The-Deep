@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -19,7 +21,7 @@ import org.firstinspires.ftc.teamcode.auto.P2P;
 
 
 @Config
-@TeleOp(name = "p2p tester")
+@Autonomous(name = "p2p tester")
 public class TestingP2P extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;
@@ -38,7 +40,7 @@ public class TestingP2P extends LinearOpMode {
 
         bot.state = Bot.BotState.STORAGE;
 
-        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(initHeading));
+        Pose2d initialPose = new Pose2d(10, 10, Math.toRadians(initHeading));
 
         boolean left = true;
 
@@ -46,128 +48,96 @@ public class TestingP2P extends LinearOpMode {
 
         P2P controller = new P2P(drive);
 
+        bot.openPipeline(false, false, true);
+
         Actions.runBlocking(
                 new ActionHelpersJava.RaceParallelCommand(
-                    bot.actionPeriodic(),
-                    bot.actionSubAutoIntake()
+                        bot.actionPeriodic(),
+                        bot.actionSubAutoIntake()
                 )
         );
 
-
-//        bot.openPipeline(false, false, true);
-//
-//        Actions.runBlocking(
-//                new ActionHelpersJava.RaceParallelCommand(
-//                        bot.actionPeriodic(),
-//                        bot.actionSubAutoIntake()
-//                )
-//        );
-
-//        while(!isStarted()) {
-//            bot.autoPeriodic();
-//            bot.scan();
-//
-//            gp1.readButtons();
-//            telemetry.addData("current angle", bot.pipeline.getAngle());
-//            telemetry.addLine("");
-//            telemetry.addData("current getx", bot.pipeline.getX());
-//            telemetry.addData("strafe value", bot.pipeline.getDriveX());
-//            telemetry.addData("AX value", bot.pipeline.getAX());
-//            telemetry.addLine("");
-//            telemetry.addData("slides pixels", bot.pipeline.getYPixels());
-//            telemetry.addData("current gety", bot.pipeline.getY());
-//            telemetry.addData("slides value", bot.pipeline.getSlidesY());
-//            telemetry.addData("area", bot.pipeline.getArea());
-//            telemetry.addData("aspect ratio", bot.pipeline.getAspectRatio());
-//            telemetry.addData("density", bot.pipeline.getDensity());
-//            telemetry.update();
-//        }
-
-//        bot.updateSampleDrive();
-//        drive.updatePoseEstimate();
-//        bot.savePosition(drive.pose);
-//
-//        Actions.runBlocking(
-//                new ActionHelpersJava.RaceParallelCommand(
-//                        bot.actionPeriodic(),
-//                        new SequentialAction(
-////                                bot.actionFrontIntakeToStorage(),
-////                                new SleepAction(0.6),
-//                                bot.actionDetect(),
-//                                drive.actionBuilderPrecise(bot.storedPosition)
-//                                        .stopAndAdd(controller.p2p())
-//                                        .stopAndAdd(new SequentialAction(
-//                                                new SleepAction(0.25),
-//                                                bot.actionSubAutoPickDown(),
-//                                                new SleepAction(0.25),
-//                                                bot.actionSubAutoPickUp(),
-//                                                new SleepAction(0.3),
-//                                                bot.actionFrontIntakeToStorage(),
-//                                                new SleepAction(0.5)
-//                                        ))
-//                                        .build()
-//                        ),
-//                        telemetryPacket -> {
-//                            telemetry.addData("sample y val", Bot.sampleYPos);
-//                            telemetry.addData("rounds", bot.pipeline.rounds);
-//                            telemetry.addData("pose", bot.storedPosition);
-//                            telemetry.addData("refAngle", bot.refAngle);
-//                            telemetry.addData("target vector", bot.targetPosition);
-//                            telemetry.update();
-//                            return true;
-//                        }
-//                )
-//        );
         while(!isStarted()) {
             bot.autoPeriodic();
+            bot.scan();
+
             gp1.readButtons();
+            telemetry.addData("current angle", bot.pipeline.getAngle());
+            telemetry.addLine("");
+            telemetry.addData("current getx", bot.pipeline.getX());
+            telemetry.addData("strafe value", bot.pipeline.getDriveX());
+            telemetry.addData("AX value", bot.pipeline.getAX());
+            telemetry.addLine("");
+            telemetry.addData("slides pixels", bot.pipeline.getYPixels());
+            telemetry.addData("current gety", bot.pipeline.getY());
+            telemetry.addData("slides value", bot.pipeline.getSlidesY());
+            telemetry.addData("area", bot.pipeline.getArea());
+            telemetry.addData("aspect ratio", bot.pipeline.getAspectRatio());
+            telemetry.addData("density", bot.pipeline.getDensity());
             telemetry.update();
         }
 
-        //bot.updateSampleDrive();
+        bot.updateSampleDrive();
         drive.updatePoseEstimate();
         bot.savePosition(drive.pose);
 
-        while (opModeIsActive() && !isStopRequested()) {
-            bot.autoPeriodic();
-            gp1.readButtons();
-            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-                left = !left;
-            }
-            if (left) {
-                controller.goToPosition(x2, y2, Math.toRadians(heading2), 0.7);
-            } else {
-                controller.goToPosition(x, y, Math.toRadians(heading), 0.7);
-            }
-            telemetry.addData("x", drive.pose.position.x);
-            telemetry.addData("y", drive.pose.position.y);
-            telemetry.addData("heading", Math.toDegrees(drive.pose.heading.toDouble()));
-            telemetry.addLine("");
-            telemetry.addData("left", left);
-//            telemetry.addData("x", x);
-//            telemetry.addData("y", y);
-//            telemetry.addData("heading", heading);
-            telemetry.addLine("");
-            telemetry.addData("x error", controller.getXError());
-            telemetry.addData("y error", controller.getYError());
-            telemetry.addData("heading error", controller.headingError);
-            telemetry.update();
-        }
+//        while (opModeIsActive() && !isStopRequested()) {
+//            bot.autoPeriodic();
+//            gp1.readButtons();
+//            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+//                left = !left;
+//            }
+//            if (left) {
+//                controller.goToPosition(x2, y2, Math.toRadians(heading2), 0.7);
+//            } else {
+//                controller.goToPosition(x, y, Math.toRadians(heading), 0.7);
+//            }
+//            telemetry.addData("x", drive.pose.position.x);
+//            telemetry.addData("y", drive.pose.position.y);
+//            telemetry.addData("heading", Math.toDegrees(drive.pose.heading.toDouble()));
+//            telemetry.addLine("");
+//            telemetry.addData("left", left);
+////            telemetry.addData("x", x);
+////            telemetry.addData("y", y);
+////            telemetry.addData("heading", heading);
+//            telemetry.addLine("");
+//            telemetry.addData("x error", controller.getXError());
+//            telemetry.addData("y error", controller.getYError());
+//            telemetry.addData("heading error", controller.headingError);
+//            telemetry.update();
+//        }
 
-//        Actions.runBlocking(
-//                new ActionHelpersJava.RaceParallelCommand(
-//                        bot.actionPeriodic(),
-//                        controller.p2p(),
-//                        telemetryPacket -> {
-//                            telemetry.addData("x error", controller.getXError());
-//                            telemetry.addData("y error", controller.getYError());
-//                            telemetry.addData("heading error", controller.headingError);
-//                            telemetry.update();
-//                            return true;
-//                        }
-//                )
-//        );
+        Actions.runBlocking(
+                new ActionHelpersJava.RaceParallelCommand(
+                        bot.actionPeriodic(),
+                        new SequentialAction(
+                                bot.actionDetect(),
+                                controller.p2p(),
+                                new SequentialAction(
+                                        new SleepAction(0.4),
+                                        bot.actionSubAutoPickDown(),
+                                        new SleepAction(0.25),
+                                        bot.actionSubAutoPickUp(),
+                                        new SleepAction(0.3),
+                                        bot.actionFrontIntakeToStorage(),
+                                        new SleepAction(0.5)
 
-        sleep(5000);
+                                ),
+                                telemetryPacket -> {
+                                    telemetry.addData("sample y val", Bot.sampleYPos);
+                                    telemetry.addData("rounds", bot.pipeline.rounds);
+                                    telemetry.addData("pose", bot.storedPosition);
+                                    telemetry.addData("refAngle", bot.refAngle);
+                                    telemetry.addData("target vector", Bot.targetPosition);
+                                    telemetry.addData("x error", controller.getXError());
+                                    telemetry.addData("y error", controller.getYError());
+                                    telemetry.addData("heading error", controller.headingError * 180 / Math.PI);
+                                    telemetry.addData("counter", controller.counter);
+                                    telemetry.update();
+                                    return true;
+                                }
+                        )
+                )
+        );
     }
 }
