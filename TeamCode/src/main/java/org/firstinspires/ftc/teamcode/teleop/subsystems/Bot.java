@@ -60,6 +60,8 @@ public class Bot {
     public static double ySign = -1;
     public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
+    private boolean breakBeamWorking = true;
+    public boolean climbing = false;
 
     // Define subsystem objects
     public Gripper gripper;
@@ -103,18 +105,37 @@ public class Bot {
         breakBeam = opMode.hardwareMap.get(DigitalChannel.class, "BreakBeam");
     }
 
-    public boolean getBreakBeam() {
+    public boolean isHolding() {
         return !breakBeam.getState(); //TODO uncomment when bb is fixed
 //        return true; //hardcoded holding
     }
 
     public boolean isEmpty() {
-        return breakBeam.getState(); //TODO uncomment when bb is fixed
+        if (breakBeamWorking) {
+            return breakBeam.getState(); //TODO uncomment when bb is fixed
+        } else {
+            return false;
+        }
+
 //        return false; //hardcoded holding
     }
 
+    public void checkBreakBeam(boolean correct) {
+        if (breakBeam.getState() != correct) {
+            breakBeamWorking = false;
+        }
+    }
+
+    public void fixBreakBeam() {
+        breakBeamWorking = true;
+    }
+
+    public void turnOffBreakBeam() {
+        breakBeamWorking = false;
+    }
+
     public void saveBreakBeam() {
-        holding = getBreakBeam();
+        holding = isHolding();
     }
 
     //SAMPLE DETECTION
@@ -563,6 +584,7 @@ public class Bot {
 
     public SequentialAction teleopL2Climb() {
         List<Action> actions = new ArrayList<>();
+        climbing = true;
 
         actions.add(new InstantAction(() -> pivot.midl2Climb(false, true)));
         actions.add(new SleepAction(0.15));
@@ -571,7 +593,9 @@ public class Bot {
         actions.add(new InstantAction(() -> pivot.postl2Climb(false, true)));
         actions.add(new SleepAction(2));
         actions.add(new InstantAction(() -> pivot.climbTransfer(true, false)));
-        actions.add(new SleepAction(0.75));
+        actions.add(new SleepAction(0.55));
+        climbing = false;
+        actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> pivot.climbTransfer(false, true)));
 
         return new SequentialAction(actions);
@@ -579,6 +603,7 @@ public class Bot {
 
     public SequentialAction teleopL3Climb() {
         List<Action> actions = new ArrayList<>();
+        climbing = true;
 
         actions.add(new InstantAction(() -> pivot.prel3Climb(true, false)));
         actions.add(new SleepAction(0.2));
@@ -599,7 +624,7 @@ public class Bot {
         actions.add(new InstantAction(() -> pivot.postl3Climb(false, true)));
         actions.add(new SleepAction(1));
         actions.add(new InstantAction(() -> pivot.postl3Climb(true, false)));
-
+        climbing = false;
         return new SequentialAction(actions);
     }
 
@@ -618,7 +643,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
-        if (getBreakBeam() || trigger) {
+        if (isHolding() || trigger) {
             actions.add(new SleepAction(0.125));
             actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new SleepAction(0.075));
@@ -638,7 +663,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
-        if (getBreakBeam() || trigger) {
+        if (isHolding() || trigger) {
             actions.add(new SleepAction(0.125));
             actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new SleepAction(0.075));
@@ -661,7 +686,7 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
-        if (getBreakBeam() || trigger) {
+        if (isHolding() || trigger) {
             actions.add(new SleepAction(0.125));
             actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new SleepAction(0.075));
@@ -795,27 +820,6 @@ public class Bot {
         pivot.slides.resetEncoders();
     }
 
-    public void subAutoIntake() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
-                    storage();
-                    Thread.sleep(225);
-                }
-                gripper.open();
-                pivot.arm.frontPickupToStorage();
-                Thread.sleep(100);
-                pivot.frontIntakeStorage(true, false);
-                Thread.sleep(100);
-                pivot.subAutoIntake(true, true);
-                Thread.sleep(300);
-                pivot.arm.frontPickup();
-                state = BotState.FRONT_INTAKE;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
     public void initialize() {
         storage();
         pivot.slides.high();
@@ -826,398 +830,9 @@ public class Bot {
         state = BotState.STORAGE;
     }
 
-    public void storage() {
-        Thread thread = new Thread(() -> {
-            try {
-                gripper.close();
-                if (state == BotState.FRONT_INTAKE) {
-                    pivot.storage(true, true);
-                } else if (state == BotState.WALL_INTAKE) {
-                    pivot.storage(true, true);
-                    Thread.sleep(250);
-                    pivot.arm.storage();
-                } else if (state == BotState.HIGH_BUCKET) {
-                    pivot.arm.outtakeUp();
-                    pivot.storage(false, true);
-                    Thread.sleep(450);
-                    pivot.storage(true, true);
-                    pivot.arm.storage();
-                } else if (state == BotState.LOW_BUCKET) {
-                    pivot.arm.outtakeUp();
-                    pivot.storage(false, true);
-                    Thread.sleep(450);
-                    pivot.storage(true, true);
-                    pivot.arm.storage();
-                } else if (state == BotState.HIGH_CHAMBER){
-                    pivot.highChamberTransfer(false, true);
-                    Thread.sleep(50);
-                    pivot.arm.outtakeHoriz();
-                    pivot.highChamberTransfer(true, false);
-                    Thread.sleep(400);
-                    pivot.arm.outtakeUp();
-                    pivot.storage(false, true);
-                    Thread.sleep(500);
-                    pivot.storage(true, true);
-                    pivot.arm.storage();
-                } else {
-                    pivot.storage(false, true);
-                    Thread.sleep(400);
-                    pivot.storage(true, false);
-                    pivot.arm.storage();
-                }
-                state = BotState.STORAGE;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
 
-    public void storageOpenGripper() {
-        Thread thread = new Thread(() -> {
-            try {
-                gripper.open();
-                if (state == BotState.FRONT_INTAKE) {
-                    pivot.storage(true, true);
-                } else if (state == BotState.WALL_INTAKE) {
-                    pivot.storage(true, true);
-                    Thread.sleep(250);
-                    pivot.arm.storage();
-                } else if (state == BotState.HIGH_BUCKET) {
-                    pivot.storage(false, true);
-                    Thread.sleep(900);
-                    pivot.storage(true, true);
-                    pivot.arm.storage();
-                } else if (state == BotState.HIGH_CHAMBER){
-                    pivot.highChamberTransfer(false, true);
-                    Thread.sleep(50);
-                    pivot.arm.outtakeHoriz();
-                    pivot.highChamberTransfer(true, false);
-                    Thread.sleep(400);
-                    pivot.arm.outtakeUp();
-                    pivot.storage(false, true);
-                    Thread.sleep(500);
-                    pivot.storage(true, true);
-                    pivot.arm.storage();
-                } else {
-                    pivot.storage(false, true);
-                    Thread.sleep(400);
-                    pivot.storage(true, false);
-                    pivot.arm.storage();
-                }
-                state = BotState.STORAGE;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
+    //FOR AUTONOMOUS
 
-    public void shiftDown() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.slides.setState(Slides.SlidesState.HIGH2LOW);
-                pivot.goToResetPosition();
-                Thread.sleep(250);
-                pivot.slides.setPower(0);
-                pivot.slides.neutral();
-                Thread.sleep(300);
-                pivot.slides.setPower(-0.1); //Upwards (for high) to help it disengage
-                Thread.sleep(75);
-                pivot.slides.setPower(0);
-                pivot.slides.low(); //Engage high
-                while (pivot.slides.getCurrent() < 4000) {
-                    pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
-                }
-                Thread.sleep(75);
-                pivot.slides.setPower(0.3);
-                Thread.sleep(100);
-                pivot.slides.setPower(-0.6); //run it into the ground
-                Thread.sleep(200);
-                pivot.slides.setPower(0);
-                pivot.slides.resetEncoders();
-                pivot.slides.setState(Slides.SlidesState.LOW);
-            } catch (InterruptedException ignored) {}
-        });
-        if (pivot.slides.state == Slides.SlidesState.HIGH)
-            thread.start();
-    }
-
-    public void shiftUp() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.slides.setState(Slides.SlidesState.LOW2HIGH);
-                pivot.goToResetPosition();
-                Thread.sleep(250);
-                pivot.slides.setPower(0);
-                pivot.slides.neutral();
-                Thread.sleep(300);
-                pivot.slides.setPower(0.1); //Upwards (for low) to help it disengage
-                Thread.sleep(75);
-                pivot.slides.setPower(0);
-                pivot.slides.high(); //Engage high
-                while (pivot.slides.getCurrent() < 2000) {
-                    pivot.slides.setPower(0.2); //Downwards (for high) to help it engage
-                }
-                Thread.sleep(75);
-                pivot.slides.setPower(-0.3);
-                Thread.sleep(100);
-                pivot.slides.setPower(1); //run it into the ground
-                Thread.sleep(100);
-                pivot.slides.setPower(0);
-                pivot.slides.resetEncoders();
-                pivot.slides.setState(Slides.SlidesState.HIGH);
-            } catch (InterruptedException ignored) {}
-        });
-        if (pivot.slides.state == Slides.SlidesState.LOW)
-            thread.start();
-    }
-
-    public void lowBucket() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.HIGH_BUCKET || state == BotState.HIGH_CHAMBER) {
-                    pivot.arm.vertical();
-                    pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(250);
-                }
-                pivot.lowBucket(true, false);
-                Thread.sleep(300);
-                pivot.lowBucket(false, true);
-                Thread.sleep(125);
-                pivot.arm.bucket();
-                state = BotState.LOW_BUCKET;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void highBucket() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.LOW_BUCKET) { //TODO: Test if hits bucket
-                    pivot.arm.vertical();
-                    pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    pivot.highBucket(true, false);
-                    Thread.sleep(250);
-                } else {
-                    pivot.highBucket(true, false);
-                    Thread.sleep(300);
-                }
-                pivot.highBucket(false, true);
-                Thread.sleep(650);
-                pivot.arm.bucket();
-                state = BotState.HIGH_BUCKET;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void lowChamber() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.HIGH_CHAMBER) { //TODO: Test if hits chamber rod
-                    pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(400);
-                } else if (state == BotState.HIGH_BUCKET) {
-                    storage();
-                    Thread.sleep(600);
-                }
-                pivot.lowChamber(true, false);
-                Thread.sleep(250);
-                pivot.arm.outtakeUp();
-                pivot.lowChamber(false, true);
-                state = BotState.LOW_CHAMBER;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void highChamber() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
-                    pivot.storage(false, true); //pull slides in so that it doesn't hit
-                    Thread.sleep(400);
-                } else if (state == BotState.HIGH_BUCKET) {
-                    storage();
-                    Thread.sleep(600);
-                }
-                pivot.arm.outtakeUp();
-                pivot.highChamber(true, false);
-                Thread.sleep(200);
-                pivot.highChamber(false, true);
-                state = BotState.HIGH_CHAMBER;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void prel2Climb() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state != BotState.STORAGE) { //TODO: Test if hits chamber rod
-                    storage();
-                    Thread.sleep(500);
-                }
-                pivot.arm.bucket();
-                pivot.prel2Climb(true, false);
-                Thread.sleep(150);
-                pivot.prel2Climb(false, true);
-                state = BotState.CLIMBING;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void l2Climb() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.midl2Climb(false, true);
-                Thread.sleep(150);
-                pivot.postl2Climb(true, false);
-                Thread.sleep(175);
-                pivot.postl2Climb(false, true);
-                Thread.sleep(2150);
-                pivot.climbTransfer(true, false);
-                Thread.sleep(750);
-                pivot.climbTransfer(false, true);
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void l3Climb() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.prel3Climb(true, false);
-                Thread.sleep(200);
-                pivot.prel3Climb(false, true);
-                Thread.sleep(1500);
-                pivot.midl3Climb(true, false);
-                Thread.sleep(400);
-                pivot.arm.outtakeHoriz();
-                Thread.sleep(150);
-                pivot.midl3Climb(false, true);
-                Thread.sleep(250);
-                pivot.tiltedl3Climb(true, false);
-                Thread.sleep(800);
-                pivot.tiltedl3Climb(false, true);
-                Thread.sleep(1700);
-                pivot.backTiltedl3Climb(true, false);
-                Thread.sleep(500);
-                pivot.postl3Climb(false, true);
-                Thread.sleep(1000);
-                pivot.postl3Climb(true, false);
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void clipCancel() {
-        pivot.arm.outtakeUp();
-    }
-
-    public void clipDown() {
-        pivot.arm.outtakeDown();
-    }
-
-    public void clipStorage() {
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(200);
-                gripper.open();
-                Thread.sleep(350);
-                pivot.arm.outtakeUp();
-                storageOpenGripper();
-                Thread.sleep(300);
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void bucketDrop() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.arm.bucketDrop();
-                gripper.open();
-                Thread.sleep(400);
-                storage();
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void frontIntakeToStorage() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.changeZ(3.5);
-                Thread.sleep(125);
-                pivot.arm.outtakeHoriz();
-                Thread.sleep(75);
-                pivot.storage(false, true);
-                Thread.sleep(300);
-                pivot.storage(true, false);
-                Thread.sleep(300);
-                pivot.arm.storage();
-                storage();
-
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void frontIntake() {
-        Thread thread = new Thread(() -> {
-            try {
-                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
-                    storage();
-                    Thread.sleep(225);
-                }
-                gripper.open();
-                pivot.arm.frontPickupToStorage();
-                Thread.sleep(100);
-                pivot.frontIntakeStorage(true, false);
-                Thread.sleep(100);
-                pivot.frontIntake(true, true);
-                Thread.sleep(300);
-                pivot.arm.frontPickup();
-                state = BotState.FRONT_INTAKE;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void pickDown() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.changeZ(-pickDownUpValue);
-                Thread.sleep(200);
-                gripper.close();
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void unPick() {
-        Thread thread = new Thread(() -> {
-            try {
-                gripper.open();
-                Thread.sleep(200);
-                pivot.changeZ(pickDownUpValue);
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void subAutoPickDown() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.changeZ(-5.5);
-                Thread.sleep(500);
-                pivot.changeZ(-4.5);
-                Thread.sleep(400);
-                gripper.close();
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
 
     public void subAutoPickUp() {
         pivot.changeZ(6);
@@ -1226,38 +841,6 @@ public class Bot {
     public void pickUp() {
         pivot.changeZ(pickDownUpValue);
     }
-
-    public void wallIntakeOpen() {
-        Thread thread = new Thread(() -> {
-            try {
-                pivot.teleopWallIntake(true, true);
-                Thread.sleep(200);
-                pivot.arm.wallPickup();
-                gripper.open();
-                state = BotState.WALL_INTAKE;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    public void openGripper() {
-        gripper.open();
-    }
-
-    public void wallIntakeClosed() {
-        Thread thread = new Thread(() -> {
-            try {
-                gripper.close();
-                pivot.teleopWallIntake(true, true);
-                Thread.sleep(200);
-                pivot.arm.wallPickup();
-                state = BotState.WALL_INTAKE;
-            } catch (InterruptedException ignored) {}
-        });
-        thread.start();
-    }
-
-    //FOR AUTONOMOUS
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
@@ -1445,6 +1028,7 @@ public class Bot {
                 new SleepAction(0.15),
                 new InstantAction(() -> gripper.open()),
                 new SleepAction(0.12),
+                new InstantAction(() -> checkBreakBeam(false)),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }
@@ -1735,4 +1319,457 @@ public class Bot {
         double dy = v1.y - v2.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
-}
+
+//    public void subAutoIntake() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
+//                    storage();
+//                    Thread.sleep(225);
+//                }
+//                gripper.open();
+//                pivot.arm.frontPickupToStorage();
+//                Thread.sleep(100);
+//                pivot.frontIntakeStorage(true, false);
+//                Thread.sleep(100);
+//                pivot.subAutoIntake(true, true);
+//                Thread.sleep(300);
+//                pivot.arm.frontPickup();
+//                state = BotState.FRONT_INTAKE;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+    public void storage() {
+        Thread thread = new Thread(() -> {
+            try {
+                gripper.close();
+                if (state == BotState.FRONT_INTAKE) {
+                    pivot.storage(true, true);
+                } else if (state == BotState.WALL_INTAKE) {
+                    pivot.storage(true, true);
+                    Thread.sleep(250);
+                    pivot.arm.storage();
+                } else if (state == BotState.HIGH_BUCKET) {
+                    pivot.arm.outtakeUp();
+                    pivot.storage(false, true);
+                    Thread.sleep(450);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
+                } else if (state == BotState.LOW_BUCKET) {
+                    pivot.arm.outtakeUp();
+                    pivot.storage(false, true);
+                    Thread.sleep(450);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
+                } else if (state == BotState.HIGH_CHAMBER){
+                    pivot.highChamberTransfer(false, true);
+                    Thread.sleep(50);
+                    pivot.arm.outtakeHoriz();
+                    pivot.highChamberTransfer(true, false);
+                    Thread.sleep(400);
+                    pivot.arm.outtakeUp();
+                    pivot.storage(false, true);
+                    Thread.sleep(500);
+                    pivot.storage(true, true);
+                    pivot.arm.storage();
+                } else {
+                    pivot.storage(false, true);
+                    Thread.sleep(400);
+                    pivot.storage(true, false);
+                    pivot.arm.storage();
+                }
+                state = BotState.STORAGE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+//
+//    public void storageOpenGripper() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                gripper.open();
+//                if (state == BotState.FRONT_INTAKE) {
+//                    pivot.storage(true, true);
+//                } else if (state == BotState.WALL_INTAKE) {
+//                    pivot.storage(true, true);
+//                    Thread.sleep(250);
+//                    pivot.arm.storage();
+//                } else if (state == BotState.HIGH_BUCKET) {
+//                    pivot.storage(false, true);
+//                    Thread.sleep(900);
+//                    pivot.storage(true, true);
+//                    pivot.arm.storage();
+//                } else if (state == BotState.HIGH_CHAMBER){
+//                    pivot.highChamberTransfer(false, true);
+//                    Thread.sleep(50);
+//                    pivot.arm.outtakeHoriz();
+//                    pivot.highChamberTransfer(true, false);
+//                    Thread.sleep(400);
+//                    pivot.arm.outtakeUp();
+//                    pivot.storage(false, true);
+//                    Thread.sleep(500);
+//                    pivot.storage(true, true);
+//                    pivot.arm.storage();
+//                } else {
+//                    pivot.storage(false, true);
+//                    Thread.sleep(400);
+//                    pivot.storage(true, false);
+//                    pivot.arm.storage();
+//                }
+//                state = BotState.STORAGE;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void shiftDown() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.slides.setState(Slides.SlidesState.HIGH2LOW);
+//                pivot.goToResetPosition();
+//                Thread.sleep(250);
+//                pivot.slides.setPower(0);
+//                pivot.slides.neutral();
+//                Thread.sleep(300);
+//                pivot.slides.setPower(-0.1); //Upwards (for high) to help it disengage
+//                Thread.sleep(75);
+//                pivot.slides.setPower(0);
+//                pivot.slides.low(); //Engage high
+//                while (pivot.slides.getCurrent() < 4000) {
+//                    pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
+//                }
+//                Thread.sleep(75);
+//                pivot.slides.setPower(0.3);
+//                Thread.sleep(100);
+//                pivot.slides.setPower(-0.6); //run it into the ground
+//                Thread.sleep(200);
+//                pivot.slides.setPower(0);
+//                pivot.slides.resetEncoders();
+//                pivot.slides.setState(Slides.SlidesState.LOW);
+//            } catch (InterruptedException ignored) {}
+//        });
+//        if (pivot.slides.state == Slides.SlidesState.HIGH)
+//            thread.start();
+//    }
+//
+//    public void shiftUp() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.slides.setState(Slides.SlidesState.LOW2HIGH);
+//                pivot.goToResetPosition();
+//                Thread.sleep(250);
+//                pivot.slides.setPower(0);
+//                pivot.slides.neutral();
+//                Thread.sleep(300);
+//                pivot.slides.setPower(0.1); //Upwards (for low) to help it disengage
+//                Thread.sleep(75);
+//                pivot.slides.setPower(0);
+//                pivot.slides.high(); //Engage high
+//                while (pivot.slides.getCurrent() < 2000) {
+//                    pivot.slides.setPower(0.2); //Downwards (for high) to help it engage
+//                }
+//                Thread.sleep(75);
+//                pivot.slides.setPower(-0.3);
+//                Thread.sleep(100);
+//                pivot.slides.setPower(1); //run it into the ground
+//                Thread.sleep(100);
+//                pivot.slides.setPower(0);
+//                pivot.slides.resetEncoders();
+//                pivot.slides.setState(Slides.SlidesState.HIGH);
+//            } catch (InterruptedException ignored) {}
+//        });
+//        if (pivot.slides.state == Slides.SlidesState.LOW)
+//            thread.start();
+//    }
+//
+//    public void lowBucket() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state == BotState.HIGH_BUCKET || state == BotState.HIGH_CHAMBER) {
+//                    pivot.arm.vertical();
+//                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+//                    Thread.sleep(250);
+//                }
+//                pivot.lowBucket(true, false);
+//                Thread.sleep(300);
+//                pivot.lowBucket(false, true);
+//                Thread.sleep(125);
+//                pivot.arm.bucket();
+//                state = BotState.LOW_BUCKET;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void highBucket() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state == BotState.LOW_BUCKET) { //TODO: Test if hits bucket
+//                    pivot.arm.vertical();
+//                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+//                    pivot.highBucket(true, false);
+//                    Thread.sleep(250);
+//                } else {
+//                    pivot.highBucket(true, false);
+//                    Thread.sleep(300);
+//                }
+//                pivot.highBucket(false, true);
+//                Thread.sleep(650);
+//                pivot.arm.bucket();
+//                state = BotState.HIGH_BUCKET;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void lowChamber() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state == BotState.HIGH_CHAMBER) { //TODO: Test if hits chamber rod
+//                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+//                    Thread.sleep(400);
+//                } else if (state == BotState.HIGH_BUCKET) {
+//                    storage();
+//                    Thread.sleep(600);
+//                }
+//                pivot.lowChamber(true, false);
+//                Thread.sleep(250);
+//                pivot.arm.outtakeUp();
+//                pivot.lowChamber(false, true);
+//                state = BotState.LOW_CHAMBER;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void highChamber() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state == BotState.LOW_CHAMBER) { //TODO: Test if hits chamber rod
+//                    pivot.storage(false, true); //pull slides in so that it doesn't hit
+//                    Thread.sleep(400);
+//                } else if (state == BotState.HIGH_BUCKET) {
+//                    storage();
+//                    Thread.sleep(600);
+//                }
+//                pivot.arm.outtakeUp();
+//                pivot.highChamber(true, false);
+//                Thread.sleep(200);
+//                pivot.highChamber(false, true);
+//                state = BotState.HIGH_CHAMBER;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void prel2Climb() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state != BotState.STORAGE) { //TODO: Test if hits chamber rod
+//                    storage();
+//                    Thread.sleep(500);
+//                }
+//                pivot.arm.bucket();
+//                pivot.prel2Climb(true, false);
+//                Thread.sleep(150);
+//                pivot.prel2Climb(false, true);
+//                state = BotState.CLIMBING;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void l2Climb() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.midl2Climb(false, true);
+//                Thread.sleep(150);
+//                pivot.postl2Climb(true, false);
+//                Thread.sleep(175);
+//                pivot.postl2Climb(false, true);
+//                Thread.sleep(2150);
+//                pivot.climbTransfer(true, false);
+//                Thread.sleep(750);
+//                pivot.climbTransfer(false, true);
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void l3Climb() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.prel3Climb(true, false);
+//                Thread.sleep(200);
+//                pivot.prel3Climb(false, true);
+//                Thread.sleep(1500);
+//                pivot.midl3Climb(true, false);
+//                Thread.sleep(400);
+//                pivot.arm.outtakeHoriz();
+//                Thread.sleep(150);
+//                pivot.midl3Climb(false, true);
+//                Thread.sleep(250);
+//                pivot.tiltedl3Climb(true, false);
+//                Thread.sleep(800);
+//                pivot.tiltedl3Climb(false, true);
+//                Thread.sleep(1700);
+//                pivot.backTiltedl3Climb(true, false);
+//                Thread.sleep(500);
+//                pivot.postl3Climb(false, true);
+//                Thread.sleep(1000);
+//                pivot.postl3Climb(true, false);
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void clipCancel() {
+//        pivot.arm.outtakeUp();
+//    }
+//
+//    public void clipDown() {
+//        pivot.arm.outtakeDown();
+//    }
+//
+//    public void clipStorage() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                Thread.sleep(200);
+//                gripper.open();
+//                Thread.sleep(350);
+//                pivot.arm.outtakeUp();
+//                storageOpenGripper();
+//                Thread.sleep(300);
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void bucketDrop() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.arm.bucketDrop();
+//                gripper.open();
+//                Thread.sleep(400);
+//                storage();
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void frontIntakeToStorage() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.changeZ(3.5);
+//                Thread.sleep(125);
+//                pivot.arm.outtakeHoriz();
+//                Thread.sleep(75);
+//                pivot.storage(false, true);
+//                Thread.sleep(300);
+//                pivot.storage(true, false);
+//                Thread.sleep(300);
+//                pivot.arm.storage();
+//                storage();
+//
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void frontIntake() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
+//                    storage();
+//                    Thread.sleep(225);
+//                }
+//                gripper.open();
+//                pivot.arm.frontPickupToStorage();
+//                Thread.sleep(100);
+//                pivot.frontIntakeStorage(true, false);
+//                Thread.sleep(100);
+//                pivot.frontIntake(true, true);
+//                Thread.sleep(300);
+//                pivot.arm.frontPickup();
+//                state = BotState.FRONT_INTAKE;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void pickDown() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.changeZ(-pickDownUpValue);
+//                Thread.sleep(200);
+//                gripper.close();
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void unPick() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                gripper.open();
+//                Thread.sleep(200);
+//                pivot.changeZ(pickDownUpValue);
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void subAutoPickDown() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.changeZ(-5.5);
+//                Thread.sleep(500);
+//                pivot.changeZ(-4.5);
+//                Thread.sleep(400);
+//                gripper.close();
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void subAutoPickUp() {
+//        pivot.changeZ(6);
+//    }
+//
+//    public void pickUp() {
+//        pivot.changeZ(pickDownUpValue);
+//    }
+//
+//    public void wallIntakeOpen() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                pivot.teleopWallIntake(true, true);
+//                Thread.sleep(200);
+//                pivot.arm.wallPickup();
+//                gripper.open();
+//                state = BotState.WALL_INTAKE;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+//
+//    public void openGripper() {
+//        gripper.open();
+//    }
+//
+//    public void wallIntakeClosed() {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                gripper.close();
+//                pivot.teleopWallIntake(true, true);
+//                Thread.sleep(200);
+//                pivot.arm.wallPickup();
+//                state = BotState.WALL_INTAKE;
+//            } catch (InterruptedException ignored) {}
+//        });
+//        thread.start();
+//    }
+
+    }

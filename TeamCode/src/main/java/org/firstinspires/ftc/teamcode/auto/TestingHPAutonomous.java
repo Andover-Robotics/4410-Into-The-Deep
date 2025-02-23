@@ -35,7 +35,7 @@ public class TestingHPAutonomous extends LinearOpMode {
         telemetry.setAutoClear(true);
 
         bot.state = Bot.BotState.STORAGE;
-        bot.storage();
+        bot.initialize();
 
         Pose2d initialPose = new Pose2d(-9, 63, Math.toRadians(-90));
 

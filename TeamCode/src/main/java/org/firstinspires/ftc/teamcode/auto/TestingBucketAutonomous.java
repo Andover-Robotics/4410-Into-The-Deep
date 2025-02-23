@@ -37,7 +37,7 @@ public class TestingBucketAutonomous extends LinearOpMode {
         gp1 = new GamepadEx(gamepad1);
 
         bot.state = Bot.BotState.STORAGE;
-        bot.storage();
+        bot.initialize();
 
         int cv = 0;
 

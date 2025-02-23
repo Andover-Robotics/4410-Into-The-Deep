@@ -29,7 +29,7 @@ public class SampleDetectionPipeline
 {
 
     public int height = 360, width = 640;
-    public static int minArea = 7500, maxArea = 19500;
+    public static int minArea = 6500, maxArea = 19500;
     public int rounds;
     public static int strafePixelsPerInch = -42;
     public static int slidesPixelsPerInch = 32;
@@ -204,13 +204,7 @@ public class SampleDetectionPipeline
                 }
             }
         } else {
-            x = 2000;
-            y = 2000;
             angle = -1;
-            blobArea = 0;
-            boxArea = 0;
-            density = 0;
-            aspectRatio = 0;
         }
     }
 
