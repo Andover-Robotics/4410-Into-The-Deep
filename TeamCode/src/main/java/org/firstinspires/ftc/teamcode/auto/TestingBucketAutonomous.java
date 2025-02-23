@@ -509,13 +509,12 @@ public class TestingBucketAutonomous extends LinearOpMode {
                             new ActionHelper.RaceParallelCommand(
                                     bot.actionPeriodic(),
                                     new SequentialAction(
-//                                            controller.p2p(unRam),
-//                                            controller.p2p(subDropRam)
+//                                            controller.ramp2p(unRam),
+//                                            controller.ramp2p(subDropRam)
                                             drive.actionBuilder(bot.storedPosition)
                                                     .strafeToLinearHeading(firstSub.position, Math.toRadians(180))
                                                     .splineTo(subDropRam.position, Math.toRadians(0), drive.defaultVelConstraint, new ProfileAccelConstraint(-300, 300))
                                                     .build()
-
                                     )
                             )
                     );

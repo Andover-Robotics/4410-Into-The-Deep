@@ -87,6 +87,30 @@ public class P2P {
         }
     }
 
+    public boolean roughGoToPosition(double targetX, double targetY, double targetH, double speed, double dispTolerance, double angTolerance) {
+        drive.updatePoseEstimate();
+        counter++;
+        driveVector = new Vector2d(targetX - drive.pose.component1().x, targetY - drive.pose.component1().y);
+        double heading = drive.pose.heading.toDouble();
+
+        Vector2d rotatedVector = rotate(driveVector, heading);
+
+        inputTurn = pidHeading(targetH, hP, hI, hD, heading);
+        driveCorrection = pfdDrive(dP, dD, 0, rotatedVector.x);
+        strafeCorrection = pfdStrafe(sP, sD, 0, rotatedVector.y);
+
+        PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
+        boolean atPos = ((Math.abs(driveVector.x)) < dispTolerance) && (Math.abs(driveVector.y) < dispTolerance) && (Math.abs(targetH - heading) < Math.toRadians(angTolerance));
+
+        if ((atPos) || counter > counterMax) {
+            drive.setDrivePowers(off);
+            return false;
+        } else {
+            drive.setDrivePowers(botVel);
+            return true;
+        }
+    }
+
     public double getXError() {
         return driveVector.x;
     }
@@ -122,15 +146,15 @@ public class P2P {
         return new cvp2p();
     }
 
-    public class p2p implements Action {
+    public class ramp2p implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            return goToPosition(target.position.x, target.position.y, target.heading.toDouble(), 0.7);
+            return roughGoToPosition(target.position.x, target.position.y, target.heading.toDouble(), 1, 3, 90);
         }
     }
 
-    public Action p2p(Pose2d newTarget) {
+    public Action ramp2p(Pose2d newTarget) {
         setTarget(newTarget);
-        return new p2p();
+        return new ramp2p();
     }
 }
