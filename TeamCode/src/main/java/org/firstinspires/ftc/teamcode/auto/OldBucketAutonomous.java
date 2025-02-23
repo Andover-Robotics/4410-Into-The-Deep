@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcode.auto;
 // RR-specific imports
 import com.acmerobotics.dashboard.config.Config;
         import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
@@ -23,8 +21,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
-@Autonomous(name = "Bucket Autonomous", group = "Autonomous")
-public class BucketAutonomous extends LinearOpMode {
+@Autonomous(name = "Old Bucket Autonomous", group = "Autonomous")
+public class OldBucketAutonomous extends LinearOpMode {
     Bot bot;
     private GamepadEx gp1;
 
