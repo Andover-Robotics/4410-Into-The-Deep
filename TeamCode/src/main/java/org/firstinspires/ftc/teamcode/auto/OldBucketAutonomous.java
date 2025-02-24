@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 // import org.firstinspires.ftc.teamcode.MecanumDrive; not resolved
 
 @Config
-@Autonomous(name = "Old Bucket Autonomous", group = "Autonomous")
+@Autonomous(name = "Old Bucket Autonomous", group = "Old Autonomous")
 public class OldBucketAutonomous extends LinearOpMode {
     Bot bot;
     private GamepadEx gp1;

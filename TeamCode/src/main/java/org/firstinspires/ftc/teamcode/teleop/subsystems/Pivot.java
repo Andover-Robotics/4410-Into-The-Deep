@@ -57,17 +57,17 @@ public class Pivot {
     public boolean manualIK;
     //BTW angle of 0 degrees is front horizontal - not reachable physically
 
-    public static double slidesClippingHeightDelta = 7.5;
+    public static double slidesClippingHeightDelta = 8;
 
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 35.5 * inches2mm,
             lowBucketHeight = 21 * inches2mm,
             highChamberHeight = 15.4 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
-            frontIntakeHeight = 5 * inches2mm,
+            frontIntakeHeight = 6 * inches2mm,
             wallIntakeHeight = 3 * inches2mm,
 
-    slidesHighChamberHeight = 19.8 * inches2mm,
+    slidesHighChamberHeight = 20.5 * inches2mm,
 
     frontAutoIntakeHeight = 5.5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm, //12

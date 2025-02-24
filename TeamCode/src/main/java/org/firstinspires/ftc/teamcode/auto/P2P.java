@@ -111,6 +111,25 @@ public class P2P {
         }
     }
 
+    public void demoGoToPosition(double targetX, double targetY, double targetH, double speed) {
+        drive.updatePoseEstimate();
+        counter++;
+        driveVector = new Vector2d(targetX - drive.pose.component1().x, targetY - drive.pose.component1().y);
+        double heading = drive.pose.heading.toDouble();
+
+        Vector2d rotatedVector = rotate(driveVector, heading);
+
+        inputTurn = pidHeading(targetH, hP, hI, hD, heading);
+        driveCorrection = pfdDrive(dP, dD, 0, rotatedVector.x);
+        strafeCorrection = pfdStrafe(sP, sD, 0, rotatedVector.y);
+
+        PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
+        boolean stopped = (Math.abs(driveCorrection) < dThr) && (Math.abs(strafeCorrection) < sThr) && (Math.abs(inputTurn) < tThr);
+        boolean atPos = ((Math.abs(driveVector.x)) < 0.35) && (Math.abs(driveVector.y) < 0.35) && (Math.abs(targetH - heading) < Math.toRadians(2));
+        drive.setDrivePowers(botVel);
+
+    }
+
     public double getXError() {
         return driveVector.x;
     }

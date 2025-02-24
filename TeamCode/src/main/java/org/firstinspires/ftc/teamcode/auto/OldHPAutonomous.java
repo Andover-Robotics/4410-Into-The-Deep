@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 @Config
-@Autonomous(name = "Old HP Autonomous (zoom zoom)", group = "Autonomous")
+@Autonomous(name = "Old HP Autonomous (zoom zoom)", group = "Old Autonomous")
 public class OldHPAutonomous extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;

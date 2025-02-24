@@ -53,7 +53,7 @@ public class Bot {
 
     public SampleDetectionPipeline pipeline;
 
-    double pickDownUpValue = 3.75; //TELEOP ONLY (not auton)
+    double pickDownUpValue = 4.75; //TELEOP ONLY (not auton)
 
     public static double sampleYPos = 0;
     public static int angleOffset = 0;
@@ -771,7 +771,7 @@ public class Bot {
 
     public SequentialAction teleopPickUpMore() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeZ(pickDownUpValue + 1))
+                new InstantAction(() -> pivot.changeZ(pickDownUpValue))
         );
     }
 

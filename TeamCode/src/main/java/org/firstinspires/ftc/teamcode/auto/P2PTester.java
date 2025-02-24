@@ -15,12 +15,12 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 
 @Config
-@TeleOp(name = "cvp2p tester")
+@TeleOp(name = "p2p tester")
 public class P2PTester extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;
 
-    public static double x = 0, y = 0, heading = 90, initHeading = 180;
+    public static double x = 0, y = 0, heading = 90, initHeading = 90;
     public static double x2 = 0, y2 = 0, heading2 = 90;
 
     @Override
@@ -33,8 +33,9 @@ public class P2PTester extends LinearOpMode {
         telemetry.setAutoClear(true);
 
         bot.state = Bot.BotState.STORAGE;
+        bot.storage();
 
-        Pose2d initialPose = new Pose2d(10, 10, Math.toRadians(initHeading));
+        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(initHeading));
 
         boolean left = false;
 
@@ -44,12 +45,10 @@ public class P2PTester extends LinearOpMode {
 
         bot.openPipeline(false, false, true);
 
-        Actions.runBlocking(
-                new ActionHelpersJava.RaceParallelCommand(
-                        bot.actionPeriodic(),
-                        bot.teleopStorage()
-                )
-        );
+        while (opModeInInit()) {
+            bot.autoPeriodic();
+        }
+
 
         while (opModeIsActive() && !isStopRequested()) {
             bot.autoPeriodic();
@@ -58,9 +57,9 @@ public class P2PTester extends LinearOpMode {
                 left = !left;
             }
             if (left) {
-                controller.goToPosition(x2, y2, Math.toRadians(heading2), 0.7);
+                controller.demoGoToPosition(x2, y2, Math.toRadians(heading2), 0.7);
             } else {
-                controller.goToPosition(x, y, Math.toRadians(heading), 0.7);
+                controller.demoGoToPosition(x, y, Math.toRadians(heading), 0.7);
             }
             telemetry.addData("x", drive.pose.position.x);
             telemetry.addData("y", drive.pose.position.y);
@@ -73,38 +72,5 @@ public class P2PTester extends LinearOpMode {
             telemetry.addData("heading error", controller.headingError * 180 / Math.PI);
             telemetry.update();
         }
-
-        Actions.runBlocking(
-                new ActionHelpersJava.RaceParallelCommand(
-                        bot.actionPeriodic(),
-                        new SequentialAction(
-                                bot.actionDetect(),
-                                controller.cvp2p(),
-                                new SequentialAction(
-                                        new SleepAction(0.4),
-                                        bot.actionSubAutoPickDown(),
-                                        new SleepAction(0.25),
-                                        bot.actionSubAutoPickUp(),
-                                        new SleepAction(0.3),
-                                        bot.actionFrontIntakeToStorage(),
-                                        new SleepAction(0.5)
-
-                                ),
-                                telemetryPacket -> {
-                                    telemetry.addData("sample y val", Bot.sampleYPos);
-                                    telemetry.addData("rounds", bot.pipeline.rounds);
-                                    telemetry.addData("pose", bot.storedPosition);
-                                    telemetry.addData("refAngle", bot.refAngle);
-                                    telemetry.addData("target vector", Bot.targetPosition);
-                                    telemetry.addData("x error", controller.getXError());
-                                    telemetry.addData("y error", controller.getYError());
-                                    telemetry.addData("heading error", controller.headingError * 180 / Math.PI);
-                                    telemetry.addData("counter", controller.counter);
-                                    telemetry.update();
-                                    return true;
-                                }
-                        )
-                )
-        );
     }
 }
