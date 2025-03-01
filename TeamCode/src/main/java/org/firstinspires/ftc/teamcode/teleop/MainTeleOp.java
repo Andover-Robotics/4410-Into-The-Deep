@@ -78,7 +78,7 @@ public class MainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopPrel2Climb());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    runningActions.add(bot.teleopFrontIntake());
+                    runningActions.add(bot.teleopFrontIntake(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
                     intakeCancel = false;
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
@@ -93,7 +93,6 @@ public class MainTeleOp extends LinearOpMode {
 //                    clipCancel = false;
 //                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-//                    runningActions.add(bot.teleopHighChamber());// TODO: TEST SLIDES CLIPPING
                     runningActions.add(bot.teleopSlidesHighChamber());
                     clipCancel = false;
                 }

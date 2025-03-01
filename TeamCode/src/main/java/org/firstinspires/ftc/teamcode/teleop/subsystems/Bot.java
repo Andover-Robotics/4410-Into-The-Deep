@@ -724,7 +724,7 @@ public class Bot {
         return new SequentialAction(actions);
     }
 
-    public SequentialAction teleopFrontIntake() {
+    public SequentialAction teleopFrontIntake(double leftTrigger, double rightTrigger) {
         List<Action> actions = new ArrayList<>();
 
         if (state == BotState.LOW_CHAMBER || state == BotState.HIGH_CHAMBER) {
@@ -735,7 +735,7 @@ public class Bot {
         //actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
         actions.add(new SleepAction(0.1));
         actions.add(new InstantAction(() -> pivot.frontIntake(true, false)));
-        actions.add(new InstantAction(() -> pivot.arm.frontPickup()));
+        actions.add(new InstantAction(() -> pivot.arm.frontPickup(leftTrigger > 0.2, rightTrigger > 0.2)));
         actions.add(new SleepAction(0.15));
         actions.add(new InstantAction(() -> pivot.frontIntake(false, true)));
         actions.add(new InstantAction(() -> state = BotState.FRONT_INTAKE));
@@ -745,11 +745,8 @@ public class Bot {
 
     public SequentialAction teleopPickDown() {
         List<Action> actions = new ArrayList<>();
-        boolean slides = false;
+        boolean slides = pivot.targetX < 13;
 
-        if (pivot.targetX < 13) {
-            slides = true;
-        }
         actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue, true, slides)));
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> gripper.close()));
