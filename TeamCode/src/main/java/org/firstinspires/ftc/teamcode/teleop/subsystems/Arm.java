@@ -108,6 +108,10 @@ public class Arm {
         setRollPitch(rollFlipped, pitchWallPickup);
     }
 
+    public void higherWallPickup() {
+        setRollPitch(rollFlipped, 90);
+    }
+
     public void frontPickup() {
         setRollPitch(rollVertical, pitchGroundPickup);
     }
@@ -118,10 +122,6 @@ public class Arm {
 
     public void cv() {
         setRollPitch(rollVertical, pitchGroundPickup-4);
-    }
-
-    public void rearPickup() {
-        setRollPitch(rollFlipped, pitchGroundPickup);
     }
 
     public void periodic(double pivotAngleDegrees) {

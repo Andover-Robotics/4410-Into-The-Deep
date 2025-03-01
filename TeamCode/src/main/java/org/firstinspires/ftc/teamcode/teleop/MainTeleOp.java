@@ -121,7 +121,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                 }
-                bot.pivot.runManualIK(gp2.getLeftY() / 1.1);
+                bot.pivot.runManualIK(gp2.getLeftY() / 0.9);
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopPickDown());
                 }
@@ -201,14 +201,6 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
                     runningActions.add(bot.teleopOpenGripper());
                 }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-//                    runningActions.add(bot.teleopLowChamber());
-//                    clipCancel = false;
-//                }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-//                    runningActions.add(bot.teleopHighChamber());
-//                    clipCancel = false;
-//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     runningActions.add(bot.teleopHighBucket());
                 }

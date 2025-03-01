@@ -42,10 +42,10 @@ public class BucketAuto extends LinearOpMode {
         int cv = 0;
 
         Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
-        Vector2d preloadDrop = new Vector2d(60, 53.5);
-        Pose2d firstSample = new Pose2d(48, 47, Math.toRadians(-89));
-        Pose2d secondSample = new Pose2d(60.5, 46.2, Math.toRadians(-89.5));
-        Pose2d thirdSample = new Pose2d(56.5, 38, Math.toRadians(-45));
+        Vector2d preloadDrop = new Vector2d(58, 53.5);
+        Pose2d firstSample = new Pose2d(48, 47.5, Math.toRadians(-89));
+        Pose2d secondSample = new Pose2d(60.5, 46.5, Math.toRadians(-89.5));
+        Pose2d thirdSample = new Pose2d(56.2, 38, Math.toRadians(-45));
 
         Pose2d firstBucket = new Pose2d(56.5, 57, Math.toRadians(-135));
         Pose2d secondBucket = new Pose2d(56, 56, Math.toRadians(-135));
@@ -105,7 +105,7 @@ public class BucketAuto extends LinearOpMode {
 
                 .strafeToLinearHeading(firstBucket.component1(), firstBucket.component2())
 
-                .waitSeconds(0.30)
+                .waitSeconds(0.35)
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .afterTime(0.01, new SequentialAction(
@@ -135,8 +135,10 @@ public class BucketAuto extends LinearOpMode {
 
                 .strafeToLinearHeading(secondBucket.component1(), secondBucket.component2())
 
-                .waitSeconds(0.30)
+                .waitSeconds(0.35)
                 .stopAndAdd(bot.actionBucketDrop())
+
+                .waitSeconds(0.10)
 
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),

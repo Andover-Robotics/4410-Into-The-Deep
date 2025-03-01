@@ -746,7 +746,11 @@ public class Bot {
     public SequentialAction teleopPickDown() {
         List<Action> actions = new ArrayList<>();
 
-        actions.add(new InstantAction(() -> pivot.changeXZ(+0.5, -pickDownUpValue)));
+        if (pivot.targetX > 13) {
+            actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue, true, false)));
+        } else {
+            actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue, true, true)));
+        }
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> gripper.close()));
 
@@ -903,6 +907,7 @@ public class Bot {
 
     public SequentialAction actionWallToHighChamber() {
         return new SequentialAction(
+                new InstantAction(() -> pivot.arm.higherWallPickup()),
                 new InstantAction(() -> pivot.highChamber(true, false)),
                 new SleepAction(0.8),
                 new InstantAction(() -> pivot.highChamber(false, true)),
@@ -1015,9 +1020,9 @@ public class Bot {
                 new InstantAction(() -> pivot.highChamberTransfer(true, false)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.autoWallIntake(false, true)),
-                new InstantAction(() -> pivot.arm.wallPickup()),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.autoWallIntake(true, false)),
+                new InstantAction(() -> pivot.arm.wallPickup()),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
         );
     }
@@ -1025,9 +1030,9 @@ public class Bot {
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.bucketDrop()),
-                new SleepAction(0.15),
+                new SleepAction(0.10),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.12),
+                new SleepAction(0.1),
                 new InstantAction(() -> checkBreakBeam(false)),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
@@ -1064,7 +1069,7 @@ public class Bot {
                 new SleepAction(0.425),
                 new InstantAction(() -> pivot.highBucket(false, true)),
                 new InstantAction(() -> pivot.arm.outtakeDown()),
-                new SleepAction(0.70),
+                new SleepAction(0.65),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
