@@ -745,12 +745,12 @@ public class Bot {
 
     public SequentialAction teleopPickDown() {
         List<Action> actions = new ArrayList<>();
+        boolean slides = false;
 
-        if (pivot.targetX > 13) {
-            actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue, true, false)));
-        } else {
-            actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue, true, true)));
+        if (pivot.targetX < 13) {
+            slides = true;
         }
+        actions.add(new InstantAction(() -> pivot.changeXZ(0, -pickDownUpValue, true, slides)));
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> gripper.close()));
 
