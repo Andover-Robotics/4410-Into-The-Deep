@@ -29,7 +29,7 @@ public class SampleDetectionPipeline
 {
 
     public int height = 360, width = 640;
-    public static int minArea = 6500, maxArea = 19500;
+    public static int minArea = 5500, maxArea = 19500;
     public int rounds;
     public static int strafePixelsPerInch = -42;
     public static int slidesPixelsPerInch = 32;
@@ -43,12 +43,12 @@ public class SampleDetectionPipeline
 //    public static double slidesA = 0.0193807, slidesB = 1.3, slidesMultiplier = 1.2, strafingSlidesModifier = -0;
 
 //    public static double strafeA = -0.0, strafeB = -0.0195, strafeC = 0.23/*334958 + 0.1*/, strafeMultiplier = 1.5;
-    public static double slidesA = 0.02101524, slidesB = 1.0, slidesMultiplier = 1.0, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
+    public static double slidesA = 0.02, slidesB = 19, slidesC = 0.5, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
 
-    public static double strafeA = -0.00000156672, strafeB = -0.02, strafeC=0.304958, strafeMultiplier = 1.0;
+    public static double strafeA = -0, strafeB = -0.022, strafeC=39, strafeMultiplier = 1.0;
 //    public static double strafeA = 0.00000156672, strafeB = 0.02, strafeC=-0.004958, strafeMultiplier = 1.0;
 
-    public static double lowAR = 1, highAR = 3.1, lowD = 0.3, highD = 1, maxSide1 = 220, maxSide2 = 105;
+    public static double lowAR = 1, highAR = 3.25, lowD = 0.25, highD = 1, maxSide1 = 220, maxSide2 = 105;
 
     public static double pastStrafe = 0;
     public double aspectRatio = 0, side1 = 0, side2 = 0, boxArea = 0, blobArea = 0, density = 0;
@@ -220,7 +220,7 @@ public class SampleDetectionPipeline
         if (x != 2000) {
 //            double value = ((x + 320)/640.0 * strafeRescaledMax - (strafeRescaledMax-320))/strafePixelsPerInch;
 //            value += Math.max(0, ((value - 3.5) * 0.5874 - 0.5));
-            double value = strafeA * x * x + strafeB * x + strafeC;
+            double value = strafeA * x * x + strafeB * (x + strafeC);
             return value; //NEEDS TO return in inches
         } else {
             return 0;
@@ -245,7 +245,7 @@ public class SampleDetectionPipeline
 
     public double getY() {
         if (y != 2000) {
-            double value = slidesA * y + slidesB;
+            double value = slidesA * (y + slidesB) + slidesC;
             return value; //NEEDS TO return in inches
         } else {
             return 0;
@@ -254,7 +254,7 @@ public class SampleDetectionPipeline
     }
 
     public double getSlidesY() {
-        return getY() * slidesMultiplier + getX() * strafingSlidesModifier;
+        return getY();
     }
 
     public double getArea() {

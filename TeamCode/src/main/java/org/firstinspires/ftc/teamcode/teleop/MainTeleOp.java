@@ -120,7 +120,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                 }
-                bot.pivot.runManualIK(gp2.getLeftY() / 0.9);
+                bot.pivot.runManualIK(gp2.getLeftY() / 1.01);
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopPickDown());
                 }

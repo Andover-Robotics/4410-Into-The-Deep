@@ -845,7 +845,7 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.arm.pitchPickup()),
+                new InstantAction(() -> pivot.arm.setPitch(pivot.arm.pitchGroundPickup)),
                 new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -13, true, true)),//7.1
                 new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
@@ -965,7 +965,7 @@ public class Bot {
     public SequentialAction actionPickDown() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.changeZ(-5.2)),
-                new SleepAction(0.25),
+                new SleepAction(0.35),
                 new InstantAction(() -> gripper.close()),
                 new SleepAction(0.125)
         );
@@ -1012,7 +1012,7 @@ public class Bot {
     public SequentialAction actionClipWall() {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
-                new InstantAction(() -> pivot.arm.horizLower()),
+                new InstantAction(() -> pivot.arm.frontPickup()),
                 new InstantAction(() -> pivot.highChamberTransfer(false, true)),
                 new InstantAction(() -> pivot.highChamberTransfer(true, false)),
                 new SleepAction(0.2),
@@ -1029,7 +1029,7 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.bucketDrop()),
                 new SleepAction(0.10),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.1),
+                new SleepAction(0.12),
                 new InstantAction(() -> checkBreakBeam(false)),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
@@ -1267,7 +1267,7 @@ public class Bot {
         double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.2 : 1.02;
         if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.06;
         double rearWheelModifier = (state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.07 : 1;
-        if (state == BotState.WALL_INTAKE) rearWheelModifier = 1.0;
+        if (state == BotState.WALL_INTAKE) rearWheelModifier = 0.85;
         double[] speeds = {
                 (forwardBackSpeed - strafeSpeed - turnSpeed) * frontWheelModifier,
                 (forwardBackSpeed + strafeSpeed + turnSpeed) * frontWheelModifier,

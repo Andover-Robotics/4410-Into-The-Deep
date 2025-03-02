@@ -62,12 +62,12 @@ public class Pivot {
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 35.5 * inches2mm,
             lowBucketHeight = 21 * inches2mm,
-            highChamberHeight = 14.6 * inches2mm,
+            highChamberHeight = 15 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
-            frontIntakeHeight = 6 * inches2mm,
+            frontIntakeHeight = 5 * inches2mm,
             wallIntakeHeight = 3 * inches2mm,
 
-    slidesHighChamberHeight = 20.5 * inches2mm,
+    slidesHighChamberHeight = 19.75 * inches2mm,
 
     frontAutoIntakeHeight = 5.5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm, //12
@@ -91,14 +91,14 @@ public class Pivot {
             frontIntakeX = 16.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             teleopWallIntakeX = -7.1 * inches2mm,
-            autoWallIntakeX = teleopWallIntakeX,//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+            autoWallIntakeX = -7.6 * inches2mm,//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
             autoMoreWallIntakeX = teleopWallIntakeX + (-3 * inches2mm),//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
-    slidesHighChamberX = 3.75 * inches2mm,
+    slidesHighChamberX = 4.5 * inches2mm,
     autoSlidesHighChamberX = 7.5 * inches2mm,
 
     frontAutoIntakeX = 20 * inches2mm,
-    subAutoIntakeX = 13 * inches2mm, //13
+    subAutoIntakeX = 14 * inches2mm, //13
     pushIntakeX = 21 * inches2mm,
 
     prel2ClimbX = 18 * inches2mm,
@@ -369,7 +369,7 @@ public class Pivot {
     }
 
     public void highChamberTransfer(boolean pivot, boolean slides) {
-        targetZ = highChamberHeight - (0.5 * inches2mm);
+        targetZ = highChamberHeight - (0.9 * inches2mm);
         targetX = highChamberTransferX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();

@@ -25,7 +25,7 @@ public class Arm {
 
     public static double rollMultiplier = 1.0663; //integrate into code later
 
-    public double pitchGroundPickup = -95, pitchWallPickup = 195, pitchFrontPickupToStorage = -55, pitchRearPickupToStorage = -142, pitchStorage = -110, pitchOuttakeUp = 80, pitchOuttakeDown = 70, pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = -0, pitchOuttakeHoriz = 0;
+    public static double pitchGroundPickup = -97, pitchWallPickup = 195, pitchFrontPickupToStorage = -55, pitchRearPickupToStorage = -142, pitchStorage = -110, pitchOuttakeUp = 80, pitchOuttakeDown = 70, pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = -0, pitchOuttakeHoriz = 0;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopRight = ROLL_MID - 45, rollTopLeft = ROLL_MID + 45, rollFlipped = ROLL_MIN;
 
     // Track the current angles for pitch and roll (accounts for pivot angle) (is the output sent to servos)
@@ -66,10 +66,6 @@ public class Arm {
 
     public void frontPickupToStorage() {
         setRollPitch(rollVertical, pitchFrontPickupToStorage);
-    }
-
-    public void rearPickupToStorage() {
-        setRollPitch(rollVertical, pitchRearPickupToStorage);
     }
 
     public void outtakeUp() {
@@ -129,11 +125,11 @@ public class Arm {
     }
 
     public void pitchPickup() {
-        setPitch(pitchGroundPickup+1);
+        setPitch(pitchGroundPickup);
     }
 
     public void cv() {
-        setRollPitch(rollVertical, pitchGroundPickup-4);
+        setRollPitch(rollVertical, pitchGroundPickup-14);
     }
 
     public void periodic(double pivotAngleDegrees) {
@@ -150,7 +146,7 @@ public class Arm {
 
         // Clamp roll and pitch to their respective ranges
         roll = Math.max(ROLL_MIN, Math.min(ROLL_MAX, roll));
-        pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
+        //pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
 
         // Calculate servo angles for combined roll and pitch
         double leftAngle = pitch + (roll);

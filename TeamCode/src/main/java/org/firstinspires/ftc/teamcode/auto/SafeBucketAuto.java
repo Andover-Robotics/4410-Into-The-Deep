@@ -41,27 +41,27 @@ public class SafeBucketAuto extends LinearOpMode {
 
         int cv = 0;
 
-        Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
-        Vector2d preloadDrop = new Vector2d(60, 53.5);
-        Pose2d firstSample = new Pose2d(48, 47, Math.toRadians(-89));
-        Pose2d secondSample = new Pose2d(60.5, 46.2, Math.toRadians(-89.5));
-        Pose2d thirdSample = new Pose2d(56.5, 38, Math.toRadians(-45));
+        Pose2d initialPose = BucketAuto.initialPose;
+        Vector2d preloadDrop = BucketAuto.preloadDrop;
+        Pose2d firstSample = BucketAuto.firstSample;
+        Pose2d secondSample = BucketAuto.secondSample;
+        Pose2d thirdSample = BucketAuto.thirdSample;
 
-        Pose2d firstBucket = new Pose2d(56.5, 57, Math.toRadians(-135));
-        Pose2d secondBucket = new Pose2d(56, 56, Math.toRadians(-135));
-        Pose2d thirdBucket = new Pose2d(54, 54.5, Math.toRadians(-135));
+        Pose2d firstBucket = BucketAuto.firstBucket;
+        Pose2d secondBucket = BucketAuto.secondBucket;
+        Pose2d thirdBucket = BucketAuto.thirdBucket;
 
-        Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y - 2, Math.toRadians(-90));
-        Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y - 2, Math.toRadians(-90));
-        Pose2d thirdCVSample = new Pose2d(52.5, 24, Math.toRadians(0));
+        Pose2d firstCVSample = BucketAuto.firstCVSample;
+        Pose2d secondCVSample = BucketAuto.secondCVSample;
+        Pose2d thirdCVSample = BucketAuto.thirdCVSample;
 
-        Pose2d firstSub = new Pose2d(21, 3.5, Math.toRadians(180));
-        Pose2d secondSub = new Pose2d(21, 6, Math.toRadians(180));
-        Pose2d firstSubDrop = new Pose2d(52.5, 55, Math.toRadians(-135));
-        Pose2d secondSubDrop = new Pose2d(52.5, 55, Math.toRadians(-135));
+        Pose2d firstSub = BucketAuto.firstSub;
+        Pose2d secondSub = BucketAuto.secondSub;
+        Pose2d firstSubDrop = BucketAuto.firstSubDrop;
+        Pose2d secondSubDrop = BucketAuto.secondSubDrop;
 
-        Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
-        Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
+        Pose2d subDropRam = BucketAuto.subDropRam;
+        Pose2d unRam = BucketAuto.unRam;
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -150,38 +150,38 @@ public class SafeBucketAuto extends LinearOpMode {
 //                .build();
 
 
-//        Action thirdSamplePickup = drive.actionBuilder(thirdSample)
-//                .stopAndAdd(new SequentialAction(
-//                        new SleepAction(0.1),
-//                        bot.actionPickDown(),
-//                        new SleepAction(0.1),
-//                        bot.actionPickUp(),
-//                        new SleepAction(0.25)
-//                ))
-//                .build();
+        Action thirdSamplePickup = drive.actionBuilder(thirdSample)
+                .stopAndAdd(new SequentialAction(
+                        new SleepAction(0.1),
+                        bot.actionPickDown(),
+                        new SleepAction(0.1),
+                        bot.actionPickUp(),
+                        new SleepAction(0.25)
+                ))
+                .build();
 
         Action thirdSampleCVPickup = drive.actionBuilder(thirdSample)
                 .afterTime(0.01, bot.actionSubAutoIntake())
                 .strafeToLinearHeading(thirdCVSample.component1(), thirdCVSample.component2())
                 .build();
 
-//        Action thirdSampleSetDropToSub = drive.actionBuilder(thirdSample)
-//                .afterTime(0.01, new SequentialAction(
-//                        bot.actionIntakeToHighBucket()
-//                ))
-//                .strafeToLinearHeading(thirdBucket.component1(), thirdBucket.component2())
-//                .stopAndAdd(new SequentialAction(
-//                        new SleepAction(0.15),
-//                        bot.actionBucketDrop()
-//                ))
-//
-//                .afterTime(0.01, new SequentialAction(
-//                        bot.actionBucketToStorage(),
-//                        bot.actionSubAutoIntake()
-//                ))
-//                .splineToSplineHeading(new Pose2d(new Vector2d(firstSub.component1().x + 10, firstSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
-//                .splineToLinearHeading(firstSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 350))
-//                .build();
+        Action thirdSampleSetDropToSub = drive.actionBuilder(thirdSample)
+                .afterTime(0.01, new SequentialAction(
+                        bot.actionIntakeToHighBucket()
+                ))
+                .strafeToLinearHeading(thirdBucket.component1(), thirdBucket.component2())
+                .stopAndAdd(new SequentialAction(
+                        new SleepAction(0.15),
+                        bot.actionBucketDrop()
+                ))
+
+                .afterTime(0.01, new SequentialAction(
+                        bot.actionBucketToStorage(),
+                        bot.actionSubAutoIntake()
+                ))
+                .splineToSplineHeading(new Pose2d(new Vector2d(firstSub.component1().x + 10, firstSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(firstSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 350))
+                .build();
 
         Action backToSub = drive.actionBuilder(firstSubDrop)
                 .stopAndAdd(new SequentialAction(
@@ -357,57 +357,124 @@ public class SafeBucketAuto extends LinearOpMode {
         Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
                 bot.actionPeriodic(),
                 new SequentialAction(
-                        thirdSampleCVPickup
+                        thirdSamplePickup
                 )
 
         ));
 
-        Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
-                bot.actionPeriodic(),
-                new SequentialAction(
-                        bot.actionResetPipeline(),
-                        new SleepAction(0.7),
-                        bot.actionDetectWait()
-                )
+        if (bot.isEmpty()) {
+            cv++;
+            Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
+                    bot.actionPeriodic(),
+                    new SequentialAction(
+                            bot.actionResetPipeline(),
+                            thirdSampleCVPickup,
+                            new SleepAction(0.3),
+                            bot.actionDetectWait()
+                    )
 
-        ));
+            ));
 
-        bot.updateSampleDrive();
-        drive.updatePoseEstimate();
-        bot.savePosition(drive.pose);
+            bot.updateSampleDrive();
+            drive.updatePoseEstimate();
+            bot.savePosition(drive.pose);
 
-        Actions.runBlocking(
-                new ActionHelpersJava.RaceParallelCommand(
-                        bot.actionPeriodic(),
-                        new SequentialAction(
-                                bot.actionDetect(),
-                                controller.cvp2p(),
-                                new InstantAction(() -> bot.savePosition(drive.pose)),
-                                drive.actionBuilderPrecise(bot.storedPosition)
-                                        .stopAndAdd(new SequentialAction(
-                                                bot.actionSubAutoPickDown(),
-                                                new SleepAction(0.25),
-                                                bot.actionSubAutoPickUp()
-                                        ))
-                                        .afterTime(0.01, new SequentialAction(
-                                                bot.actionIntakeToHighBucket()
-                                        ))
-                                        .strafeToLinearHeading(thirdBucket.component1(), thirdBucket.component2())
-                                        .stopAndAdd(new SequentialAction(
-                                                new SleepAction(0.15),
-                                                bot.actionBucketDrop()
-                                        ))
+            Actions.runBlocking(
+                    new ActionHelpersJava.RaceParallelCommand(
+                            bot.actionPeriodic(),
+                            new SequentialAction(
+                                    bot.actionDetect(),
+                                    controller.cvp2p(),
+                                    new InstantAction(() -> bot.savePosition(drive.pose)),
+                                    drive.actionBuilderPrecise(bot.storedPosition)
+                                            .stopAndAdd(new SequentialAction(
+                                                    bot.actionSubAutoPickDown(),
+                                                    new SleepAction(0.25),
+                                                    bot.actionSubAutoPickUp()
+                                            ))
+                                            .afterTime(0.01, new SequentialAction(
+                                                    bot.actionIntakeToHighBucket()
+                                            ))
+                                            .strafeToLinearHeading(thirdBucket.component1(), thirdBucket.component2())
+                                            .stopAndAdd(new SequentialAction(
+                                                    new SleepAction(0.15),
+                                                    bot.actionBucketDrop()
+                                            ))
 
-                                        .afterTime(0.01, new SequentialAction(
-                                                bot.actionBucketToStorage(),
-                                                bot.actionSubAutoIntake()
-                                        ))
-                                        .splineToSplineHeading(new Pose2d(new Vector2d(firstSub.component1().x + 10, firstSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
-                                        .splineToLinearHeading(firstSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 350))
-                                        .build()
-                        )
-                )
-        );
+                                            .afterTime(0.01, new SequentialAction(
+                                                    bot.actionBucketToStorage(),
+                                                    bot.actionSubAutoIntake()
+                                            ))
+                                            .splineToSplineHeading(new Pose2d(new Vector2d(firstSub.component1().x + 10, firstSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
+                                            .splineToLinearHeading(firstSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 350))
+                                            .build()
+                            )
+                    )
+            );
+        } else {
+            Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
+                    bot.actionPeriodic(),
+                    new SequentialAction(
+                            thirdSampleSetDropToSub
+                    )
+
+            ));
+        }
+
+//        Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
+//                bot.actionPeriodic(),
+//                new SequentialAction(
+//                        thirdSampleCVPickup
+//                )
+//
+//        ));
+
+//        Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(
+//                bot.actionPeriodic(),
+//                new SequentialAction(
+//                        bot.actionResetPipeline(),
+//                        new SleepAction(0.7),
+//                        bot.actionDetectWait()
+//                )
+//
+//        ));
+//
+//        bot.updateSampleDrive();
+//        drive.updatePoseEstimate();
+//        bot.savePosition(drive.pose);
+//
+//        Actions.runBlocking(
+//                new ActionHelpersJava.RaceParallelCommand(
+//                        bot.actionPeriodic(),
+//                        new SequentialAction(
+//                                bot.actionDetect(),
+//                                controller.cvp2p(),
+//                                new InstantAction(() -> bot.savePosition(drive.pose)),
+//                                drive.actionBuilderPrecise(bot.storedPosition)
+//                                        .stopAndAdd(new SequentialAction(
+//                                                bot.actionSubAutoPickDown(),
+//                                                new SleepAction(0.25),
+//                                                bot.actionSubAutoPickUp()
+//                                        ))
+//                                        .afterTime(0.01, new SequentialAction(
+//                                                bot.actionIntakeToHighBucket()
+//                                        ))
+//                                        .strafeToLinearHeading(thirdBucket.component1(), thirdBucket.component2())
+//                                        .stopAndAdd(new SequentialAction(
+//                                                new SleepAction(0.15),
+//                                                bot.actionBucketDrop()
+//                                        ))
+//
+//                                        .afterTime(0.01, new SequentialAction(
+//                                                bot.actionBucketToStorage(),
+//                                                bot.actionSubAutoIntake()
+//                                        ))
+//                                        .splineToSplineHeading(new Pose2d(new Vector2d(firstSub.component1().x + 10, firstSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
+//                                        .splineToLinearHeading(firstSub, Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 350))
+//                                        .build()
+//                        )
+//                )
+//        );
 
 
         Actions.runBlocking(new ActionHelpersJava.RaceParallelCommand(

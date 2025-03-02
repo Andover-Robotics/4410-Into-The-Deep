@@ -125,7 +125,7 @@ public class P2P {
 
         PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
         boolean stopped = (Math.abs(driveCorrection) < dThr) && (Math.abs(strafeCorrection) < sThr) && (Math.abs(inputTurn) < tThr);
-        boolean atPos = ((Math.abs(driveVector.x)) < 0.35) && (Math.abs(driveVector.y) < 0.35) && (Math.abs(targetH - heading) < Math.toRadians(2));
+        boolean atPos = ((Math.abs(driveVector.x)) < 0.35) && (Math.abs(driveVector.y) < 0.35) && (Math.abs(targetH - heading) < Math.toRadians(1.5));
         drive.setDrivePowers(botVel);
 
     }
@@ -163,6 +163,18 @@ public class P2P {
 
     public Action cvp2p() {
         return new cvp2p();
+    }
+
+    public class roughp2p implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            return roughGoToPosition(target.position.x, target.position.y, target.heading.toDouble(), 0.7, 1, 4);
+        }
+    }
+
+    public Action roughp2p(Pose2d newTarget) {
+        setTarget(newTarget);
+        return new roughp2p();
     }
 
     public class ramp2p implements Action {

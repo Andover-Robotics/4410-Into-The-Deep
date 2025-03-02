@@ -28,6 +28,29 @@ public class BucketAuto extends LinearOpMode {
 
     boolean chamber = false, redAlliance = true;
 
+    public static Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
+    public static Vector2d preloadDrop = new Vector2d(58, 55);
+
+    public static Pose2d firstSample = new Pose2d(47.5, 48, Math.toRadians(-89));
+    public static Pose2d secondSample = new Pose2d(60.25, 46.75, Math.toRadians(-89.5));
+    public static Pose2d thirdSample = new Pose2d(56.2, 38, Math.toRadians(-45));
+
+    public static Pose2d firstBucket = new Pose2d(57, 57, Math.toRadians(-135));
+    public static Pose2d secondBucket = new Pose2d(57, 57.5, Math.toRadians(-135));
+    public static Pose2d thirdBucket = new Pose2d(54.5, 55.5, Math.toRadians(-135));
+
+    public static Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y - 3.5, Math.toRadians(-90));
+    public static Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y - 3.5, Math.toRadians(-90));
+    public static Pose2d thirdCVSample = new Pose2d(52.5, 24, Math.toRadians(0));
+
+    public static Pose2d firstSub = new Pose2d(22, 7, Math.toRadians(180));
+    public static Pose2d secondSub = new Pose2d(21, 2.5, Math.toRadians(180));
+    public static Pose2d firstSubDrop = new Pose2d(52, 57.5, Math.toRadians(-135));
+    public static Pose2d secondSubDrop = new Pose2d(52, 57, Math.toRadians(-135));
+
+    public static Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
+    public static Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -42,23 +65,24 @@ public class BucketAuto extends LinearOpMode {
         int cv = 0;
 
         Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
-        Vector2d preloadDrop = new Vector2d(58, 53.5);
-        Pose2d firstSample = new Pose2d(48, 47.5, Math.toRadians(-89));
-        Pose2d secondSample = new Pose2d(60.5, 46.5, Math.toRadians(-89.5));
+        Vector2d preloadDrop = new Vector2d(58, 55);
+
+        Pose2d firstSample = new Pose2d(47.5, 48, Math.toRadians(-89));
+        Pose2d secondSample = new Pose2d(60.25, 47, Math.toRadians(-89.5));
         Pose2d thirdSample = new Pose2d(56.2, 38, Math.toRadians(-45));
 
-        Pose2d firstBucket = new Pose2d(56.5, 57, Math.toRadians(-135));
-        Pose2d secondBucket = new Pose2d(56, 56, Math.toRadians(-135));
-        Pose2d thirdBucket = new Pose2d(54, 54.5, Math.toRadians(-135));
+        Pose2d firstBucket = new Pose2d(57, 57, Math.toRadians(-135));
+        Pose2d secondBucket = new Pose2d(57, 57.5, Math.toRadians(-135));
+        Pose2d thirdBucket = new Pose2d(54.5, 55.5, Math.toRadians(-135));
 
-        Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y - 2, Math.toRadians(-90));
-        Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y - 2, Math.toRadians(-90));
+        Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y - 3.5, Math.toRadians(-90));
+        Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y - 3.5, Math.toRadians(-90));
         Pose2d thirdCVSample = new Pose2d(52.5, 24, Math.toRadians(0));
 
-        Pose2d firstSub = new Pose2d(21, 3.5, Math.toRadians(180));
-        Pose2d secondSub = new Pose2d(21, 6, Math.toRadians(180));
-        Pose2d firstSubDrop = new Pose2d(52.5, 55, Math.toRadians(-135));
-        Pose2d secondSubDrop = new Pose2d(52.5, 55, Math.toRadians(-135));
+        Pose2d firstSub = new Pose2d(22, 7, Math.toRadians(180));
+        Pose2d secondSub = new Pose2d(21, 2.5, Math.toRadians(180));
+        Pose2d firstSubDrop = new Pose2d(52, 57, Math.toRadians(-135));
+        Pose2d secondSubDrop = new Pose2d(52, 56, Math.toRadians(-135));
 
         Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
         Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
@@ -73,7 +97,8 @@ public class BucketAuto extends LinearOpMode {
 
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.12),
-                        bot.actionBucketDrop()
+                        bot.actionBucketDrop(),
+                        new SleepAction(0.05)
                 ))
 
                 .afterTime(0.01, new SequentialAction(
@@ -89,7 +114,7 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionPickDown(),
                         new SleepAction(0.05),
                         bot.actionPickUp(),
-                        new SleepAction(0.20)
+                        new SleepAction(0.10)
                 ))
                 .build();
 
@@ -119,7 +144,7 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionPickDown(),
                         new SleepAction(0.15),
                         bot.actionPickUp(),
-                        new SleepAction(0.20)
+                        new SleepAction(0.1)
                 ))
                 .build();
 
@@ -158,7 +183,7 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionPickDown(),
                         new SleepAction(0.1),
                         bot.actionPickUp(),
-                        new SleepAction(0.25)
+                        new SleepAction(0.15)
                 ))
                 .build();
 
@@ -269,7 +294,7 @@ public class BucketAuto extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             firstSampleCVPickup,
-                            new SleepAction(0.7),
+                            new SleepAction(0.3),
                             bot.actionDetectWait()
                     )
 
@@ -327,7 +352,7 @@ public class BucketAuto extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             secondSampleCVPickup,
-                            new SleepAction(0.7),
+                            new SleepAction(0.3),
                             bot.actionDetectWait()
                     )
 
@@ -395,7 +420,7 @@ public class BucketAuto extends LinearOpMode {
                     new SequentialAction(
                             bot.actionResetPipeline(),
                             thirdSampleCVPickup,
-                            new SleepAction(0.7),
+                            new SleepAction(0.3),
                             bot.actionDetectWait()
                     )
 
@@ -554,7 +579,7 @@ public class BucketAuto extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     backToSub,
-                                    new SleepAction(0.4),
+                                    new SleepAction(0.3),
                                     bot.actionResetPipeline(),
                                     bot.actionDetectWait()
                             )
