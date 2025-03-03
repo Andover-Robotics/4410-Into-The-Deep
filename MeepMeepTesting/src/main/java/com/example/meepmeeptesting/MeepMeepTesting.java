@@ -47,21 +47,27 @@ public class MeepMeepTesting {
 
                         .setReversed(true)
 
-                        .splineToConstantHeading(new Vector2d(-43,53), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-43,45), Math.toRadians(90))
+
+                        .strafeToConstantHeading(new Vector2d(-43,53))
 
                         .setReversed(false)
                         .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-80))
 
                         .setReversed(true)
 
-                        .splineToConstantHeading(new Vector2d(-43,53), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-43,45), Math.toRadians(90))
+
+                        .strafeToConstantHeading(new Vector2d(-43,53))
 
                         .setReversed(false)
                         .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-80))
 
                         .setReversed(true)
 
-                        .splineToConstantHeading(new Vector2d(-43,53), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-43,45), Math.toRadians(90))
+
+                        .strafeToConstantHeading(new Vector2d(-43,53))
 
 //
 //                .strafeTo(new Vector2d(2,50))

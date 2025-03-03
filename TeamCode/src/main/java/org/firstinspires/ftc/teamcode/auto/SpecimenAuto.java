@@ -57,9 +57,10 @@ public class SpecimenAuto extends LinearOpMode {
                 .afterTime(0.1, bot.actionSecondClipStorage())
 
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-37, 27), Math.toRadians(-90))//-41
+                .splineToConstantHeading(new Vector2d(-36, 27), Math.toRadians(-90))//-41
 
-                .splineToConstantHeading(new Vector2d(-38,9), Math.toRadians(110)) // NEW (CAN REMOVE)
+                .splineToConstantHeading(new Vector2d(-37,9), Math.toRadians(110)) // NEW (CAN REMOVE)
+
 
                 .splineToConstantHeading(new Vector2d(-45.5,11), Math.toRadians(0))//140
                 .strafeToConstantHeading(new Vector2d(-45.6,55.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 300))
@@ -95,7 +96,10 @@ public class SpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionClipWall())
 
-                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 123))
+//                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 123))
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(-40, 50), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-40, 55.5))
 
                 .waitSeconds(0.1)
 
@@ -107,13 +111,16 @@ public class SpecimenAuto extends LinearOpMode {
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
                 .splineToConstantHeading(new Vector2d(6.5,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
-                .splineToConstantHeading(new Vector2d(7,30), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 85))
+                .splineToConstantHeading(new Vector2d(7,30.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 85))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
                 .afterTime(0.01, bot.actionClipWall())
 
-                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
+//                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(-40, 49.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-40, 55.5))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -122,14 +129,17 @@ public class SpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
-                .splineToConstantHeading(new Vector2d(3.5,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
-                .splineToConstantHeading(new Vector2d(4.5,30), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 80))
+                .splineToConstantHeading(new Vector2d(4,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
+                .splineToConstantHeading(new Vector2d(5,30.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 80))
 
                 .stopAndAdd(bot.actionOpenGripper())
 
                 .afterTime(0.01, bot.actionClipWall())
 
-                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
+//                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(-40, 49.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-40, 56))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -138,8 +148,8 @@ public class SpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionWallToHighChamber())
 
-                .splineToConstantHeading(new Vector2d(3,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
-                .splineToConstantHeading(new Vector2d(0,29), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-250, 80))
+                .splineToConstantHeading(new Vector2d(4,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
+                .splineToConstantHeading(new Vector2d(1,29.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-250, 80))
 
                 .afterTime(0.1, bot.actionOpenGripper())
 

@@ -897,7 +897,7 @@ public class Bot {
                 new SleepAction(0.25),
                 new InstantAction(() -> pivot.highChamber(false, true)),
                 new SleepAction(0.05),
-                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new InstantAction(() -> pivot.arm.chamber()),
                 new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
     }
@@ -906,10 +906,10 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.higherWallPickup()),
                 new InstantAction(() -> pivot.highChamber(true, false)),
-                new SleepAction(0.8),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.arm.chamber()),
+                new SleepAction(0.3),
                 new InstantAction(() -> pivot.highChamber(false, true)),
-                new SleepAction(0.05),
-                new InstantAction(() -> pivot.arm.outtakeUp()),
                 new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
     }
