@@ -632,8 +632,9 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
 
         actions.add(new InstantAction(() -> pivot.arm.bucketDrop()));
+        actions.add(new SleepAction(0.15));
         actions.add(new InstantAction(() -> gripper.open()));
-        actions.add(new SleepAction(0.4));
+        actions.add(new SleepAction(0.25));
         actions.add(teleopStorage());
 
         return new SequentialAction(actions);
@@ -908,7 +909,7 @@ public class Bot {
                 new InstantAction(() -> pivot.highChamber(true, false)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.arm.chamber()),
-                new SleepAction(0.3),
+                new SleepAction(0.45),
                 new InstantAction(() -> pivot.highChamber(false, true)),
                 new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
@@ -1030,7 +1031,7 @@ public class Bot {
                 new SleepAction(0.10),
                 new InstantAction(() -> gripper.open()),
                 new SleepAction(0.12),
-                new InstantAction(() -> checkBreakBeam(false)),
+//                new InstantAction(() -> checkBreakBeam(false)),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );
     }

@@ -57,7 +57,7 @@ public class SpecimenAuto extends LinearOpMode {
                 .afterTime(0.1, bot.actionSecondClipStorage())
 
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-36, 27), Math.toRadians(-90))//-41
+                .splineToConstantHeading(new Vector2d(-36.25, 27), Math.toRadians(-90))//-41
 
                 .splineToConstantHeading(new Vector2d(-37,9), Math.toRadians(110)) // NEW (CAN REMOVE)
 
@@ -86,102 +86,22 @@ public class SpecimenAuto extends LinearOpMode {
 
         Action threeSpecimens = drive.actionBuilder(new Pose2d(-64.5, 56.5, Math.toRadians(-90)))
 
-                .afterTime(0.01, bot.actionWallToHighChamber())
-
-                .splineToConstantHeading(new Vector2d(9,65), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 86))//-90
-                .splineToConstantHeading(new Vector2d(9,30.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 200))
-                //.strafeToConstantHeading(new Vector2d(6,29), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 120))
-
-                .stopAndAdd(bot.actionOpenGripper())
-
-                .afterTime(0.01, bot.actionClipWall())
-
-//                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 123))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40, 50), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-40, 55.5))
-
-                .waitSeconds(0.1)
-
-                .stopAndAdd(new SequentialAction(
-                        bot.actionCloseGripper(),
-                        new SleepAction(0.1)
-                ))
-
-                .afterTime(0.01, bot.actionWallToHighChamber())
-
-                .splineToConstantHeading(new Vector2d(6.5,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
-                .splineToConstantHeading(new Vector2d(7,30.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 85))
-
-                .stopAndAdd(bot.actionOpenGripper())
-
-                .afterTime(0.01, bot.actionClipWall())
-
-//                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40, 49.5), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-40, 55.5))
-
-                .stopAndAdd(new SequentialAction(
-                        bot.actionCloseGripper(),
-                        new SleepAction(0.1)
-                ))
-
-                .afterTime(0.01, bot.actionWallToHighChamber())
-
-                .splineToConstantHeading(new Vector2d(4,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
-                .splineToConstantHeading(new Vector2d(5,30.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 80))
-
-                .stopAndAdd(bot.actionOpenGripper())
-
-                .afterTime(0.01, bot.actionClipWall())
-
-//                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40, 49.5), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(-40, 56))
-
-                .stopAndAdd(new SequentialAction(
-                        bot.actionCloseGripper(),
-                        new SleepAction(0.1)
-                ))
-
-                .afterTime(0.01, bot.actionWallToHighChamber())
-
-                .splineToConstantHeading(new Vector2d(4,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
-                .splineToConstantHeading(new Vector2d(1,29.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-250, 80))
-
-                .afterTime(0.1, bot.actionOpenGripper())
-
-                .stopAndAdd(new SequentialAction(
-                        bot.actionFirstClipStorage()
-                ))
-
-                .afterTime(0.1, new SequentialAction(
-                        bot.actionSecondClipStorage()
-                ))
-
-                .setReversed(true)
-                .splineTo(new Vector2d(-59,48), Math.toRadians(-15), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
-                .strafeTo(new Vector2d(-60,48), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
-
-                .build();
-//
-//                .stopAndAdd(new SequentialAction(
-//                        bot.actionCloseGripper()
-//                ))
-//
 //                .afterTime(0.01, bot.actionWallToHighChamber())
 //
-//                .strafeToConstantHeading(new Vector2d(2, 52), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 85))
-//                .strafeToConstantHeading(new Vector2d(2,26.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 200))
+//                .splineToConstantHeading(new Vector2d(9,65), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 86))//-90
+//                .splineToConstantHeading(new Vector2d(9,30.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 200))
 //                //.strafeToConstantHeading(new Vector2d(6,29), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 120))
 //
 //                .stopAndAdd(bot.actionOpenGripper())
 //
 //                .afterTime(0.01, bot.actionClipWall())
 //
-//                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 120))
+////                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 123))
+//                .setReversed(true)
+//                .splineToConstantHeading(new Vector2d(-40, 50), Math.toRadians(90))
+//                .strafeToConstantHeading(new Vector2d(-40, 55.5))
+//
+//                .waitSeconds(0.1)
 //
 //                .stopAndAdd(new SequentialAction(
 //                        bot.actionCloseGripper(),
@@ -190,14 +110,17 @@ public class SpecimenAuto extends LinearOpMode {
 //
 //                .afterTime(0.01, bot.actionWallToHighChamber())
 //
-//                .strafeToConstantHeading(new Vector2d(4,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
-//                .splineToConstantHeading(new Vector2d(0,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 85))
+//                .splineToConstantHeading(new Vector2d(6.5,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
+//                .splineToConstantHeading(new Vector2d(7,30.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 85))
 //
 //                .stopAndAdd(bot.actionOpenGripper())
 //
 //                .afterTime(0.01, bot.actionClipWall())
 //
-//                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 110))
+////                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
+//                .setReversed(true)
+//                .splineToConstantHeading(new Vector2d(-40, 49.5), Math.toRadians(90))
+//                .strafeToConstantHeading(new Vector2d(-40, 55.5))
 //
 //                .stopAndAdd(new SequentialAction(
 //                        bot.actionCloseGripper(),
@@ -206,14 +129,17 @@ public class SpecimenAuto extends LinearOpMode {
 //
 //                .afterTime(0.01, bot.actionWallToHighChamber())
 //
-//                .strafeToConstantHeading(new Vector2d(0,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
-//                .splineToConstantHeading(new Vector2d(3,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 80))
+//                .splineToConstantHeading(new Vector2d(4,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
+//                .splineToConstantHeading(new Vector2d(5,30.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-400, 80))
 //
 //                .stopAndAdd(bot.actionOpenGripper())
 //
 //                .afterTime(0.01, bot.actionClipWall())
 //
-//                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 110))
+////                .strafeToLinearHeading(new Vector2d(-40,55.2), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 120))
+//                .setReversed(true)
+//                .splineToConstantHeading(new Vector2d(-40, 49.5), Math.toRadians(90))
+//                .strafeToConstantHeading(new Vector2d(-40, 56))
 //
 //                .stopAndAdd(new SequentialAction(
 //                        bot.actionCloseGripper(),
@@ -222,8 +148,8 @@ public class SpecimenAuto extends LinearOpMode {
 //
 //                .afterTime(0.01, bot.actionWallToHighChamber())
 //
-//                .strafeToConstantHeading(new Vector2d(5,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
-//                .splineToConstantHeading(new Vector2d(6,31), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-90, 80))
+//                .splineToConstantHeading(new Vector2d(4,55), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 110))
+//                .splineToConstantHeading(new Vector2d(1,29.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-250, 80))
 //
 //                .afterTime(0.1, bot.actionOpenGripper())
 //
@@ -235,9 +161,85 @@ public class SpecimenAuto extends LinearOpMode {
 //                        bot.actionSecondClipStorage()
 //                ))
 //
-//                .strafeToLinearHeading(new Vector2d(-50,70),Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
-////
+//                .setReversed(true)
+//                .splineTo(new Vector2d(-59,48), Math.toRadians(-15), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+//                .strafeTo(new Vector2d(-60,48), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+//
 //                .build();
+//
+//                .stopAndAdd(new SequentialAction(
+//                        bot.actionCloseGripper()
+//                ))
+//
+                .afterTime(0.01, bot.actionWallToHighChamber())
+
+                .strafeToConstantHeading(new Vector2d(3,60), drive.defaultVelConstraint, new ProfileAccelConstraint(-65, 85))
+                .strafeToConstantHeading(new Vector2d(2,28.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 200))
+                //.strafeToConstantHeading(new Vector2d(6,29), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 120))
+
+                .stopAndAdd(bot.actionOpenGripper())
+
+                .afterTime(0.01, bot.actionClipWall())
+
+                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 85))
+
+                .stopAndAdd(new SequentialAction(
+                        bot.actionCloseGripper(),
+                        new SleepAction(0.05)
+                ))
+
+                .afterTime(0.01, bot.actionWallToHighChamber())
+
+                .strafeToConstantHeading(new Vector2d(4,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
+                .splineToConstantHeading(new Vector2d(0,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 115))
+
+                .stopAndAdd(bot.actionOpenGripper())
+
+                .afterTime(0.01, bot.actionClipWall())
+
+                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 80))
+
+                .stopAndAdd(new SequentialAction(
+                        bot.actionCloseGripper(),
+                        new SleepAction(0.05)
+                ))
+
+                .afterTime(0.01, bot.actionWallToHighChamber())
+
+                .strafeToConstantHeading(new Vector2d(-1,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
+                .splineToConstantHeading(new Vector2d(0,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 115))
+
+                .stopAndAdd(bot.actionOpenGripper())
+
+                .afterTime(0.01, bot.actionClipWall())
+
+                .strafeToLinearHeading(new Vector2d(-43,52.5), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 80))
+
+                .stopAndAdd(new SequentialAction(
+                        bot.actionCloseGripper(),
+                        new SleepAction(0.05)
+                ))
+
+                .afterTime(0.01, bot.actionWallToHighChamber())
+
+                .strafeToConstantHeading(new Vector2d(0,65), drive.defaultVelConstraint, new ProfileAccelConstraint(-110, 85))
+                .splineToConstantHeading(new Vector2d(1,34), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 115))
+
+                .afterTime(0.01, bot.actionOpenGripper())
+
+                .stopAndAdd(new SequentialAction(
+                        bot.actionFirstClipStorage()
+                ))
+
+                .afterTime(0.1, new SequentialAction(
+                        bot.actionSecondClipStorage()
+                ))
+
+                //.strafeToLinearHeading(new Vector2d(-50,70),Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+                .setReversed(true)
+                .splineTo(new Vector2d(-59,48), Math.toRadians(-15), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+                .strafeTo(new Vector2d(-60,48), drive.defaultVelConstraint, new ProfileAccelConstraint(-500,500)) //PARK
+                .build();
         //bot.openPipeline(true, false, false);
 
         while(!isStarted()) {

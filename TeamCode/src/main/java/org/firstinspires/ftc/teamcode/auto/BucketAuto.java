@@ -251,8 +251,9 @@ public class BucketAuto extends LinearOpMode {
 //                        new SleepAction(0.8),
 //                        bot.actionSubPark()
                 ))
-//                .splineToLinearHeading(new Pose2d(new Vector2d(20, 2), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 350))
-//                .waitSeconds(5)
+                .splineToSplineHeading(new Pose2d(new Vector2d(secondSub.component1().x + 10, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(secondSub.component1().x-4, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
+                .waitSeconds(5)
                 .build();
 
         bot.openPipeline(false, false, true);
@@ -268,10 +269,19 @@ public class BucketAuto extends LinearOpMode {
                 bot.pipeline.setRed(redAlliance);
             }
 
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+                cv = (cv == 0)? 1 : 0;
+            }
+
             if (redAlliance) {
                 telemetry.addLine("RED ALLIANCE (B)");
             } else {
                 telemetry.addLine("BLUE ALLIANCE (B)");
+            }
+            if (cv == 0) {
+                telemetry.addLine("6 Sample (A)");
+            } else {
+                telemetry.addLine("5 Sample (A)");
             }
             telemetry.update();
         }

@@ -62,10 +62,10 @@ public class Pivot {
     // Heights for positions millimeters higher than pivot point
     public static double highBucketHeight = 35.5 * inches2mm,
             lowBucketHeight = 21 * inches2mm,
-            highChamberHeight = 15.5 * inches2mm,
+            highChamberHeight = 15.2 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
             frontIntakeHeight = 5 * inches2mm,
-            wallIntakeHeight = 3 * inches2mm,
+            wallIntakeHeight = 3.2 * inches2mm,
 
     slidesHighChamberHeight = 19.75 * inches2mm,
 
@@ -86,13 +86,15 @@ public class Pivot {
 
     // distances forward from pivot for positions
     public static double bucketX = -5.25 * inches2mm,
-            chamberX = 19.75 * inches2mm,
+            chamberX = 19.4 * inches2mm,
             highChamberTransferX = 2 * inches2mm,
             frontIntakeX = 16.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             teleopWallIntakeX = -7.1 * inches2mm,
-            autoWallIntakeX = -7.6 * inches2mm,//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
-            autoMoreWallIntakeX = teleopWallIntakeX + (-3 * inches2mm),//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+            autoWallIntakeX = autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+    //-7.6 * inches2mm,//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+            autoMoreWallIntakeX = autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+//teleopWallIntakeX + (-3 * inches2mm),//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
 
     slidesHighChamberX = 4.5 * inches2mm,
     autoSlidesHighChamberX = 7.5 * inches2mm,
