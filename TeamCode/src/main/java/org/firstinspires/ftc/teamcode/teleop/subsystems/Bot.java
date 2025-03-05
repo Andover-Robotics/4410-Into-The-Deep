@@ -1067,7 +1067,7 @@ public class Bot {
                 new SleepAction(0.425),
                 new InstantAction(() -> pivot.highBucket(false, true)),
                 new InstantAction(() -> pivot.arm.outtakeDown()),
-                new SleepAction(0.65),
+                new SleepAction(0.7),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
