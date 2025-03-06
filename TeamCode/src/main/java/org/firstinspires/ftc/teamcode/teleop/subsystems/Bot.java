@@ -835,6 +835,70 @@ public class Bot {
 
     //FOR AUTONOMOUS
 
+    public SequentialAction actionFrontWallIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.frontWallIntake(true, true)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction actionFrontWallToRearSlidesChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.arm.frontWallUp()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
+                new SleepAction(0.20),
+                new InstantAction(() -> pivot.arm.rearChamber()),
+                new SleepAction(0.15),
+                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction actionRearSlidesChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
+                new InstantAction(() -> pivot.arm.rearChamber()),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction actionRearSlidesClipDown() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.rearSlidesClipDown(true, true))
+        );
+    }
+
+    public SequentialAction actionRearClipWall() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.frontWallIntake(true, false)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.frontWallIntake(false, true)),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction actionRearClipStorage() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.storage(true, false)),
+                new InstantAction(() -> pivot.arm.storage()),
+                new InstantAction(() -> state = BotState.STORAGE)
+        );
+    }
 
     public void subAutoPickUp() {
         pivot.changeZ(6);
@@ -1007,7 +1071,7 @@ public class Bot {
                 new SleepAction(0.4),
                 new InstantAction(() -> pivot.storage(true, true)),
                 new InstantAction(() -> pivot.arm.storage())
-                );
+        );
     }
 
     public SequentialAction actionClipWall() {
@@ -1018,7 +1082,6 @@ public class Bot {
                 new InstantAction(() -> pivot.highChamberTransfer(true, false)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.autoWallIntake(false, true)),
-                new SleepAction(0.2),
                 new InstantAction(() -> pivot.autoWallIntake(true, false)),
                 new InstantAction(() -> pivot.arm.wallPickup()),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
@@ -1067,7 +1130,7 @@ public class Bot {
                 new SleepAction(0.425),
                 new InstantAction(() -> pivot.highBucket(false, true)),
                 new InstantAction(() -> pivot.arm.outtakeDown()),
-                new SleepAction(0.65),
+                new SleepAction(0.7),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
@@ -1323,7 +1386,7 @@ public class Bot {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-//    public void subAutoIntake() {
+    //    public void subAutoIntake() {
 //        Thread thread = new Thread(() -> {
 //            try {
 //                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
@@ -1775,4 +1838,4 @@ public class Bot {
 //        thread.start();
 //    }
 
-    }
+}

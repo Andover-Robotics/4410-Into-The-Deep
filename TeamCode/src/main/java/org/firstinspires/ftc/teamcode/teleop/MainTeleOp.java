@@ -58,6 +58,31 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             gp2.readButtons();
 
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+                runningActions.add(bot.actionRearSlidesChamber());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
+                runningActions.add(bot.actionRearSlidesClipDown());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
+                runningActions.add(bot.actionRearClipWall());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+                runningActions.add(bot.actionRearClipStorage());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                runningActions.add(bot.actionFrontWallIntake());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                runningActions.add(bot.actionFrontWallToRearSlidesChamber());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                runningActions.add(bot.actionOpenGripper());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                runningActions.add(bot.actionCloseGripper());
+            }
+
 
 
             //STORAGE
