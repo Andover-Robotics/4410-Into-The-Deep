@@ -28,61 +28,32 @@ public class MeepMeepTesting {
 //                .setReversed(true)
 //                .splineToConstantHeading(new Vector2d(-38, 26), Math.toRadians(-90))
 
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-41, 20), Math.toRadians(-90))
-
-                        .splineToConstantHeading(new Vector2d(-47,10), Math.toRadians(180))
-                        .strafeToConstantHeading(new Vector2d(-46.9,55))//aultVelConstraint, new ProfileAccelConstraint(-200, 300))
-
-                        //-45,33
-                        .splineToConstantHeading(new Vector2d(-26,18),Math.toRadians(100))
-                        .splineToConstantHeading(new Vector2d(-58,14),Math.toRadians(0))//180
-                        .strafeToConstantHeading(new Vector2d(-58,58))//aultVelConstraint, new ProfileAccelConstraint(-200, 300))
-
-                        .splineToConstantHeading(new Vector2d(-40,14),Math.toRadians(100))
-                        .splineToConstantHeading(new Vector2d(-62,10), Math.toRadians(0))//-75
-                        .strafeToConstantHeading(new Vector2d(-62.5,52))//aultVelConstraint, new ProfileAccelConstraint(-25, 100))
-
-                        .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-80))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(-38, 32), Math.toRadians(-45))
+//
+//                        .splineToConstantHeading(new Vector2d(-46,11), Math.toRadians(100))//140
+//                        .strafeToConstantHeading(new Vector2d(-45.8,52))
+//
+//                        .splineToSplineHeading(new Pose2d(-36,14, Math.toRadians(90)),Math.toRadians(100))
+//                        .splineToConstantHeading(new Vector2d(-56,10),Math.toRadians(0))//180
+//                        .strafeToConstantHeading(new Vector2d(-56,48))
+//
+////                .splineToConstantHeading(new Vector2d(-46,17),Math.toRadians(-90))
+//                        .splineToConstantHeading(new Vector2d(-63.5,11), Math.toRadians(165))//0
 
                         .setReversed(true)
+                        .splineToSplineHeading(new Pose2d(-33, 36, Math.toRadians(-130)), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-33, 58), Math.toRadians(160))//140
+                        .strafeToLinearHeading(new Vector2d(-45, 32), Math.toRadians(-130))//140
+                        .strafeToLinearHeading(new Vector2d(-46, 52), Math.toRadians(140))//140
+                        .strafeToLinearHeading(new Vector2d(-53, 30), Math.toRadians(-140))//140
+                        .strafeToLinearHeading(new Vector2d(-51, 53), Math.toRadians(150))//140
+//                        .setReversed(true)
+                        .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-47.5,62.5), Math.toRadians(90))
 
-                        .splineToConstantHeading(new Vector2d(-43,45), Math.toRadians(90))
 
-                        .strafeToConstantHeading(new Vector2d(-43,53))
 
-                        .setReversed(false)
-                        .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-80))
-
-                        .setReversed(true)
-
-                        .splineToConstantHeading(new Vector2d(-43,45), Math.toRadians(90))
-
-                        .strafeToConstantHeading(new Vector2d(-43,53))
-
-                        .setReversed(false)
-                        .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-80))
-
-                        .setReversed(true)
-
-                        .splineToConstantHeading(new Vector2d(-43,45), Math.toRadians(90))
-
-                        .strafeToConstantHeading(new Vector2d(-43,53))
-
-//
-//                .strafeTo(new Vector2d(2,50))
-//                .strafeTo(new Vector2d(2,20))
-//
-//                .strafeTo(new Vector2d(-43,53))
-//
-//                        .setReversed(false)
-//
-//                .splineToConstantHeading(new Vector2d(0,20), Math.toRadians(-90))
-//                .strafeTo(new Vector2d(-43,53))
-//
-//
-//
-//                .setReversed(false)
 //                .splineToConstantHeading(new Vector2d(0,20), Math.toRadians(-90))
 //
 //

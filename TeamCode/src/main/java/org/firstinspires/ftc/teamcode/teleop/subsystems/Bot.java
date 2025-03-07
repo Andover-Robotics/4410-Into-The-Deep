@@ -5,23 +5,39 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-
+import org.firstinspires.ftc.teamcode.auto.P2P;
 import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.auto.MecanumDrive;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +60,15 @@ public class Bot {
 
     public static Bot instance;
     public BotState state = BotState.STORAGE; // Default bot state
-    private final MotorEx fl, fr, bl, br;
+    private MotorEx fl;
+    private MotorEx fr;
+    private MotorEx bl;
+    private MotorEx br;
     public OpMode opMode;
     public double heading = 0.0;
-    private MecanumDrive drive;
+    private TeleMecanumDrive drive;
+    public MecanumDrive autoDrive;
+    public P2P controller;
 
     public static int detectionCounter, searchCounter;
 
@@ -60,7 +81,7 @@ public class Bot {
     public static double ySign = -1;
     public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
-    private boolean breakBeamWorking = true;
+    private boolean breakBeamWorking = false;
     public boolean climbing = false;
 
     // Define subsystem objects
@@ -69,9 +90,14 @@ public class Bot {
 
     DigitalChannel breakBeam;
     public boolean holding;
+    public boolean autonomous;
 
     public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
+    public Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(0, 34, Math.toRadians(90));
+
+    public Action cycleClip = actionCloseGripper();
 
     // get bot instance
     public static Bot getInstance() {
@@ -96,13 +122,36 @@ public class Bot {
         fr = new MotorEx(opMode.hardwareMap, "motorFR", Motor.GoBILDA.RPM_435);
         bl = new MotorEx(opMode.hardwareMap, "motorBL", Motor.GoBILDA.RPM_435);
         br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
-
-        drive = new MecanumDrive(fl, fr, bl, br);
-
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
         sampleYPos = 0;
         breakBeam = opMode.hardwareMap.get(DigitalChannel.class, "BreakBeam");
+    }
+
+    public void rebuildMotors() {
+        fl = new MotorEx(opMode.hardwareMap, "motorFL", Motor.GoBILDA.RPM_435);
+        fr = new MotorEx(opMode.hardwareMap, "motorFR", Motor.GoBILDA.RPM_435);
+        bl = new MotorEx(opMode.hardwareMap, "motorBL", Motor.GoBILDA.RPM_435);
+        br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
+        autonomous = false;
+    }
+
+    public void initializeAutoClipping() {
+        autoDrive = new MecanumDrive(opMode.hardwareMap, clipIntake);
+        controller = new P2P(autoDrive);
+
+        cycleClip = autoDrive.actionBuilder(clipIntake)
+                .strafeToConstantHeading(chamber.component1())
+                .strafeToConstantHeading(new Vector2d(-43, 52), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
+                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
+
+                .build();
+        autonomous = true;
+    }
+
+    public Action cycleClip() {
+//        return cycleClip;
+        return controller.roughp2p(chamber);
     }
 
     public boolean isHolding() {
@@ -835,6 +884,86 @@ public class Bot {
 
     //FOR AUTONOMOUS
 
+    public SequentialAction actionFrontWallIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.frontWallIntake(true, true)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction actionFrontWallIntakeToHighBucket() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.arm.frontWallUp()),
+                new SleepAction(0.3),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.15),
+                new InstantAction(() -> pivot.highBucket(true, false)),
+                new SleepAction(0.7),
+                new InstantAction(() -> pivot.highBucket(false, true)),
+                new InstantAction(() -> pivot.arm.outtakeDown()),
+                new SleepAction(0.7),
+                new InstantAction(() -> pivot.arm.bucket()),
+                new InstantAction(() -> state = BotState.HIGH_BUCKET)
+        );
+    }
+
+    public SequentialAction actionFrontWallToRearSlidesChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.arm.frontWallUp()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
+                new SleepAction(0.20),
+                new InstantAction(() -> pivot.arm.rearChamber()),
+                new SleepAction(0.15),
+                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction actionRearSlidesChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
+                new InstantAction(() -> pivot.arm.rearChamber()),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction actionRearSlidesClipDown() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.rearSlidesClipDown(true, true))
+        );
+    }
+
+    public SequentialAction actionRearClipWall() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.frontWallIntake(true, false)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.frontWallIntake(false, true)),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction actionRearClipStorage() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.storage(true, false)),
+                new InstantAction(() -> pivot.arm.storage()),
+                new InstantAction(() -> state = BotState.STORAGE)
+        );
+    }
 
     public void subAutoPickUp() {
         pivot.changeZ(6);
@@ -1007,7 +1136,7 @@ public class Bot {
                 new SleepAction(0.4),
                 new InstantAction(() -> pivot.storage(true, true)),
                 new InstantAction(() -> pivot.arm.storage())
-                );
+        );
     }
 
     public SequentialAction actionClipWall() {
@@ -1018,7 +1147,6 @@ public class Bot {
                 new InstantAction(() -> pivot.highChamberTransfer(true, false)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.autoWallIntake(false, true)),
-                new SleepAction(0.2),
                 new InstantAction(() -> pivot.autoWallIntake(true, false)),
                 new InstantAction(() -> pivot.arm.wallPickup()),
                 new InstantAction(() -> state = BotState.WALL_INTAKE)
@@ -1103,12 +1231,26 @@ public class Bot {
 
     public SequentialAction actionPushIntake() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.arm.outtakeHoriz()),
+                new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> pivot.pushIntake(true, false)),
-                new InstantAction(() -> pivot.arm.outtakeHoriz()),
+                new InstantAction(() -> pivot.arm.bucket()),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.pushIntake(false, true)),
                 new SleepAction(0.4),
+                new InstantAction(() -> state = BotState.FRONT_INTAKE)
+        );
+    }
+
+    public SequentialAction actionDropPush() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.changeXZ(0, -2.9, true, false)),
+                new InstantAction(() -> state = BotState.FRONT_INTAKE)
+        );
+    }
+
+    public SequentialAction actionLiftPush() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.changeXZ(0, 2.9, true, false)),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }
@@ -1284,10 +1426,12 @@ public class Bot {
                 speeds[i] /= maxSpeed;
             }
         }
-        fl.set(speeds[0]);
-        fr.set(speeds[1]);
-        bl.set(speeds[2]);
-        br.set(speeds[3]);
+        if (!autonomous){
+            fl.set(speeds[0]);
+            fr.set(speeds[1]);
+            bl.set(speeds[2]);
+            br.set(speeds[3]);
+        }
     }
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
         double magnitude = Math.sqrt(strafeSpeed * strafeSpeed + forwardBackSpeed * forwardBackSpeed);
@@ -1323,7 +1467,7 @@ public class Bot {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-//    public void subAutoIntake() {
+    //    public void subAutoIntake() {
 //        Thread thread = new Thread(() -> {
 //            try {
 //                if (state == BotState.LOW_CHAMBER | state == BotState.HIGH_CHAMBER) {
@@ -1775,4 +1919,4 @@ public class Bot {
 //        thread.start();
 //    }
 
-    }
+}

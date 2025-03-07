@@ -25,7 +25,8 @@ public class Arm {
 
     public static double rollMultiplier = 1.0663; //integrate into code later
 
-    public static double pitchGroundPickup = -90, pitchWallPickup = 193, pitchFrontPickupToStorage = -55, pitchChamber = 83, pitchStorage = -110, pitchOuttakeUp = 80, pitchOuttakeDown = 70, pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = -0, pitchOuttakeHoriz = 0;
+    public static double pitchGroundPickup = -93, pitchWallPickup = 189, pitchFrontPickupToStorage = -55, pitchChamber = 83, pitchStorage = -110, pitchOuttakeUp = 80, pitchOuttakeDown = 70,
+            pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = 0, pitchOuttakeHoriz = 0, pitchRearChamber = 185;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopRight = ROLL_MID - 45, rollTopLeft = ROLL_MID + 45, rollFlipped = ROLL_MIN;
 
     // Track the current angles for pitch and roll (accounts for pivot angle) (is the output sent to servos)
@@ -92,6 +93,10 @@ public class Arm {
         setRollPitch(rollVertical, pitchChamber);
     }
 
+    public void rearChamber() {
+        setRollPitch(rollVertical, pitchRearChamber);
+    }
+
     public void horizLower() {
         setRollPitch(rollVertical, -45);
     }
@@ -106,6 +111,14 @@ public class Arm {
 
     public void wallPickup() {
         setRollPitch(rollFlipped, pitchWallPickup);
+    }
+
+    public void frontWallPickup() {
+        setRollPitch(rollFlipped, 5);
+    }
+
+    public void frontWallUp() {
+        setRollPitch(rollFlipped, 40);
     }
 
     public void higherWallPickup() {

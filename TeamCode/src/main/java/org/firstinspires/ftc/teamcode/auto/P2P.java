@@ -25,6 +25,7 @@ public class P2P {
     public double inputTurn = 0, driveCorrection = 0, strafeCorrection = 0;
     public Vector2d driveVector;
     public Pose2d target;
+    public PoseVelocity2d currentPoseVel;
     public PoseVelocity2d off = new PoseVelocity2d(new Vector2d(0, 0), 0);
     public int counter = 0, counterMax = 40;
 
@@ -100,9 +101,10 @@ public class P2P {
         strafeCorrection = pfdStrafe(sP, sD, 0, rotatedVector.y);
 
         PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
+        currentPoseVel = botVel;
         boolean atPos = ((Math.abs(driveVector.x)) < dispTolerance) && (Math.abs(driveVector.y) < dispTolerance) && (Math.abs(targetH - heading) < Math.toRadians(angTolerance));
 
-        if ((atPos) || counter > counterMax) {
+        if ((atPos)) {
             drive.setDrivePowers(off);
             return false;
         } else {
@@ -144,7 +146,6 @@ public class P2P {
 
         double newX = -v.x * cosA - v.y * sinA;// +-
         double newY = v.x * sinA - v.y * cosA;// ++
-//        double newX = -v.x * cosA - v.y * sinA;// +-
 
 
         return new Vector2d(newX, newY);
@@ -162,18 +163,20 @@ public class P2P {
     }
 
     public Action cvp2p() {
+        resetCounter();
         return new cvp2p();
     }
 
     public class roughp2p implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            return roughGoToPosition(target.position.x, target.position.y, target.heading.toDouble(), 0.7, 1, 4);
+            return roughGoToPosition(target.position.x, target.position.y, target.heading.toDouble(), 0.7, 0.5, 4);
         }
     }
 
     public Action roughp2p(Pose2d newTarget) {
         setTarget(newTarget);
+        resetCounter();
         return new roughp2p();
     }
 
@@ -186,6 +189,11 @@ public class P2P {
 
     public Action ramp2p(Pose2d newTarget) {
         setTarget(newTarget);
+        resetCounter();
         return new ramp2p();
+    }
+
+    public void resetCounter() {
+        counter = 0;
     }
 }

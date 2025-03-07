@@ -68,7 +68,7 @@ public class BucketAuto extends LinearOpMode {
         Vector2d preloadDrop = new Vector2d(58, 55);
 
         Pose2d firstSample = new Pose2d(47.5, 48, Math.toRadians(-89));
-        Pose2d secondSample = new Pose2d(60.25, 47, Math.toRadians(-89.5));
+        Pose2d secondSample = new Pose2d(60.25, 47, Math.toRadians(-90));
         Pose2d thirdSample = new Pose2d(56.2, 38, Math.toRadians(-45));
 
         Pose2d firstBucket = new Pose2d(57, 57, Math.toRadians(-135));
@@ -237,7 +237,7 @@ public class BucketAuto extends LinearOpMode {
 //                        bot.actionSubPark()
                 ))
                 .splineToSplineHeading(new Pose2d(new Vector2d(secondSub.component1().x + 10, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(new Vector2d(secondSub.component1().x-4, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
+                .splineToLinearHeading(new Pose2d(new Vector2d(secondSub.component1().x-2, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
                 .stopAndAdd(bot.actionSubPark())
                 .build();
 

@@ -67,11 +67,14 @@ public class Pivot {
             frontIntakeHeight = 5 * inches2mm,
             wallIntakeHeight = 3.2 * inches2mm,
 
+            frontWallIntakeHeight = 6 * inches2mm,
+            rearSlidesClippingHeight = 20 * inches2mm,
+
     slidesHighChamberHeight = 19.75 * inches2mm,
 
     frontAutoIntakeHeight = 5.5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm, //12
-    pushIntakeHeight = 0.3 * inches2mm,
+    pushIntakeHeight = 2 * inches2mm,
 
     prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,
@@ -91,17 +94,18 @@ public class Pivot {
             frontIntakeX = 16.5 * inches2mm,
             rearIntakeX = -9.5 * inches2mm,
             teleopWallIntakeX = -7.1 * inches2mm,
-            autoWallIntakeX = autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
-    //-7.6 * inches2mm,//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+            autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
             autoMoreWallIntakeX = autoWallIntakeX = -Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
-//teleopWallIntakeX + (-3 * inches2mm),//-Math.sqrt(Math.pow(11.86, 2) - Math.pow((wallIntakeHeight/inches2mm), 2)) * inches2mm,
+
+            frontWallIntakeX = 8 * inches2mm,
+            rearSlidesClippingX = -5.25 * inches2mm,
 
     slidesHighChamberX = 4.5 * inches2mm,
     autoSlidesHighChamberX = 7.5 * inches2mm,
 
     frontAutoIntakeX = 20 * inches2mm,
     subAutoIntakeX = 14 * inches2mm, //13
-    pushIntakeX = 21 * inches2mm,
+    pushIntakeX = 19 * inches2mm,
 
     prel2ClimbX = 18 * inches2mm,
             midl2ClimbX = 16 * inches2mm,
@@ -297,6 +301,24 @@ public class Pivot {
 
     public void manualRunToDeg(double angle) {
         manualRunTo(degreestoTicks(angle));
+    }
+
+    public void rearSlidesChamber(boolean pivot, boolean slides) {
+        targetZ = rearSlidesClippingHeight;
+        targetX = rearSlidesClippingX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void frontWallIntake(boolean pivot, boolean slides) {
+        targetZ = frontWallIntakeHeight;
+        targetX = frontWallIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void rearSlidesClipDown(boolean pivot, boolean slides) {
+        changeXZ(0, -slidesClippingHeightDelta, pivot, slides);
     }
 
     public void slidesHighChamber(boolean pivot, boolean slides) {
