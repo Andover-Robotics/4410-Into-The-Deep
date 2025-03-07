@@ -23,7 +23,7 @@ public class Slides {
     public static double p = 0.04, i = 0, d = 0.0012, f = 0, staticFOffset = 0.07, gComp = 0.22;
     public static double staticF = 0;
     public static double ikMMoffset = 200;
-    public static double neutral = 0.645, high = 0.78, low = 0.51;
+    public static double neutral = 0.60, high = 0.79, low = 0.41;
 
     public boolean climbingPower = false;
     private final double tolerance = 10;

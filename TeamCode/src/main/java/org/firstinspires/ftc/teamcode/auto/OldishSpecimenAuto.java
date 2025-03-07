@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 @Config
-@Autonomous(name = "Oldish Specimen Auto (5 Spec)", group = "Autonomous")
+@Autonomous(name = "Oldish Specimen Auto (5 Spec)", group = "Old Autonomous")
 public class OldishSpecimenAuto extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;
