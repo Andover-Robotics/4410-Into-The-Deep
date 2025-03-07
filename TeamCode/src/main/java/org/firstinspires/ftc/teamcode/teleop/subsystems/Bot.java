@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.teamcode.auto.P2P;
 import org.firstinspires.ftc.teamcode.util.SampleDetectionPipeline;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
@@ -58,11 +60,15 @@ public class Bot {
 
     public static Bot instance;
     public BotState state = BotState.STORAGE; // Default bot state
-    private final MotorEx fl, fr, bl, br;
+    private MotorEx fl;
+    private MotorEx fr;
+    private MotorEx bl;
+    private MotorEx br;
     public OpMode opMode;
     public double heading = 0.0;
     private TeleMecanumDrive drive;
     public MecanumDrive autoDrive;
+    public P2P controller;
 
     public static int detectionCounter, searchCounter;
 
@@ -88,8 +94,10 @@ public class Bot {
 
     public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
-    public static Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(-90));
-    public static Pose2d chamber = new Pose2d(-1, 34, Math.toRadians(-90));
+    public Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(0, 34, Math.toRadians(90));
+
+    public Action cycleClip = actionCloseGripper();
 
     // get bot instance
     public static Bot getInstance() {
@@ -114,17 +122,36 @@ public class Bot {
         fr = new MotorEx(opMode.hardwareMap, "motorFR", Motor.GoBILDA.RPM_435);
         bl = new MotorEx(opMode.hardwareMap, "motorBL", Motor.GoBILDA.RPM_435);
         br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
-
-        drive = new TeleMecanumDrive(fl, fr, bl, br);
-
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
         sampleYPos = 0;
         breakBeam = opMode.hardwareMap.get(DigitalChannel.class, "BreakBeam");
     }
 
+    public void rebuildMotors() {
+        fl = new MotorEx(opMode.hardwareMap, "motorFL", Motor.GoBILDA.RPM_435);
+        fr = new MotorEx(opMode.hardwareMap, "motorFR", Motor.GoBILDA.RPM_435);
+        bl = new MotorEx(opMode.hardwareMap, "motorBL", Motor.GoBILDA.RPM_435);
+        br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
+        autonomous = false;
+    }
+
     public void initializeAutoClipping() {
         autoDrive = new MecanumDrive(opMode.hardwareMap, clipIntake);
+        controller = new P2P(autoDrive);
+
+        cycleClip = autoDrive.actionBuilder(clipIntake)
+                .strafeToConstantHeading(chamber.component1())
+                .strafeToConstantHeading(new Vector2d(-43, 52), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
+                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
+
+                .build();
+        autonomous = true;
+    }
+
+    public Action cycleClip() {
+//        return cycleClip;
+        return controller.roughp2p(chamber);
     }
 
     public boolean isHolding() {
@@ -1204,9 +1231,9 @@ public class Bot {
 
     public SequentialAction actionPushIntake() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.arm.outtakeHoriz()),
+                new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> pivot.pushIntake(true, false)),
-                new InstantAction(() -> pivot.arm.outtakeHoriz()),
+                new InstantAction(() -> pivot.arm.bucket()),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.pushIntake(false, true)),
                 new SleepAction(0.4),
@@ -1216,14 +1243,14 @@ public class Bot {
 
     public SequentialAction actionDropPush() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeXZ(0, -3, true, false)),
+                new InstantAction(() -> pivot.changeXZ(0, -2.9, true, false)),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }
 
     public SequentialAction actionLiftPush() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.changeXZ(0, 3, true, false)),
+                new InstantAction(() -> pivot.changeXZ(0, 2.9, true, false)),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }
@@ -1399,10 +1426,12 @@ public class Bot {
                 speeds[i] /= maxSpeed;
             }
         }
-        fl.set(speeds[0]);
-        fr.set(speeds[1]);
-        bl.set(speeds[2]);
-        br.set(speeds[3]);
+        if (!autonomous){
+            fl.set(speeds[0]);
+            fr.set(speeds[1]);
+            bl.set(speeds[2]);
+            br.set(speeds[3]);
+        }
     }
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
         double magnitude = Math.sqrt(strafeSpeed * strafeSpeed + forwardBackSpeed * forwardBackSpeed);

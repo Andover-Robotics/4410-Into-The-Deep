@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Vector2d;
@@ -58,18 +59,22 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             gp2.readButtons();
 
+            if (bot.autoDrive != null) {
+                bot.autoDrive.updatePoseEstimate();
+            }
+//
 //            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-//                runningActions.add(bot.actionRearSlidesChamber());
+//                bot.initializeAutoClipping();
 //            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
-//                runningActions.add(bot.actionRearSlidesClipDown());
+//                runningActions.add(bot.cycleClip());
 //            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
-//                runningActions.add(bot.actionRearClipWall());
+//                bot.rebuildMotors();
 //            }
-//            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-//                runningActions.add(bot.actionRearClipStorage());
-//            }
+////            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+////                runningActions.add(bot.actionRearClipStorage());
+////            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
 //                runningActions.add(bot.actionFrontWallIntake());
 //            }
@@ -281,6 +286,18 @@ public class MainTeleOp extends LinearOpMode {
             drive();
 
             // TELEMETRY
+            if (bot.autoDrive != null) {
+                telemetry.addData("bot position", bot.autoDrive.pose);
+                if (bot.controller.currentPoseVel != null) {
+                    telemetry.addData("p2p power", bot.controller.currentPoseVel);
+                } else {
+                    telemetry.addLine("NO POSITION");
+                }
+            } else {
+                telemetry.addLine("NO POSITION");
+                telemetry.addLine("NO POSITION");
+            }
+
             telemetry.addData("Bot State", bot.state);
             telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
             telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);

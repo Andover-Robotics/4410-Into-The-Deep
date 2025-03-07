@@ -25,6 +25,7 @@ public class P2P {
     public double inputTurn = 0, driveCorrection = 0, strafeCorrection = 0;
     public Vector2d driveVector;
     public Pose2d target;
+    public PoseVelocity2d currentPoseVel;
     public PoseVelocity2d off = new PoseVelocity2d(new Vector2d(0, 0), 0);
     public int counter = 0, counterMax = 45;
 
@@ -100,6 +101,7 @@ public class P2P {
         strafeCorrection = pfdStrafe(sP, sD, 0, rotatedVector.y);
 
         PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
+        currentPoseVel = botVel;
         boolean atPos = ((Math.abs(driveVector.x)) < dispTolerance) && (Math.abs(driveVector.y) < dispTolerance) && (Math.abs(targetH - heading) < Math.toRadians(angTolerance));
 
         if ((atPos)) {
@@ -144,7 +146,6 @@ public class P2P {
 
         double newX = -v.x * cosA - v.y * sinA;// +-
         double newY = v.x * sinA - v.y * cosA;// ++
-//        double newX = -v.x * cosA - v.y * sinA;// +-
 
 
         return new Vector2d(newX, newY);
