@@ -67,8 +67,8 @@ public class Pivot {
             frontIntakeHeight = 5 * inches2mm,
             wallIntakeHeight = 3.2 * inches2mm,
 
-            frontWallIntakeHeight = 6 * inches2mm,
-            rearSlidesClippingHeight = 20 * inches2mm,
+            frontWallIntakeHeight = 5.5 * inches2mm,
+            rearSlidesClippingHeight = 19.25 * inches2mm,
 
     slidesHighChamberHeight = 19.75 * inches2mm,
 

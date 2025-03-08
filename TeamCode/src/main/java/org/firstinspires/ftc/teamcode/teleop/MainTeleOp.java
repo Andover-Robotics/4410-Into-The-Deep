@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -15,6 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
@@ -59,15 +61,15 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             gp2.readButtons();
 
-            if (bot.autoDrive != null) {
-                bot.autoDrive.updatePoseEstimate();
-            }
-//
-//            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-//                bot.initializeAutoClipping();
+//            if (bot.autoDrive != null) {
+//                bot.autoDrive.updatePoseEstimate();
 //            }
+//
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+                bot.initializeAutoClipping();
+            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
-//                runningActions.add(bot.cycleClip());
+//                bot.cycleClip();
 //            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
 //                bot.rebuildMotors();
@@ -75,9 +77,9 @@ public class MainTeleOp extends LinearOpMode {
 ////            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
 ////                runningActions.add(bot.actionRearClipStorage());
 ////            }
-//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-//                runningActions.add(bot.actionFrontWallIntake());
-//            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                runningActions.add(bot.actionFrontWallIntake());
+            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
 //                runningActions.add(bot.actionFrontWallToRearSlidesChamber());
 //            }
@@ -273,14 +275,24 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //Execute Actions
-            List<Action> newActions = new ArrayList<>();
-            for (Action action : runningActions) {
-                action.preview(packet.fieldOverlay());
-                if (action.run(packet)) {
-                    newActions.add(action);
+            if (!bot.autonomous){
+                List<Action> newActions = new ArrayList<>();
+                for (Action action : runningActions) {
+                    action.preview(packet.fieldOverlay());
+                    if (action.run(packet)) {
+                        newActions.add(action);
+                    }
                 }
+                runningActions = newActions;
+            } else {
+                Actions.runBlocking(
+                        new ActionHelpersJava.RaceParallelCommand(
+                                bot.actionPeriodic(),
+                                bot.cycleClip,
+                                bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
+                        )
+                );
             }
-            runningActions = newActions;
 
             // DRIVE
             drive();

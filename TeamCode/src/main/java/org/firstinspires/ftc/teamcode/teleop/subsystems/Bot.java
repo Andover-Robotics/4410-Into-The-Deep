@@ -70,6 +70,8 @@ public class Bot {
     public MecanumDrive autoDrive;
     public P2P controller;
 
+    public double triggerVal;
+
     public static int detectionCounter, searchCounter;
 
     public SampleDetectionPipeline pipeline;
@@ -147,11 +149,43 @@ public class Bot {
 
                 .build();
         autonomous = true;
+        cycleClip = autoDrive.actionBuilder(clipIntake)
+                .stopAndAdd(new SequentialAction(
+                        new SleepAction(0.15),
+                        actionCloseGripper(),
+                        new SleepAction(0.2)
+                ))
+                .afterTime(0.05, actionFrontWallToRearSlidesChamber())
+                .strafeToConstantHeading(chamber.component1())
+                .stopAndAdd(new SequentialAction(
+                        actionRearSlidesClipDown(),
+                        new SleepAction(0.45),
+                        actionOpenGripper()
+                ))
+
+                .afterTime(0.01, actionRearClipWall())
+
+//                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(clipIntake.component1().x, clipIntake.component1().y-9))
+                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
+
+                .build();
     }
 
-    public Action cycleClip() {
-//        return cycleClip;
-        return controller.roughp2p(chamber);
+    public class checkAutoClipping implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (triggerVal > 0.4) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public Action checkAutoClipping(double triggerVal) {
+        this.triggerVal = triggerVal;
+        return new checkAutoClipping();
     }
 
     public boolean isHolding() {

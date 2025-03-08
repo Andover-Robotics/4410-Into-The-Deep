@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -20,8 +21,8 @@ public class P2PTester extends LinearOpMode {
     private Bot bot;
     private GamepadEx gp1;
 
-    public static double x = 0, y = 0, heading = 90, initHeading = 90;
-    public static double x2 = 0, y2 = 0, heading2 = 90;
+    public static double x = 0, y = 0, heading = -90, initHeading = -90;
+    public static double x2 = 0, y2 = 0, heading2 = -90;
     public static double speed = 0.7;
 
     @Override
@@ -57,19 +58,19 @@ public class P2PTester extends LinearOpMode {
             if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                 left = !left;
             }
-
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                bot.pivot.pushIntake(true, true);
-                bot.pivot.arm.outtakeHoriz();
-            }
-
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                bot.pivot.changeXZ(0, -3, true, false);
-            }
-
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                bot.pivot.changeXZ(0, 3, true, false);
-            }
+//
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+//                bot.pivot.pushIntake(true, true);
+//                bot.pivot.arm.outtakeHoriz();
+//            }
+//
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+//                bot.pivot.changeXZ(0, -3, true, false);
+//            }
+//
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+//                bot.pivot.changeXZ(0, 3, true, false);
+//            }
             if (left) {
                 controller.demoGoToPosition(x2, y2, Math.toRadians(heading2), speed);
             } else {
@@ -84,6 +85,7 @@ public class P2PTester extends LinearOpMode {
             telemetry.addData("x error", controller.getXError());
             telemetry.addData("y error", controller.getYError());
             telemetry.addData("heading error", controller.headingError * 180 / Math.PI);
+            telemetry.addData("vectordiff", Bot.vectorDiff(drive.pose.component1(), new Vector2d(x, y)));
             telemetry.update();
         }
     }

@@ -60,7 +60,7 @@ public class SafeSpecimenAuto extends LinearOpMode {
 
                 .setReversed(true)
 
-                .afterDisp(20, new SequentialAction(bot.actionPushIntake()))
+                .afterDisp(25, new SequentialAction(bot.actionPushIntake()))
 
                 .splineToSplineHeading(new Pose2d(-34, 36, Math.toRadians(-130)), Math.toRadians(180))
 
@@ -91,10 +91,11 @@ public class SafeSpecimenAuto extends LinearOpMode {
                 .afterTime(0.01, bot.actionFrontWallIntake())
 
                 .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-47.5,62.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 50))
+                .splineToConstantHeading(new Vector2d(-47.5,62.5), Math.toRadians(90), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 45))
 
                 .stopAndAdd(new SequentialAction(
-                        bot.actionCloseGripper()
+                        bot.actionCloseGripper(),
+                        new SleepAction(0.1)
                 ))
                 .build();
 
@@ -114,11 +115,11 @@ public class SafeSpecimenAuto extends LinearOpMode {
 
                 //.strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
                 .strafeToConstantHeading(new Vector2d(-43, 52), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
-                .strafeToConstantHeading(new Vector2d(-43, 60.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
+                .strafeToConstantHeading(new Vector2d(-43, 60.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
-                        new SleepAction(0.05)
+                        new SleepAction(0.1)
                 ))
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
@@ -135,11 +136,11 @@ public class SafeSpecimenAuto extends LinearOpMode {
 
 //                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
                 .strafeToConstantHeading(new Vector2d(-43, 52), drive.defaultVelConstraint, new ProfileAccelConstraint(-50, 100))
-                .strafeToConstantHeading(new Vector2d(-43, 60.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
+                .strafeToConstantHeading(new Vector2d(-43, 60.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
-                        new SleepAction(0.05)
+                        new SleepAction(0.1)
                 ))
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
@@ -156,11 +157,11 @@ public class SafeSpecimenAuto extends LinearOpMode {
 
 //                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
                 .strafeToConstantHeading(new Vector2d(-43, 52), drive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
-                .strafeToConstantHeading(new Vector2d(-43, 60.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
+                .strafeToConstantHeading(new Vector2d(-43, 60.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
-                        new SleepAction(0.05)
+                        new SleepAction(0.1)
                 ))
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())

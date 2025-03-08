@@ -170,7 +170,7 @@ public class P2P {
     public class roughp2p implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            return roughGoToPosition(target.position.x, target.position.y, target.heading.toDouble(), 0.7, 0.5, 4);
+            return goToPosition(-40, 60.5, Math.toRadians(90), 0.7);
         }
     }
 

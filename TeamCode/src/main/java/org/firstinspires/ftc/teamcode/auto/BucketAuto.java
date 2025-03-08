@@ -31,7 +31,7 @@ public class BucketAuto extends LinearOpMode {
     public static Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
     public static Vector2d preloadDrop = new Vector2d(58, 55);
 
-    public static Pose2d firstSample = new Pose2d(47.2, 48, Math.toRadians(-89));
+    public static Pose2d firstSample = new Pose2d(47.2, 48.4, Math.toRadians(-89));
     public static Pose2d secondSample = new Pose2d(60.25, 46.75, Math.toRadians(-89.5));
     public static Pose2d thirdSample = new Pose2d(56.2, 38, Math.toRadians(-45));
 
@@ -48,8 +48,8 @@ public class BucketAuto extends LinearOpMode {
     public static Pose2d firstSubDrop = new Pose2d(52.5, 57.5, Math.toRadians(-135));
     public static Pose2d secondSubDrop = new Pose2d(52.5, 57, Math.toRadians(-135));
 
-    public static Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
-    public static Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
+    public static Pose2d subDropRam = new Pose2d(48, 9.5, Math.toRadians(180));
+    public static Pose2d unRam = new Pose2d(23, 9.5, Math.toRadians(180));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,7 +69,7 @@ public class BucketAuto extends LinearOpMode {
 
         Pose2d firstSample = new Pose2d(47.5, 48, Math.toRadians(-89));
         Pose2d secondSample = new Pose2d(60.25, 47, Math.toRadians(-90));
-        Pose2d thirdSample = new Pose2d(56.2, 38, Math.toRadians(-45));
+        Pose2d thirdSample = new Pose2d(56.2, 38.4, Math.toRadians(-45));
 
         Pose2d firstBucket = new Pose2d(57, 57, Math.toRadians(-135));
         Pose2d secondBucket = new Pose2d(57, 57.5, Math.toRadians(-135));
@@ -82,7 +82,7 @@ public class BucketAuto extends LinearOpMode {
         Pose2d firstSub = new Pose2d(22, 7, Math.toRadians(180));
         Pose2d secondSub = new Pose2d(21, 2.5, Math.toRadians(180));
         Pose2d firstSubDrop = new Pose2d(52, 57, Math.toRadians(-135));
-        Pose2d secondSubDrop = new Pose2d(52, 56, Math.toRadians(-135));
+        Pose2d secondSubDrop = new Pose2d(51.5, 56.5, Math.toRadians(-135));
 
         Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
         Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
@@ -181,7 +181,7 @@ public class BucketAuto extends LinearOpMode {
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.1),
                         bot.actionPickDown(),
-                        new SleepAction(0.1),
+                        new SleepAction(0.2),
                         bot.actionPickUp(),
                         new SleepAction(0.15)
                 ))
@@ -251,8 +251,9 @@ public class BucketAuto extends LinearOpMode {
 //                        new SleepAction(0.8),
 //                        bot.actionSubPark()
                 ))
-                .splineToSplineHeading(new Pose2d(new Vector2d(secondSub.component1().x + 10, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(new Vector2d(secondSub.component1().x-4, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
+                .splineToSplineHeading(new Pose2d(new Vector2d(secondSub.component1().x + 10, secondSub.component1().y), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
+                .afterTime(0.1, bot.actionSubPark())
+                .splineToLinearHeading(new Pose2d(new Vector2d(secondSub.component1().x-2, secondSub.component1().y+5.5), Math.toRadians(180)), Math.toRadians(180), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
                 .waitSeconds(5)
                 .build();
 
@@ -337,7 +338,7 @@ public class BucketAuto extends LinearOpMode {
                                             .afterTime(0.01, new SequentialAction(
                                                     bot.actionBucketToFrontIntake()
                                             ))
-                                            .strafeToLinearHeading(secondSample.component1(), secondSample.component2())
+                                            .strafeToLinearHeading(secondSample.component1(), secondSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 40))
                                             .build(),
                                     secondSamplePickup
                             )
@@ -538,7 +539,7 @@ public class BucketAuto extends LinearOpMode {
                                     bot.actionBucketToStorage()
                             )
                     ));
-            while (Bot.vectorDiff(drive.pose.position, subDropRam.component1()) > 4) {
+            do {
                 drive.updatePoseEstimate();
                 bot.savePosition(drive.pose);
                 Actions.runBlocking(
@@ -548,14 +549,16 @@ public class BucketAuto extends LinearOpMode {
 //                                            controller.ramp2p(unRam),
 //                                            controller.ramp2p(subDropRam)
                                         drive.actionBuilder(bot.storedPosition)
-                                                .strafeToLinearHeading(firstSub.position, Math.toRadians(180))
-                                                .splineTo(subDropRam.position, Math.toRadians(0), drive.defaultVelConstraint, new ProfileAccelConstraint(-300, 300))
+                                                .strafeToLinearHeading(unRam.position, Math.toRadians(180))
+                                                .strafeTo(subDropRam.position, drive.defaultVelConstraint, new ProfileAccelConstraint(-300, 300))
                                                 .build()
                                 )
                         )
                 );
+                drive.updatePoseEstimate();
+                bot.savePosition(drive.pose);
                 cv++;
-            }
+            } while (Bot.vectorDiff(bot.storedPosition.component1(), subDropRam.component1()) > 6);
 
             drive.updatePoseEstimate();
             bot.savePosition(drive.pose);
