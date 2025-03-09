@@ -65,30 +65,30 @@ public class MainTeleOp extends LinearOpMode {
 //                bot.autoDrive.updatePoseEstimate();
 //            }
 //
-            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-                bot.initializeAutoClipping();
-            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+//                bot.initializeAutoClipping();
+//            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
 //                bot.cycleClip();
 //            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
 //                bot.rebuildMotors();
 //            }
-////            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-////                runningActions.add(bot.actionRearClipStorage());
-////            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+                runningActions.add(bot.actionRearClipStorage());
+            }
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 runningActions.add(bot.actionFrontWallIntake());
             }
-//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-//                runningActions.add(bot.actionFrontWallToRearSlidesChamber());
-//            }
-//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-//                runningActions.add(bot.actionOpenGripper());
-//            }
-//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-//                runningActions.add(bot.actionCloseGripper());
-//            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                runningActions.add(bot.actionFrontWallToRearSlidesChamber());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                runningActions.add(bot.actionOpenGripper());
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                runningActions.add(bot.actionCloseGripper());
+            }
 
 
 
@@ -287,7 +287,7 @@ public class MainTeleOp extends LinearOpMode {
             } else {
                 Actions.runBlocking(
                         new ActionHelpersJava.RaceParallelCommand(
-                                bot.actionPeriodic(),
+//                                bot.actionPeriodic(),
                                 bot.cycleClip,
                                 bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
                         )

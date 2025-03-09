@@ -142,34 +142,34 @@ public class Bot {
         autoDrive = new MecanumDrive(opMode.hardwareMap, clipIntake);
         controller = new P2P(autoDrive);
 
-        cycleClip = autoDrive.actionBuilder(clipIntake)
-                .strafeToConstantHeading(chamber.component1())
-                .strafeToConstantHeading(new Vector2d(-43, 52), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
-                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
-
-                .build();
-        autonomous = true;
+//        cycleClip = autoDrive.actionBuilder(clipIntake)
+//                .strafeToConstantHeading(chamber.component1())
+//                .strafeToConstantHeading(new Vector2d(-43, 52), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
+//                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
+//
+//                .build();
         cycleClip = autoDrive.actionBuilder(clipIntake)
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.15),
                         actionCloseGripper(),
                         new SleepAction(0.2)
                 ))
-                .afterTime(0.05, actionFrontWallToRearSlidesChamber())
+//                .afterTime(0.05, actionFrontWallToRearSlidesChamber())
                 .strafeToConstantHeading(chamber.component1())
-                .stopAndAdd(new SequentialAction(
-                        actionRearSlidesClipDown(),
-                        new SleepAction(0.45),
-                        actionOpenGripper()
-                ))
+//                .stopAndAdd(new SequentialAction(
+//                        actionRearSlidesClipDown(),
+//                        new SleepAction(0.45),
+//                        actionOpenGripper()
+//                ))
 
-                .afterTime(0.01, actionRearClipWall())
+//                .afterTime(0.01, actionRearClipWall())
 
 //                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
                 .strafeToConstantHeading(new Vector2d(clipIntake.component1().x, clipIntake.component1().y-9))
                 .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
 
                 .build();
+        autonomous = true;
     }
 
     public class checkAutoClipping implements Action {

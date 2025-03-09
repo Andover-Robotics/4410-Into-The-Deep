@@ -103,7 +103,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-6,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-75, 110))
+                .strafeToConstantHeading(new Vector2d(-5,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-75, 110))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -124,7 +124,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-6,33.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+                .strafeToConstantHeading(new Vector2d(-5,33.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -145,7 +145,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-8,33), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+                .strafeToConstantHeading(new Vector2d(-7,33), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -166,7 +166,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-10,33), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+                .strafeToConstantHeading(new Vector2d(-9,33), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
