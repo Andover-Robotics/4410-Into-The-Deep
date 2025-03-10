@@ -83,7 +83,7 @@ public class Bot {
     public static double ySign = -1;
     public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
-    private boolean breakBeamWorking = false;
+    private boolean breakBeamWorking = true;
     public boolean climbing = false;
 
     // Define subsystem objects
@@ -1267,7 +1267,7 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> pivot.pushIntake(true, false)),
-                new InstantAction(() -> pivot.arm.bucket()),
+                new InstantAction(() -> pivot.arm.setPitch(95)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.pushIntake(false, true)),
                 new SleepAction(0.4),
@@ -1401,11 +1401,11 @@ public class Bot {
     }
 
     public void periodic() {
-        pivot.periodic(fr.getCurrentPosition());
+        pivot.periodic(fr.getCurrentPosition(), state == BotState.WALL_INTAKE);
     }
 
     public void autoPeriodic() {
-        pivot.periodic(-fr.getCurrentPosition());
+        pivot.periodic(-fr.getCurrentPosition(), state == BotState.WALL_INTAKE);
     }
 
     public Action actionPeriodic() {

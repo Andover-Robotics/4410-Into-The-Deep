@@ -65,11 +65,11 @@ public class BucketAuto extends LinearOpMode {
         int cv = 0;
 
         Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
-        Vector2d preloadDrop = new Vector2d(58, 55);
+        Vector2d preloadDrop = new Vector2d(58.5, 55.5);
 
-        Pose2d firstSample = new Pose2d(47.5, 48, Math.toRadians(-89));
-        Pose2d secondSample = new Pose2d(60.25, 47, Math.toRadians(-90));
-        Pose2d thirdSample = new Pose2d(56.2, 38.4, Math.toRadians(-45));
+        Pose2d firstSample = new Pose2d(48.6, 48, Math.toRadians(-89));
+        Pose2d secondSample = new Pose2d(60.25, 47.5, Math.toRadians(-90));
+        Pose2d thirdSample = new Pose2d(56.2, 38.8, Math.toRadians(-45));
 
         Pose2d firstBucket = new Pose2d(57, 57, Math.toRadians(-135));
         Pose2d secondBucket = new Pose2d(57, 57.5, Math.toRadians(-135));
@@ -81,8 +81,8 @@ public class BucketAuto extends LinearOpMode {
 
         Pose2d firstSub = new Pose2d(22, 7, Math.toRadians(180));
         Pose2d secondSub = new Pose2d(21, 2.5, Math.toRadians(180));
-        Pose2d firstSubDrop = new Pose2d(52, 57, Math.toRadians(-135));
-        Pose2d secondSubDrop = new Pose2d(51.5, 56.5, Math.toRadians(-135));
+        Pose2d firstSubDrop = new Pose2d(52.5, 57.5, Math.toRadians(-135));
+        Pose2d secondSubDrop = new Pose2d(52, 57, Math.toRadians(-135));
 
         Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
         Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
@@ -105,7 +105,7 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionBucketToFrontIntake()
                 ))
 
-                .strafeToLinearHeading(firstSample.component1(), firstSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 45)) //first intake pos
+                .strafeToLinearHeading(firstSample.component1(), firstSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 45)) //first intake pos
 
                 .build();
 

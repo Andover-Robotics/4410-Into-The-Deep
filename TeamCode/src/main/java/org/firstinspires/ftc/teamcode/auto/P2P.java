@@ -27,7 +27,7 @@ public class P2P {
     public Pose2d target;
     public PoseVelocity2d currentPoseVel;
     public PoseVelocity2d off = new PoseVelocity2d(new Vector2d(0, 0), 0);
-    public int counter = 0, counterMax = 40;
+    public int counter = 0, counterMax = 36;
 
     public P2P(MecanumDrive drive) {
         this.drive = drive;

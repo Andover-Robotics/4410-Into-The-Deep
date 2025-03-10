@@ -167,6 +167,45 @@ public class Slides {
         }
     }
 
+
+    public void periodic(double pivotAngleRadians, boolean wallIntake) {
+        spoolRadiusGear = spoolRadius * (1.0 / getGearing());
+        if (state == SlidesState.HIGH || state == SlidesState.LOW) {
+            motorRight.setInverted(false);
+            motorLeft.setInverted(true);
+            controller.setPIDF(p, i, d, f);
+            adjustStaticF(pivotAngleRadians);
+            adjustCoax(pivotAngleRadians);
+            double dt = opMode.time - profile_init_time;
+            if (!profiler.isOver()) {
+                controller.setSetPoint(profiler.motion_profile_pos(dt) + coax);
+                power = powerUp * controller.calculate(getPosition());
+                if (goingDown) {
+                    powerDown = (powerUp) - (0.01 * Math.sin(pivotAngleRadians));
+                    power = powerDown * controller.calculate(getPosition());
+                }
+            } else {
+                if (profiler.isDone()) {
+                    resetProfiler();
+                    profiling = false;
+                }
+                if (manualPower != 0) {
+                    controller.setSetPoint(getPosition());
+                    power = manualPower / manualDivide;
+                    target = getPosition() - coax;
+                } else {
+                    if ((getTargetMM() < 0.5 && getTargetMM() > -0.5 && state != SlidesState.LOW && !wallIntake)) {
+                        power = 0;
+                    } else {
+                        controller.setSetPoint(target + coax);
+                        power = staticF * controller.calculate(getPosition());
+                    }
+                }
+            }
+            setPower(power);
+        }
+    }
+
     public void neutral() {
         shifter.setPosition(neutral);
     }

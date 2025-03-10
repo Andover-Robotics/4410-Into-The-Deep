@@ -197,7 +197,7 @@ public class Pivot {
         runIKSlides();
     }
 
-    public void periodic(int position) {
+    public void periodic(int position, boolean wallIntake) {
         controller.setPID(p, i, d);
         this.position = -position;
         int pivotPos = getPosition();
@@ -241,7 +241,7 @@ public class Pivot {
 
         pivotMotor.set(power);
 
-        slides.periodic(getPivotAngleRadians());
+        slides.periodic(getPivotAngleRadians(), wallIntake);
         arm.periodic(getPivotAngleDegrees()); // feeds in the pivot angle so the arm can go to an absolute angle
     }
 

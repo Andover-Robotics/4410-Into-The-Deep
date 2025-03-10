@@ -26,8 +26,8 @@ public class Arm {
     public static double rollMultiplier = 1.0663; //integrate into code later
     public static double offset = -5;
 
-    public static double pitchGroundPickup = -93+offset, pitchWallPickup = 189 + offset, pitchFrontPickupToStorage = -55, pitchChamber = 83 + offset, pitchStorage = -100 + offset, pitchOuttakeUp = 80 + offset, pitchOuttakeDown = 70 + offset,
-            pitchBucket = 120 + offset, pitchBucketDown = 165 + offset, pitchChamberHoriz = 0 + offset, pitchOuttakeHoriz = 0 + offset, pitchRearChamber = 185;
+    public static double pitchGroundPickup = -93+offset, pitchWallPickup = 189 + offset, pitchFrontPickupToStorage = -55, pitchChamber = 83 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 70,
+            pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = 0, pitchOuttakeHoriz = 0, pitchRearChamber = 185;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopRight = ROLL_MID - 45, rollTopLeft = ROLL_MID + 45, rollFlipped = ROLL_MIN;
 
     // Track the current angles for pitch and roll (accounts for pivot angle) (is the output sent to servos)
