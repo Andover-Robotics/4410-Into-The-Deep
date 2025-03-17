@@ -97,7 +97,7 @@ public class Bot {
     public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
     public Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
-    public Pose2d chamber = new Pose2d(0, 34, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(0, 35, Math.toRadians(90));
 
     public Action cycleClip = actionCloseGripper();
 
@@ -135,40 +135,38 @@ public class Bot {
         fr = new MotorEx(opMode.hardwareMap, "motorFR", Motor.GoBILDA.RPM_435);
         bl = new MotorEx(opMode.hardwareMap, "motorBL", Motor.GoBILDA.RPM_435);
         br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
+        autoDrive = null;
         autonomous = false;
     }
 
     public void initializeAutoClipping() {
+//        fl = null;
+//        fr = null;
+//        bl = null;
+//        br = null;
         autoDrive = new MecanumDrive(opMode.hardwareMap, clipIntake);
-        controller = new P2P(autoDrive);
 
 //        cycleClip = autoDrive.actionBuilder(clipIntake)
-//                .strafeToConstantHeading(chamber.component1())
-//                .strafeToConstantHeading(new Vector2d(-43, 52), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-70, 100))
-//                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-35, 60))
-//
-//                .build();
-        cycleClip = autoDrive.actionBuilder(clipIntake)
-                .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.15),
-                        actionCloseGripper(),
-                        new SleepAction(0.2)
-                ))
-//                .afterTime(0.05, actionFrontWallToRearSlidesChamber())
-                .strafeToConstantHeading(chamber.component1())
 //                .stopAndAdd(new SequentialAction(
-//                        actionRearSlidesClipDown(),
+//                        new SleepAction(0.15),
+//                        actionCloseGripper(),
+//                        new SleepAction(0.2)
+//                ))
+////                .afterTime(0.05, actionFrontWallToRearSlidesChamber())
+//                .strafeToConstantHeading(chamber.component1())
+//                .stopAndAdd(new SequentialAction(
+////                        actionRearSlidesClipDown(),
 //                        new SleepAction(0.45),
 //                        actionOpenGripper()
 //                ))
-
-//                .afterTime(0.01, actionRearClipWall())
-
-//                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
-                .strafeToConstantHeading(new Vector2d(clipIntake.component1().x, clipIntake.component1().y-9))
-                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
-
-                .build();
+//
+////                .afterTime(0.01, actionRearClipWall())
+//
+////                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
+//                .strafeToConstantHeading(new Vector2d(clipIntake.component1().x, clipIntake.component1().y-9))
+//                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
+//
+//                .build();
         autonomous = true;
     }
 
@@ -176,6 +174,7 @@ public class Bot {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (triggerVal > 0.4) {
+                rebuildMotors();
                 return false;
             } else {
                 return true;
@@ -1401,7 +1400,7 @@ public class Bot {
     }
 
     public void periodic() {
-        pivot.periodic(fr.getCurrentPosition(), state == BotState.WALL_INTAKE);
+        pivot.periodic(-fr.getCurrentPosition(), state == BotState.WALL_INTAKE);
     }
 
     public void autoPeriodic() {
@@ -1419,10 +1418,10 @@ public class Bot {
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        fl.setInverted(false);
-        fr.setInverted(true);
-        bl.setInverted(false);
-        br.setInverted(true);
+//        fl.setInverted(false);
+//        fr.setInverted(true);
+//        bl.setInverted(false);
+//        br.setInverted(true);
 
         fl.setRunMode(Motor.RunMode.RawPower);
         fr.setRunMode(Motor.RunMode.RawPower);
@@ -1461,10 +1460,10 @@ public class Bot {
             }
         }
         if (!autonomous){
-            fl.set(speeds[0]);
-            fr.set(speeds[1]);
-            bl.set(speeds[2]);
-            br.set(speeds[3]);
+            fl.set(-speeds[0]);
+            fr.set(-speeds[1]);
+            bl.set(-speeds[2]);
+            br.set(-speeds[3]);
         }
     }
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {

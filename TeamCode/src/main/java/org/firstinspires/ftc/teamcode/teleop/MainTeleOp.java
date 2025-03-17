@@ -6,7 +6,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -65,9 +68,9 @@ public class MainTeleOp extends LinearOpMode {
 //                bot.autoDrive.updatePoseEstimate();
 //            }
 //
-//            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-//                bot.initializeAutoClipping();
-//            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+                bot.initializeAutoClipping();
+            }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
 //                bot.cycleClip();
 //            }
@@ -287,24 +290,50 @@ public class MainTeleOp extends LinearOpMode {
             } else {
                 Actions.runBlocking(
                         new ActionHelpersJava.RaceParallelCommand(
-//                                bot.actionPeriodic(),
-                                bot.cycleClip,
+                                bot.actionPeriodic(),
+                                new SequentialAction(
+                                        bot.autoDrive.actionBuilder(bot.clipIntake)
+                                                .stopAndAdd(new SequentialAction(
+                                                        new SleepAction(0.15),
+                                                        bot.actionCloseGripper(),
+                                                        new SleepAction(0.2)
+                                                ))
+                                                                .afterTime(0.05, bot.actionFrontWallToRearSlidesChamber())
+                                                .strafeToConstantHeading(bot.chamber.component1())
+                                                .stopAndAdd(new SequentialAction(
+                                                        bot.actionRearSlidesClipDown(),
+                                                        new SleepAction(0.45),
+                                                        bot.actionOpenGripper()
+                                                ))
+
+                                                .afterTime(0.01, bot.actionRearClipWall())
+
+                                               // .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
+                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x, bot.clipIntake.component1().y-10))
+                                                .strafeToConstantHeading(bot.clipIntake.component1(), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 40))
+
+                                                .build()
+                                ),
                                 bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
                         )
                 );
+//                );
             }
 
             // DRIVE
-            drive();
+            if (!bot.autonomous) {
+                drive();
+                bot.periodic();
+            }
 
             // TELEMETRY
             if (bot.autoDrive != null) {
                 telemetry.addData("bot position", bot.autoDrive.pose);
-                if (bot.controller.currentPoseVel != null) {
-                    telemetry.addData("p2p power", bot.controller.currentPoseVel);
-                } else {
-                    telemetry.addLine("NO POSITION");
-                }
+//                if (bot.controller.currentPoseVel != null) {
+//                    telemetry.addData("p2p power", bot.controller.currentPoseVel);
+//                } else {
+//                    telemetry.addLine("NO POSITION");
+//                }
             } else {
                 telemetry.addLine("NO POSITION");
                 telemetry.addLine("NO POSITION");
@@ -335,7 +364,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("\n\nHolding Sample:", bot.isHolding());
             telemetry.addData("\n\ndt current", bot.getMotorCurrent());
             telemetry.update();
-            bot.periodic();
         }
     }
 
