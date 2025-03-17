@@ -101,10 +101,12 @@ public class MainTeleOp extends LinearOpMode {
                     bot.teleopGoToReset();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                    runningActions.add(bot.teleopShiftUp());
+//                    runningActions.add(bot.teleopShiftUp());
+                    bot.shiftUp();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    runningActions.add(bot.teleopShiftDown());
+//                    runningActions.add(bot.teleopShiftDown());
+                    bot.shiftDown();
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());

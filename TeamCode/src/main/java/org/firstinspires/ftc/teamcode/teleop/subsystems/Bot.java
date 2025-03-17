@@ -1604,66 +1604,66 @@ public class Bot {
 //        thread.start();
 //    }
 //
-//    public void shiftDown() {
-//        Thread thread = new Thread(() -> {
-//            try {
-//                pivot.slides.setState(Slides.SlidesState.HIGH2LOW);
-//                pivot.goToResetPosition();
-//                Thread.sleep(250);
-//                pivot.slides.setPower(0);
-//                pivot.slides.neutral();
-//                Thread.sleep(300);
-//                pivot.slides.setPower(-0.1); //Upwards (for high) to help it disengage
-//                Thread.sleep(75);
-//                pivot.slides.setPower(0);
-//                pivot.slides.low(); //Engage high
-//                while (pivot.slides.getCurrent() < 4000) {
-//                    pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
-//                }
-//                Thread.sleep(75);
-//                pivot.slides.setPower(0.3);
-//                Thread.sleep(100);
-//                pivot.slides.setPower(-0.6); //run it into the ground
-//                Thread.sleep(200);
-//                pivot.slides.setPower(0);
-//                pivot.slides.resetEncoders();
-//                pivot.slides.setState(Slides.SlidesState.LOW);
-//            } catch (InterruptedException ignored) {}
-//        });
-//        if (pivot.slides.state == Slides.SlidesState.HIGH)
-//            thread.start();
-//    }
-//
-//    public void shiftUp() {
-//        Thread thread = new Thread(() -> {
-//            try {
-//                pivot.slides.setState(Slides.SlidesState.LOW2HIGH);
-//                pivot.goToResetPosition();
-//                Thread.sleep(250);
-//                pivot.slides.setPower(0);
-//                pivot.slides.neutral();
-//                Thread.sleep(300);
-//                pivot.slides.setPower(0.1); //Upwards (for low) to help it disengage
-//                Thread.sleep(75);
-//                pivot.slides.setPower(0);
-//                pivot.slides.high(); //Engage high
-//                while (pivot.slides.getCurrent() < 2000) {
-//                    pivot.slides.setPower(0.2); //Downwards (for high) to help it engage
-//                }
-//                Thread.sleep(75);
-//                pivot.slides.setPower(-0.3);
-//                Thread.sleep(100);
-//                pivot.slides.setPower(1); //run it into the ground
-//                Thread.sleep(100);
-//                pivot.slides.setPower(0);
-//                pivot.slides.resetEncoders();
-//                pivot.slides.setState(Slides.SlidesState.HIGH);
-//            } catch (InterruptedException ignored) {}
-//        });
-//        if (pivot.slides.state == Slides.SlidesState.LOW)
-//            thread.start();
-//    }
-//
+    public void shiftDown() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.slides.setState(Slides.SlidesState.HIGH2LOW);
+                pivot.goToResetPosition();
+                Thread.sleep(250);
+                pivot.slides.setPower(0);
+                pivot.slides.neutral();
+                Thread.sleep(300);
+                pivot.slides.setPower(-0.1); //Upwards (for high) to help it disengage
+                Thread.sleep(75);
+                pivot.slides.setPower(0);
+                pivot.slides.low(); //Engage high
+                while (pivot.slides.getCurrent() < 4000) {
+                    pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
+                }
+                Thread.sleep(75);
+                pivot.slides.setPower(0.3);
+                Thread.sleep(100);
+                pivot.slides.setPower(-0.6); //run it into the ground
+                Thread.sleep(200);
+                pivot.slides.setPower(0);
+                pivot.slides.resetEncoders();
+                pivot.slides.setState(Slides.SlidesState.LOW);
+            } catch (InterruptedException ignored) {}
+        });
+        if (pivot.slides.state == Slides.SlidesState.HIGH)
+            thread.start();
+    }
+
+    public void shiftUp() {
+        Thread thread = new Thread(() -> {
+            try {
+                pivot.slides.setState(Slides.SlidesState.LOW2HIGH);
+                pivot.goToResetPosition();
+                Thread.sleep(250);
+                pivot.slides.setPower(0);
+                pivot.slides.neutral();
+                Thread.sleep(300);
+                pivot.slides.setPower(0.1); //Upwards (for low) to help it disengage
+                Thread.sleep(75);
+                pivot.slides.setPower(0);
+                pivot.slides.high(); //Engage high
+                while (pivot.slides.getCurrent() < 2000) {
+                    pivot.slides.setPower(0.2); //Downwards (for high) to help it engage
+                }
+                Thread.sleep(75);
+                pivot.slides.setPower(-0.3);
+                Thread.sleep(100);
+                pivot.slides.setPower(1); //run it into the ground
+                Thread.sleep(100);
+                pivot.slides.setPower(0);
+                pivot.slides.resetEncoders();
+                pivot.slides.setState(Slides.SlidesState.HIGH);
+            } catch (InterruptedException ignored) {}
+        });
+        if (pivot.slides.state == Slides.SlidesState.LOW)
+            thread.start();
+    }
+
 //    public void lowBucket() {
 //        Thread thread = new Thread(() -> {
 //            try {
