@@ -296,23 +296,40 @@ public class MainTeleOp extends LinearOpMode {
                                 new SequentialAction(
                                         bot.autoDrive.actionBuilder(bot.clipIntake)
                                                 .stopAndAdd(new SequentialAction(
-                                                        new SleepAction(0.15),
                                                         bot.actionCloseGripper(),
-                                                        new SleepAction(0.2)
+                                                        new SleepAction(0.15)
                                                 ))
-                                                                .afterTime(0.05, bot.actionFrontWallToRearSlidesChamber())
-                                                .strafeToConstantHeading(bot.chamber.component1())
+
+                                                .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
+
+                                                .strafeToConstantHeading(bot.chamber.component1(), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+
                                                 .stopAndAdd(new SequentialAction(
                                                         bot.actionRearSlidesClipDown(),
-                                                        new SleepAction(0.45),
+                                                        new SleepAction(0.35),
                                                         bot.actionOpenGripper()
                                                 ))
 
                                                 .afterTime(0.01, bot.actionRearClipWall())
 
-                                               // .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
-                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x, bot.clipIntake.component1().y-10))
-                                                .strafeToConstantHeading(bot.clipIntake.component1(), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 40))
+                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
+
+//                                                .stopAndAdd(new SequentialAction(
+//                                                        bot.actionCloseGripper(),
+//                                                        new SleepAction(0.15)
+//                                                ))
+//                                                .afterTime(0.05, bot.actionFrontWallToRearSlidesChamber())
+//                                                .strafeToConstantHeading(bot.chamber.component1())
+//                                                .stopAndAdd(new SequentialAction(
+//                                                        bot.actionRearSlidesClipDown(),
+//                                                        new SleepAction(0.35),
+//                                                        bot.actionOpenGripper()
+//                                                ))
+//
+//                                                .afterTime(0.01, bot.actionRearClipWall())
+//
+//                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x, bot.clipIntake.component1().y-10))
+//                                                .strafeToConstantHeading(bot.clipIntake.component1(), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-35, 55))
 
                                                 .build()
                                 ),
