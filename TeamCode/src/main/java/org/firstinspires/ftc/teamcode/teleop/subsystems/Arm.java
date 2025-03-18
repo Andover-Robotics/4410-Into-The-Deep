@@ -103,11 +103,11 @@ public class Arm {
     }
 
     public void bucket() {
-        setRollPitch(rollVertical, pitchBucket);
+        setRollPitch(rollLeft, pitchBucket);
     }
 
     public void bucketDrop() {
-        setRollPitch(rollVertical, pitchBucketDown);
+        setRollPitch(rollLeft, pitchBucketDown);
     }
 
     public void wallPickup() {
