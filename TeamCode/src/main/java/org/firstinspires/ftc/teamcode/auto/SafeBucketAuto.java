@@ -282,7 +282,7 @@ public class SafeBucketAuto extends LinearOpMode {
                                 bot.actionDetect(),
                                 controller.cvp2p(),
                                 new InstantAction(() -> bot.savePosition(drive.pose)),
-                                drive.actionBuilderPrecise(bot.storedPosition)
+                                drive.actionBuilder(bot.storedPosition)
                                         .stopAndAdd(new SequentialAction(
                                                 bot.actionSubAutoPickDown(),
                                                 new SleepAction(0.25),
@@ -327,7 +327,7 @@ public class SafeBucketAuto extends LinearOpMode {
                                 bot.actionDetect(),
                                 controller.cvp2p(),
                                 new InstantAction(() -> bot.savePosition(drive.pose)),
-                                drive.actionBuilderPrecise(bot.storedPosition)
+                                drive.actionBuilder(bot.storedPosition)
                                         .stopAndAdd(new SequentialAction(
                                                 bot.actionSubAutoPickDown(),
                                                 new SleepAction(0.25),
@@ -386,7 +386,7 @@ public class SafeBucketAuto extends LinearOpMode {
                                     bot.actionDetect(),
                                     controller.cvp2p(),
                                     new InstantAction(() -> bot.savePosition(drive.pose)),
-                                    drive.actionBuilderPrecise(bot.storedPosition)
+                                    drive.actionBuilder(bot.storedPosition)
                                             .stopAndAdd(new SequentialAction(
                                                     bot.actionSubAutoPickDown(),
                                                     new SleepAction(0.25),
@@ -450,7 +450,7 @@ public class SafeBucketAuto extends LinearOpMode {
 //                                bot.actionDetect(),
 //                                controller.cvp2p(),
 //                                new InstantAction(() -> bot.savePosition(drive.pose)),
-//                                drive.actionBuilderPrecise(bot.storedPosition)
+//                                drive.actionBuilder(bot.storedPosition)
 //                                        .stopAndAdd(new SequentialAction(
 //                                                bot.actionSubAutoPickDown(),
 //                                                new SleepAction(0.25),
@@ -498,7 +498,7 @@ public class SafeBucketAuto extends LinearOpMode {
                                 bot.actionDetect(),
                                 controller.cvp2p(),
                                 new InstantAction(() -> bot.savePosition(drive.pose)),
-                                drive.actionBuilderPrecise(bot.storedPosition)
+                                drive.actionBuilder(bot.storedPosition)
                                         .stopAndAdd(new SequentialAction(
                                                 bot.actionSubAutoPickDown(),
                                                 new SleepAction(0.25),

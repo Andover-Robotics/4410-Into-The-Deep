@@ -68,25 +68,25 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                         bot.actionDropPush(),
                         new SleepAction(0.2)))
 
-                .strafeToLinearHeading(new Vector2d(-33, 59), Math.toRadians(160), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 80))
+                .strafeToLinearHeading(new Vector2d(-33, 59), Math.toRadians(160), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 95))
 
                 .afterTime(0.01, bot.actionLiftPush())
 
-                .strafeToLinearHeading(new Vector2d(-46, 32), Math.toRadians(-130), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 95))
+                .strafeToLinearHeading(new Vector2d(-46, 32), Math.toRadians(-130), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 105))
 
                 .stopAndAdd(new SequentialAction(bot.actionDropPush(),
                         new SleepAction(0.2)))
 
-                .strafeToLinearHeading(new Vector2d(-47, 52), Math.toRadians(140), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 80))
+                .strafeToLinearHeading(new Vector2d(-47, 52), Math.toRadians(140), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 95))
 
                 .afterTime(0.01, bot.actionLiftPush())
 
-                .strafeToLinearHeading(new Vector2d(-53.5, 30), Math.toRadians(-140), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 95))
+                .strafeToLinearHeading(new Vector2d(-53.5, 30), Math.toRadians(-140), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 105))
 
                 .stopAndAdd(new SequentialAction(bot.actionDropPush(),
                         new SleepAction(0.2)))
 
-                .strafeToLinearHeading(new Vector2d(-53, 57), Math.toRadians(165), drive.defaultVelConstraint, new ProfileAccelConstraint(-60, 80))
+                .strafeToLinearHeading(new Vector2d(-53, 57), Math.toRadians(165), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 95))
 
                 .afterTime(0.01, bot.actionFrontWallIntake())
 

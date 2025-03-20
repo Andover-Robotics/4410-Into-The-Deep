@@ -100,16 +100,15 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionBucketDrop(),
                         new SleepAction(0.05)
                 ))
+                .build();
 
+        Action firstSamplePickup = drive.actionBuilderPrecise(firstSample)
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToFrontIntake()
                 ))
 
                 .strafeToLinearHeading(firstSample.component1(), firstSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 45)) //first intake pos
 
-                .build();
-
-        Action firstSamplePickup = drive.actionBuilder(firstSample)
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.05),
@@ -132,14 +131,15 @@ public class BucketAuto extends LinearOpMode {
 
                 .waitSeconds(0.35)
                 .stopAndAdd(bot.actionBucketDrop())
+                .build();
+
+        Action secondSamplePickup = drive.actionBuilderPrecise(secondSample)
 
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToFrontIntake()
                 ))
                 .strafeToLinearHeading(secondSample.component1(), secondSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 40))
-                .build();
 
-        Action secondSamplePickup = drive.actionBuilder(secondSample)
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.15),
@@ -164,7 +164,10 @@ public class BucketAuto extends LinearOpMode {
                 .stopAndAdd(bot.actionBucketDrop())
 
                 .waitSeconds(0.10)
+                .build();
 
+
+        Action thirdSamplePickup = drive.actionBuilderPrecise(thirdSample)
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),
                         new SleepAction(0.1),
@@ -174,10 +177,7 @@ public class BucketAuto extends LinearOpMode {
                 ))
 
                 .strafeToLinearHeading(thirdSample.component1(), thirdSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-25, 40))
-                .build();
 
-
-        Action thirdSamplePickup = drive.actionBuilder(thirdSample)
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.1),
                         bot.actionPickDown(),
