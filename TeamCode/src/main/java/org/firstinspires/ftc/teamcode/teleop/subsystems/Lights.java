@@ -13,6 +13,7 @@ public class Lights {
 
     public enum Color {
         RED,
+        ORANGE,
         YELLOW,
         SAGE,
         GREEN,
@@ -26,6 +27,7 @@ public class Lights {
     public enum Light {
         LEFT,
         RIGHT,
+        DUAL
     }
     public Lights(OpMode opMode) {
         lightLeft = opMode.hardwareMap.servo.get("lightLeft");
@@ -40,6 +42,9 @@ public class Lights {
             case RIGHT:
                 lightRight.setPosition(colorToPWM(color));
                 break;
+            case DUAL:
+                lightLeft.setPosition(colorToPWM(color));
+                lightRight.setPosition(colorToPWM(color));
         }
     }
 
@@ -49,6 +54,10 @@ public class Lights {
                 lightLeft.setPosition(0);
                 break;
             case RIGHT:
+                lightRight.setPosition(0);
+                break;
+            case DUAL:
+                lightLeft.setPosition(0);
                 lightRight.setPosition(0);
                 break;
         }
