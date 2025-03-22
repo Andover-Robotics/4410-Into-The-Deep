@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -33,6 +34,7 @@ public class MainTeleOp extends LinearOpMode {
 
     private Bot bot;
     private double driveSpeed = 1, driveMultiplier = 1;
+    public int clipCounter = 0;
     private GamepadEx gp1, gp2;
     private boolean fieldCentric, intakeCancel, clipCancel;
     private Thread thread;
@@ -68,8 +70,9 @@ public class MainTeleOp extends LinearOpMode {
 //                bot.autoDrive.updatePoseEstimate();
 //            }
 //
-            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
+            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
                 bot.initializeAutoClipping();
+                clipCounter = 0;
             }
 //            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
 //                bot.cycleClip();
@@ -302,7 +305,7 @@ public class MainTeleOp extends LinearOpMode {
 
                                                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                                                .strafeToConstantHeading(bot.chamber.component1(), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter), bot.chamber.component1().y), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
 
                                                 .stopAndAdd(new SequentialAction(
                                                         bot.actionRearSlidesClipDown(),
@@ -312,7 +315,9 @@ public class MainTeleOp extends LinearOpMode {
 
                                                 .afterTime(0.01, bot.actionRearClipWall())
 
-                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
+//                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
+                                                .setTangent(Math.toRadians(90))
+                                                .splineToConstantHeading(bot.clipIntake.component1(), Math.toRadians(110), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-50, 90))
 
 //                                                .stopAndAdd(new SequentialAction(
 //                                                        bot.actionCloseGripper(),
@@ -336,6 +341,7 @@ public class MainTeleOp extends LinearOpMode {
                                 bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
                         )
                 );
+                clipCounter++;
 //                );
             }
 

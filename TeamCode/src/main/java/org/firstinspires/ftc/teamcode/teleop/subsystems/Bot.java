@@ -97,7 +97,7 @@ public class Bot {
     public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
     public Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
-    public Pose2d chamber = new Pose2d(0, 35, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(0, 35.5, Math.toRadians(90));
 
     public Action cycleClip = actionCloseGripper();
 
@@ -131,11 +131,15 @@ public class Bot {
     }
 
     public void rebuildMotors() {
+        autoDrive = null;
         fl = new MotorEx(opMode.hardwareMap, "motorFL", Motor.GoBILDA.RPM_435);
         fr = new MotorEx(opMode.hardwareMap, "motorFR", Motor.GoBILDA.RPM_435);
         bl = new MotorEx(opMode.hardwareMap, "motorBL", Motor.GoBILDA.RPM_435);
         br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
-        autoDrive = null;
+        fl.setInverted(false);
+        fr.setInverted(false);
+        bl.setInverted(false);
+        br.setInverted(false);
         autonomous = false;
     }
 
@@ -519,12 +523,12 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
 
         if (state == BotState.LOW_BUCKET) {
-            actions.add(new InstantAction(() -> pivot.arm.vertical()));
+            actions.add(new InstantAction(() -> pivot.arm.vertical(true)));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
             actions.add(new SleepAction(0.25));
         } else {
-            actions.add(new InstantAction(() -> pivot.arm.vertical()));
+            actions.add(new InstantAction(() -> pivot.arm.vertical(true)));
             actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
             actions.add(new SleepAction(0.3));
         }
@@ -752,7 +756,7 @@ public class Bot {
             actions.add(new SleepAction(0.075));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.3));
-            actions.add(new InstantAction(() -> pivot.arm.vertical()));
+            actions.add(new InstantAction(() -> pivot.arm.vertical(true)));
             actions.add(new InstantAction(() -> pivot.highBucket(true, false)));
             actions.add(new SleepAction(0.5));
             actions.add(new InstantAction(() -> pivot.highBucket(false, true)));
@@ -932,10 +936,10 @@ public class Bot {
                 new SleepAction(0.3),
                 new InstantAction(() -> pivot.storage(false, true)),
                 new SleepAction(0.15),
+                new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> pivot.highBucket(true, false)),
                 new SleepAction(0.7),
                 new InstantAction(() -> pivot.highBucket(false, true)),
-                new InstantAction(() -> pivot.arm.outtakeDown()),
                 new SleepAction(0.7),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
@@ -1047,7 +1051,7 @@ public class Bot {
                 new InstantAction(() -> pivot.highBucket(true, false)),
                 new SleepAction(0.2),
                 new InstantAction(() -> pivot.highBucket(false, true)),
-                new InstantAction(() -> pivot.arm.outtakeUp()),
+                new InstantAction(() -> pivot.arm.vertical(true)),
                 new SleepAction(0.6),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
@@ -1227,7 +1231,7 @@ public class Bot {
                 new InstantAction(() -> pivot.storage(false, true)),
                 new SleepAction(0.425),
                 new InstantAction(() -> pivot.highBucket(false, true)),
-                new InstantAction(() -> pivot.arm.outtakeDown()),
+                new InstantAction(() -> pivot.arm.vertical(true)),
                 new SleepAction(0.7),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
@@ -1460,9 +1464,9 @@ public class Bot {
             }
         }
         if (!autonomous){
-            fl.set(-speeds[0]);
+            fl.set(speeds[0]);
             fr.set(-speeds[1]);
-            bl.set(-speeds[2]);
+            bl.set(speeds[2]);
             br.set(-speeds[3]);
         }
     }

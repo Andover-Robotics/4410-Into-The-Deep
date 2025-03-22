@@ -16,6 +16,10 @@ public class MeepMeepTesting {
 
         MeepMeep meepMeep = new MeepMeep(800);
 
+        Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
+        Pose2d chamber = new Pose2d(0, 34, Math.toRadians(90));
+
+
         RoadRunnerBotEntity redBig = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
@@ -41,24 +45,28 @@ public class MeepMeepTesting {
 ////                .splineToConstantHeading(new Vector2d(-46,17),Math.toRadians(-90))
 //                        .splineToConstantHeading(new Vector2d(-63.5,11), Math.toRadians(165))//0
 
-                        .setReversed(true)
-                        .splineToSplineHeading(new Pose2d(-33, 36, Math.toRadians(-130)), Math.toRadians(180))
-                        .strafeToLinearHeading(new Vector2d(-33, 58), Math.toRadians(160))//140
-                        .strafeToLinearHeading(new Vector2d(-45, 32), Math.toRadians(-130))//140
-                        .strafeToLinearHeading(new Vector2d(-46, 52), Math.toRadians(140))//140
-                        .strafeToLinearHeading(new Vector2d(-53, 30), Math.toRadians(-140))//140
-                        .strafeToLinearHeading(new Vector2d(-51, 53), Math.toRadians(150))//140
 //                        .setReversed(true)
-                        .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
-                        .splineToConstantHeading(new Vector2d(-47.5,62.5), Math.toRadians(90))
+//                        .splineToSplineHeading(new Pose2d(-33, 36, Math.toRadians(-130)), Math.toRadians(180))
+//                        .strafeToLinearHeading(new Vector2d(-33, 58), Math.toRadians(160))//140
+//                        .strafeToLinearHeading(new Vector2d(-45, 32), Math.toRadians(-130))//140
+//                        .strafeToLinearHeading(new Vector2d(-46, 52), Math.toRadians(140))//140
+//                        .strafeToLinearHeading(new Vector2d(-53, 30), Math.toRadians(-140))//140
+//                        .strafeToLinearHeading(new Vector2d(-51, 53), Math.toRadians(150))//140
+////                        .setReversed(true)
+//                        .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
+//                        .splineToConstantHeading(new Vector2d(-47.5,62.5), Math.toRadians(90))
+//
+//
+//                        .strafeToLinearHeading(new Vector2d(-43,60.7), Math.toRadians(90))
+//
+//                        .waitSeconds(0.01)
 
+                        .strafeToLinearHeading(chamber.component1(), Math.toRadians(90))
 
-                        .strafeToLinearHeading(new Vector2d(-43,60.7), Math.toRadians(90))
-
-                        .waitSeconds(0.01)
-                        .setReversed(true)
-                        .setTangent(Math.toRadians(-10))
-                        .splineToSplineHeading(new Pose2d(53, 53.5, Math.toRadians(-135)), Math.toRadians(45))
+//                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
+//                        .setReversed(true)
+                        .setTangent(Math.toRadians(90))
+                        .splineToConstantHeading(clipIntake.component1(), Math.toRadians(100))
 
 
 

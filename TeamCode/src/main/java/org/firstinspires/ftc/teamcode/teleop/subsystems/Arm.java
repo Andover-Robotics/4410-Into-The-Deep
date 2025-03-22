@@ -62,6 +62,10 @@ public class Arm {
         setRollPitch(rollVertical, 90);
     }
 
+    public void vertical(boolean horiz) {
+        setRollPitch(rollVertical, rollLeft);
+    }
+
     public void storage() {
         setRollPitch(rollVertical, pitchStorage);
     }

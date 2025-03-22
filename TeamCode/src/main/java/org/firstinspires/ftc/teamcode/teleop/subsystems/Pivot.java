@@ -60,7 +60,7 @@ public class Pivot {
     public static double slidesClippingHeightDelta = 8;
 
     // Heights for positions millimeters higher than pivot point
-    public static double highBucketHeight = 35.5 * inches2mm,
+    public static double highBucketHeight = 36 * inches2mm,
             lowBucketHeight = 21 * inches2mm,
             highChamberHeight = 15.2 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
@@ -88,7 +88,7 @@ public class Pivot {
             postl3ClimbHeight = 5 * inches2mm;
 
     // distances forward from pivot for positions
-    public static double bucketX = -5.25 * inches2mm,
+    public static double bucketX = -4.75 * inches2mm,
             chamberX = 19.4 * inches2mm,
             highChamberTransferX = 2 * inches2mm,
             frontIntakeX = 16.5 * inches2mm,
