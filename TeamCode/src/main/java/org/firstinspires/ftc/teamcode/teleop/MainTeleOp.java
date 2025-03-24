@@ -345,6 +345,8 @@ public class MainTeleOp extends LinearOpMode {
                 bot.periodic();
             }
 
+            bot.displayLights(bot.state);
+
             // TELEMETRY
             if (bot.autoDrive != null) {
                 telemetry.addData("bot position", bot.autoDrive.pose);

@@ -130,8 +130,41 @@ public class Bot {
         br = new MotorEx(opMode.hardwareMap, "motorBR", Motor.GoBILDA.RPM_435);
         gripper = new Gripper(opMode);
         pivot = new Pivot(opMode);
+        lights = new Lights(opMode);
         sampleYPos = 0;
         breakBeam = opMode.hardwareMap.get(DigitalChannel.class, "BreakBeam");
+    }
+
+    public void displayLights(BotState botState) {
+        switch (botState) {
+            case HIGH_BUCKET: //high bucket
+                lights.display(Light.DUAL, Color.VIOLET);
+                break;
+            case LOW_BUCKET: //low bucket
+                lights.display(Light.DUAL, Color.VIOLET);
+                break;
+            case HIGH_CHAMBER: //high chamber
+                lights.display(Light.DUAL, Color.AZURE);
+                break;
+            case LOW_CHAMBER: //low chamber
+                lights.display(Light.DUAL, Color.AZURE);
+                break;
+            case FRONT_INTAKE: //front intake
+                lights.display(Light.DUAL, Color.WHITE);
+                break;
+            case WALL_INTAKE://specimen intake from wall
+                lights.display(Light.DUAL, Color.WHITE);
+                break;
+            case STORAGE: //starting config (18x18x18)
+                lights.display(Light.DUAL, Color.YELLOW);
+                break;
+            case CLIMBING:
+                lights.display(Light.DUAL, Color.ORANGE);
+                break;
+            case RESETTING:
+                lights.display(Light.DUAL, Color.RED);
+                break;
+        }
     }
 
     public void rebuildMotors() {
@@ -331,13 +364,10 @@ public class Bot {
     public void teleopPivotStorage() {
         pivot.storage(true, true);
         state = BotState.STORAGE;
-        lights.display(Light.DUAL,Color.YELLOW);
     }
 
     public SequentialAction teleopStorage() {
         List<Action> actions = new ArrayList<>();
-
-        actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.YELLOW)));
         actions.add(new InstantAction(() -> gripper.close()));
 
         if (state == BotState.FRONT_INTAKE) {
@@ -517,7 +547,6 @@ public class Bot {
         actions.add(new SleepAction(0.125));
         actions.add(new InstantAction(() -> pivot.arm.bucket()));
         actions.add(new InstantAction(() -> state = BotState.LOW_BUCKET));
-        actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.VIOLET)));
 
         return new SequentialAction(actions);
     }
@@ -540,7 +569,7 @@ public class Bot {
         actions.add(new SleepAction(0.70));
         actions.add(new InstantAction(() -> pivot.arm.bucket()));
         actions.add(new InstantAction(() -> state = BotState.HIGH_BUCKET));
-        actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.VIOLET)));
+
 
         return new SequentialAction(actions);
     }
@@ -593,7 +622,6 @@ public class Bot {
             actions.add(new SleepAction(0.5));
         }
 
-        actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.ORANGE)));
         actions.add(new InstantAction(() -> pivot.arm.bucket()));
         actions.add(new InstantAction(() -> pivot.prel2Climb(true, false)));
         actions.add(new SleepAction(0.15));
@@ -677,7 +705,6 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         climbing = true;
 
-        actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.BLUE)));
         actions.add(new InstantAction(() -> pivot.midl2Climb(false, true)));
         actions.add(new SleepAction(0.15));
         actions.add(new InstantAction(() -> pivot.postl2Climb(true, false)));
@@ -697,7 +724,6 @@ public class Bot {
         List<Action> actions = new ArrayList<>();
         climbing = true;
 
-        actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.BLUE)));
         actions.add(new InstantAction(() -> pivot.prel3Climb(true, false)));
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> pivot.prel3Climb(false, true)));
@@ -738,7 +764,6 @@ public class Bot {
         actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
         if (isHolding() || trigger) {
-            actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.AZURE)));
             actions.add(new SleepAction(0.125));
             actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new SleepAction(0.075));
@@ -749,7 +774,6 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.arm.storage()));
             actions.add(teleopStorage());
         } else {
-            actions.add(new InstantAction(() -> lights.display(Light.DUAL,Color.RED)));
             actions.add(teleopOpenGripper());
         }
         return new SequentialAction(actions);
@@ -1074,8 +1098,7 @@ public class Bot {
                 new InstantAction(() -> pivot.highChamber(false, true)),
                 new SleepAction(0.05),
                 new InstantAction(() -> pivot.arm.chamber()),
-                new InstantAction(() -> state = BotState.HIGH_CHAMBER),
-                new InstantAction(() -> lights.display(Light.DUAL,Color.AZURE))
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
     }
 
@@ -1087,8 +1110,7 @@ public class Bot {
                 new InstantAction(() -> pivot.arm.chamber()),
                 new SleepAction(0.45),
                 new InstantAction(() -> pivot.highChamber(false, true)),
-                new InstantAction(() -> state = BotState.HIGH_CHAMBER),
-                new InstantAction(() -> lights.display(Light.DUAL,Color.AZURE))
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
         );
     }
 
