@@ -25,9 +25,9 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(-9, 63, Math.toRadians(-90)))
+        redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(22, 7, Math.toRadians(180)))
                 //-23, 46
-                        .strafeToLinearHeading(new Vector2d(4, 28), Math.toRadians(-90))
+//                        .strafeToLinearHeading(new Vector2d(-43,61), Math.toRadians(90))
 
 //                .setReversed(true)
 //                .splineToConstantHeading(new Vector2d(-38, 26), Math.toRadians(-90))
@@ -58,17 +58,21 @@ public class MeepMeepTesting {
 //
 //
 //                        .strafeToLinearHeading(new Vector2d(-43,60.7), Math.toRadians(90))
+
+//                .strafeToLinearHeading(new Vector2d(-53.5, 28.5), Math.toRadians(-140))
 //
-//                        .waitSeconds(0.01)
+//
+//                .strafeToLinearHeading(new Vector2d(-53, 57), Math.toRadians(165))
+//
+//                .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
+//                .splineToConstantHeading(new Vector2d(-47.5,63), Math.toRadians(90))
 
-                        .strafeToLinearHeading(chamber.component1(), Math.toRadians(90))
-
-//                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
-//                        .setReversed(true)
-                        .setTangent(Math.toRadians(90))
-                        .splineToConstantHeading(clipIntake.component1(), Math.toRadians(100))
-
-
+                .setReversed(true)
+//                        .splineToSplineHeading(new Pose2d(36, 8, Math.toRadians(180)), Math.toRadians(0))
+                .splineTo(new Pose2d(52.5, 57.5, Math.toRadians(-135)).component1(), Math.toRadians(45))
+                .waitSeconds(0.2)
+                .splineTo(new Vector2d(32, 8), Math.toRadians(-180))
+                .splineTo(new Pose2d(22, 8, Math.toRadians(180)).component1(), Math.toRadians(180))
 
 
 //                .splineToConstantHeading(new Vector2d(0,20), Math.toRadians(-90))

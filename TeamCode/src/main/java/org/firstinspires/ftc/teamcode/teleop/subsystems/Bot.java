@@ -83,7 +83,7 @@ public class Bot {
     public static double ySign = -1;
     public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
-    private boolean breakBeamWorking = true;
+    private boolean breakBeamWorking = false;
     public boolean climbing = false;
 
     // Define subsystem objects
@@ -97,7 +97,7 @@ public class Bot {
     public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
     public Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
-    public Pose2d chamber = new Pose2d(0, 35.5, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(2, 35, Math.toRadians(90));
 
     public Action cycleClip = actionCloseGripper();
 
@@ -144,33 +144,7 @@ public class Bot {
     }
 
     public void initializeAutoClipping() {
-//        fl = null;
-//        fr = null;
-//        bl = null;
-//        br = null;
         autoDrive = new MecanumDrive(opMode.hardwareMap, clipIntake);
-
-//        cycleClip = autoDrive.actionBuilder(clipIntake)
-//                .stopAndAdd(new SequentialAction(
-//                        new SleepAction(0.15),
-//                        actionCloseGripper(),
-//                        new SleepAction(0.2)
-//                ))
-////                .afterTime(0.05, actionFrontWallToRearSlidesChamber())
-//                .strafeToConstantHeading(chamber.component1())
-//                .stopAndAdd(new SequentialAction(
-////                        actionRearSlidesClipDown(),
-//                        new SleepAction(0.45),
-//                        actionOpenGripper()
-//                ))
-//
-////                .afterTime(0.01, actionRearClipWall())
-//
-////                .strafeToLinearHeading(new Vector2d(-43,57.5), Math.toRadians(90))
-//                .strafeToConstantHeading(new Vector2d(clipIntake.component1().x, clipIntake.component1().y-9))
-//                .strafeToConstantHeading(clipIntake.component1(), autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-30, 55))
-//
-//                .build();
         autonomous = true;
     }
 
@@ -272,7 +246,7 @@ public class Bot {
     public class actionDetectWait implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 5) || searchCounter > 14) {
+            if ((sampleYPos != 0 && pipeline.getAngle() != -1 && detectionCounter > 3) || searchCounter > 14) {
                 searchCounter = 0;
                 return false;
             } else if (sampleYPos != 0 && pipeline.getAngle() != -1) {
@@ -739,7 +713,7 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(true, false)));
             actions.add(new SleepAction(0.3));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
-            actions.add(teleopStorage());
+            actions.add(new InstantAction(()-> state = BotState.STORAGE));
         } else {
             actions.add(teleopOpenGripper());
         }
@@ -797,17 +771,15 @@ public class Bot {
 
     public SequentialAction teleopFrontIntakeToStorage() {
         List<Action> actions = new ArrayList<>();
-        actions.add(teleopPickUp());
         actions.add(new SleepAction(0.2));
         actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
         actions.add(new SleepAction(0.075));
         actions.add(new InstantAction(() -> pivot.storage(false, true)));
-        actions.add(new SleepAction(0.2));
+        actions.add(new SleepAction(0.3));
         actions.add(new InstantAction(() -> pivot.storage(true, false)));
         actions.add(new SleepAction(0.3));
         actions.add(new InstantAction(() -> pivot.arm.storage()));
-        actions.add(teleopStorage());
-
+        actions.add(new InstantAction(()-> state = BotState.STORAGE));
         return new SequentialAction(actions);
     }
 
@@ -1204,8 +1176,8 @@ public class Bot {
     public SequentialAction actionBucketToStorage() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.storage(false, true)),
-                new SleepAction(0.4),
-                new InstantAction(() -> pivot.storage(true, true)),
+                new SleepAction(0.3),
+                new InstantAction(() -> pivot.storage(true, false)),
                 new InstantAction(() -> pivot.arm.storage()),
                 new InstantAction(() -> state = BotState.STORAGE)
         );
@@ -1225,14 +1197,26 @@ public class Bot {
         );
     }
 
-    public SequentialAction actionIntakeToHighBucket() {
+    public SequentialAction actionIntakeToHighBucket(boolean in) {
         return new SequentialAction(
                 new InstantAction(() -> pivot.highBucket(true, false)),
                 new InstantAction(() -> pivot.storage(false, true)),
-                new SleepAction(0.425),
+                new SleepAction(0.4),
                 new InstantAction(() -> pivot.highBucket(false, true)),
                 new InstantAction(() -> pivot.arm.vertical(true)),
                 new SleepAction(0.7),
+                new InstantAction(() -> pivot.arm.bucket()),
+                new InstantAction(() -> state = BotState.HIGH_BUCKET)
+        );
+    }
+
+    public SequentialAction actionIntakeToHighBucket() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.highBucket(true, false)),
+                new SleepAction(0.4),
+                new InstantAction(() -> pivot.highBucket(false, true)),
+                new InstantAction(() -> pivot.arm.vertical(true)),
+                new SleepAction(0.5),
                 new InstantAction(() -> pivot.arm.bucket()),
                 new InstantAction(() -> state = BotState.HIGH_BUCKET)
         );
@@ -1322,9 +1306,9 @@ public class Bot {
         return new SequentialAction(
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
-                new InstantAction(() -> pivot.frontAutoIntake(true, false)),
+                new InstantAction(() -> pivot.frontAutoDiagIntake(true, false)),
                 new SleepAction(0.55),
-                new InstantAction(() -> pivot.frontAutoIntake(false, true)),
+                new InstantAction(() -> pivot.frontAutoDiagIntake(false, true)),
                 new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.frontPickup()),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)

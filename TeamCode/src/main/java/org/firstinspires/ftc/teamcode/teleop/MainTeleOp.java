@@ -315,9 +315,9 @@ public class MainTeleOp extends LinearOpMode {
 
                                                 .afterTime(0.01, bot.actionRearClipWall())
 
-//                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
-                                                .setTangent(Math.toRadians(90))
-                                                .splineToConstantHeading(bot.clipIntake.component1(), Math.toRadians(110), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-50, 90))
+                                                .strafeToLinearHeading(bot.clipIntake.component1(), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
+//                                                .setTangent(Math.toRadians(90))
+//                                                .splineToConstantHeading(bot.clipIntake.component1(), Math.toRadians(110), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-50, 90))
 
 //                                                .stopAndAdd(new SequentialAction(
 //                                                        bot.actionCloseGripper(),

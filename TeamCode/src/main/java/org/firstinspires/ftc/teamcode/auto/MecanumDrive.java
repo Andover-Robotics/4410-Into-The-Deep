@@ -70,13 +70,17 @@ public final class MecanumDrive {
         public double lateralInPerTick = 0.0014201677004055154;
         public double trackWidthTicks = 5605.740964802698;//old 6048.18798054896
 
+        public double dispTol = 0.4;
+        public double angTol = Math.toRadians(2.5);
+        public double timeTol = 0.55;
+
         // feedforward parameters (in tick units)
-        public double kS = 1;//1.477;
-        public double kV = 0.000245;//0.00025;
-        public double kA = 0.000105;//0.00005;
+        public double kS = 1.12;//1.477;
+        public double kV = 0.00024;//0.00025;
+        public double kA = 0.000096;//0.00005;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 65;
+        public double maxWheelVel = 70;
         public double minProfileAccel = -50;
         public double maxProfileAccel = 70;
 
@@ -85,11 +89,11 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 5;//3.5
+        public double axialGain = 2.25;//3.5
         public double lateralGain = 4.5;//3.5
         public double headingGain = 7; // shared with turn
 
-        public double axialVelGain = 0;
+        public double axialVelGain = 0.35;
         public double lateralVelGain = 0;
         public double headingVelGain =  0.1; // shared with turn
     }
@@ -391,11 +395,12 @@ public final class MecanumDrive {
                 Pose2d error = txWorldTarget.value().minusExp(pose);
 
                 if ((t >= timeTrajectory.duration
-                        && error.position.norm() < 0.7
-                        && Math.abs(error.heading.toDouble()) < Math.toRadians(2)
+                        && error.position.norm() < PARAMS.dispTol
+                        && Math.abs(error.heading.toDouble()) < PARAMS.angTol
 //                        && robotVelRobot.angVel < 2
-                        && robotVelRobot.linearVel.norm() < 0.5)
-                        || t >= timeTrajectory.duration + 1) {
+                        && robotVelRobot.linearVel.norm() < 15
+                )
+                        || t >= timeTrajectory.duration + PARAMS.timeTol) {
                     leftFront.setPower(0);
                     leftBack.setPower(0);
                     rightBack.setPower(0);
@@ -580,7 +585,7 @@ public final class MecanumDrive {
                 new TrajectoryBuilderParams(
                         1e-6,
                         new ProfileParams(
-                                0.25, 0.1, 1e-2
+                                0.25, 0.01, 1e-2
                         )
                 ),
                 beginPose, 0.0,

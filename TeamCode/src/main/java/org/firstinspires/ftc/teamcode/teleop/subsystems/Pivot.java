@@ -103,7 +103,8 @@ public class Pivot {
     slidesHighChamberX = 4.5 * inches2mm,
     autoSlidesHighChamberX = 7.5 * inches2mm,
 
-    frontAutoIntakeX = 20 * inches2mm,
+    frontAutoDiagIntakeX = 20 * inches2mm,
+    frontAutoIntakeX = 15 * inches2mm,
     subAutoIntakeX = 14 * inches2mm, //13
     pushIntakeX = 19 * inches2mm,
 
@@ -423,6 +424,13 @@ public class Pivot {
     public void frontAutoIntake(boolean pivot, boolean slides) {
         targetZ = frontAutoIntakeHeight;
         targetX = frontAutoIntakeX;
+        if (pivot) runPivotToIKPosition();
+        if (slides) runSlidesToIKPosition();
+    }
+
+    public void frontAutoDiagIntake(boolean pivot, boolean slides) {
+        targetZ = frontAutoIntakeHeight;
+        targetX = frontAutoDiagIntakeX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }
