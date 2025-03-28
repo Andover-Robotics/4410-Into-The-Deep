@@ -72,7 +72,7 @@ public class MeepMeepTesting {
                 .splineTo(new Pose2d(52.5, 57.5, Math.toRadians(-135)).component1(), Math.toRadians(45))
                 .waitSeconds(0.2)
                 .splineTo(new Vector2d(32, 8), Math.toRadians(-180))
-                .splineTo(new Pose2d(22, 8, Math.toRadians(180)).component1(), Math.toRadians(180))
+                .strafeToConstantHeading(new Pose2d(22, 8, Math.toRadians(180)).component1())
 
 
 //                .splineToConstantHeading(new Vector2d(0,20), Math.toRadians(-90))

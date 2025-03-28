@@ -186,6 +186,10 @@ public class Bot {
         }
     }
 
+    public boolean getBreakBeam() {
+        return breakBeam.getState();
+    }
+
     public void fixBreakBeam() {
         breakBeamWorking = true;
     }
@@ -1014,7 +1018,7 @@ public class Bot {
     public SequentialAction actionSubPark() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.subPark(true, true)),
-                new InstantAction(() -> pivot.arm.vertical())
+                new InstantAction(() -> pivot.arm.storage())
         );
     }
 
@@ -1179,6 +1183,13 @@ public class Bot {
                 new SleepAction(0.3),
                 new InstantAction(() -> pivot.storage(true, false)),
                 new InstantAction(() -> pivot.arm.storage()),
+                new InstantAction(() -> state = BotState.STORAGE)
+        );
+    }
+
+    public SequentialAction actionBucketSlidesToStorage() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.storage(false, true)),
                 new InstantAction(() -> state = BotState.STORAGE)
         );
     }

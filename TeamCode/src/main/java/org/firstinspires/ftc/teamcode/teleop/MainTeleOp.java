@@ -387,7 +387,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
             telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
             telemetry.addData("\n\nHolding Sample:", bot.isHolding());
-            telemetry.addData("\n\ndt current", bot.getMotorCurrent());
+            telemetry.addData("\nBreak Beams?", bot.getBreakBeam());
             telemetry.update();
         }
     }

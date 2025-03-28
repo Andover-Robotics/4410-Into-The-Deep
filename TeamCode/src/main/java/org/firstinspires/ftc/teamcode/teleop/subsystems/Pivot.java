@@ -125,7 +125,7 @@ public class Pivot {
     public double storageX = 4.5 * inches2mm, storageZ = 6 * inches2mm;
 
     //SUB PARK
-    public double subParkX = 9 * inches2mm, subParkZ = 11.7 * inches2mm;
+    public double subParkX = 9 * inches2mm, subParkZ = 15 * inches2mm;
 
     //TODO: HYPOTENUSE FOR X AND Y SHOULD NEVER BE LESS THAN 11.86 INCHES - WILL SCREW UP INVERSE KINEMATICS and is not accurate to reality
 

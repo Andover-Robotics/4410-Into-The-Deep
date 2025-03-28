@@ -72,7 +72,7 @@ public final class MecanumDrive {
 
         public double dispTol = 0.4;
         public double angTol = Math.toRadians(2.5);
-        public double timeTol = 0.55;
+        public double timeTol = 0.5;
 
         // feedforward parameters (in tick units)
         public double kS = 1.12;//1.477;

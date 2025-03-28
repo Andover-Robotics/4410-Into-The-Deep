@@ -63,7 +63,7 @@ public class Arm {
     }
 
     public void vertical(boolean horiz) {
-        setRollPitch(rollLeft, 90);
+        setRollPitch(rollVertical, 80);
     }
 
     public void storage() {
@@ -107,11 +107,11 @@ public class Arm {
     }
 
     public void bucket() {
-        setRollPitch(rollLeft, pitchBucket);
+        setRollPitch(rollVertical, pitchBucket);
     }
 
     public void bucketDrop() {
-        setRollPitch(rollLeft, pitchBucketDown);
+        setRollPitch(rollVertical, pitchBucketDown);
     }
 
     public void wallPickup() {

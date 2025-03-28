@@ -204,7 +204,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                         bot.actionFrontWallIntakeToHighBucket()
                 ))
                 .setReversed(true)
-                .splineTo(new Vector2d(-0, 44), Math.toRadians(0))
+                .splineTo(new Vector2d(-0, 46), Math.toRadians(0))
                 .splineTo(new Pose2d(52, 54, Math.toRadians(-135)).component1(), Math.toRadians(45))
 //                .stopAndAdd(new SequentialAction(
 //                        bot.actionCloseGripper()
