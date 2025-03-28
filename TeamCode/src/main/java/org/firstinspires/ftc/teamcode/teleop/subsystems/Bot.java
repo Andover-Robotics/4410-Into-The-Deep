@@ -86,6 +86,8 @@ public class Bot {
     private boolean breakBeamWorking = true;
     public boolean climbing = false;
 
+    public boolean intakeFail = false;
+
     // Define subsystem objects
     public Gripper gripper;
     public Pivot pivot;
@@ -135,7 +137,8 @@ public class Bot {
         breakBeam = opMode.hardwareMap.get(DigitalChannel.class, "BreakBeam");
     }
 
-    public void displayLights(BotState botState) {
+    // LIGHT FUNCTIONS + ACTIONS
+    public void displayLights(@NonNull BotState botState) {
         switch (botState) {
             case HIGH_BUCKET: //high bucket
                 lights.display(Light.DUAL, Color.VIOLET);
@@ -165,6 +168,22 @@ public class Bot {
                 lights.display(Light.DUAL, Color.RED);
                 break;
         }
+    }
+    public SequentialAction setLight(Lights.Light elements, Lights.Color color) {
+
+        List<Action> actions = new ArrayList<>();
+        actions.add(new InstantAction(() -> lights.display(elements, color)));
+
+        return new SequentialAction(actions);
+    }
+    public SequentialAction pulseLight(Lights.Light elements, Lights.Color color) {
+
+        List<Action> actions = new ArrayList<>();
+        actions.add(new InstantAction(() -> lights.display(elements, color)));
+        actions.add(new SleepAction(1));
+        actions.add(new InstantAction(() -> lights.display(elements, Color.YELLOW)));
+
+        return new SequentialAction(actions);
     }
 
     public void rebuildMotors() {
@@ -764,6 +783,7 @@ public class Bot {
         actions.add(teleopPickUpMore());
         actions.add(new SleepAction(0.325));
         if (isHolding() || trigger) {
+            intakeFail = false;
             actions.add(new SleepAction(0.125));
             actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new SleepAction(0.075));
@@ -774,6 +794,7 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.arm.storage()));
             actions.add(teleopStorage());
         } else {
+            intakeFail = true;
             actions.add(teleopOpenGripper());
         }
         return new SequentialAction(actions);

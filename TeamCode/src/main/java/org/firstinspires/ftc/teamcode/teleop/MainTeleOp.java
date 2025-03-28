@@ -156,6 +156,11 @@ public class MainTeleOp extends LinearOpMode {
             if (bot.state == Bot.BotState.FRONT_INTAKE) {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
+                    if (bot.intakeFail) {
+                        runningActions.add(bot.pulseLight(bot.Light.DUAL, bot.Color.RED));
+                    } else {
+                        runningActions.add(bot.pulseLight(bot.Light.DUAL, bot.Color.GREEN));
+                    }
                 }
                 bot.pivot.runManualIK(gp2.getLeftY() / 1.01);
                 if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
@@ -345,7 +350,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.periodic();
             }
 
-            bot.displayLights(bot.state);
+            //bot.displayLights(bot.state); DISABLED, TOO DISTRACTING
 
             // TELEMETRY
             if (bot.autoDrive != null) {
