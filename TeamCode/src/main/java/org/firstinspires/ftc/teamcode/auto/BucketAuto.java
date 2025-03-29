@@ -47,8 +47,8 @@ public class BucketAuto extends LinearOpMode {
     public static Pose2d secondSub = new Pose2d(21, 5, Math.toRadians(180));
     public static Pose2d firstSubInter = new Pose2d(33, firstSub.component1().y, Math.toRadians(180));
     public static Pose2d secondSubInter = new Pose2d(33, secondSub.component1().y, Math.toRadians(180));
-    public static Pose2d firstSubDrop = new Pose2d(55.5, 55, Math.toRadians(-135));
-    public static Pose2d secondSubDrop = new Pose2d(55.5, 55, Math.toRadians(-135));
+    public static Pose2d firstSubDrop = new Pose2d(55.75, 55, Math.toRadians(-135));
+    public static Pose2d secondSubDrop = new Pose2d(55.75, 55, Math.toRadians(-135));
 
     public static Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
     public static Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
@@ -149,8 +149,7 @@ public class BucketAuto extends LinearOpMode {
 
         Action thirdSamplePickup = drive.actionBuilderPrecise(secondBucket)
                 .afterTime(0.01, new SequentialAction(
-                        bot.actionBucketToStorage(),
-                        bot.actionDiagFrontIntake(),
+                        bot.actionBucketToDiagFrontIntake(),
                         bot.actionRotateClaw(),
                         bot.actionOpenGripper()
                 ))

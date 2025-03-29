@@ -25,7 +25,7 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(22, 7, Math.toRadians(180)))
+        redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(9, 32, Math.toRadians(-90)))
                 //-23, 46
 //                        .strafeToLinearHeading(new Vector2d(-43,61), Math.toRadians(90))
 
@@ -45,13 +45,23 @@ public class MeepMeepTesting {
 ////                .splineToConstantHeading(new Vector2d(-46,17),Math.toRadians(-90))
 //                        .splineToConstantHeading(new Vector2d(-63.5,11), Math.toRadians(165))//0
 
+                .setReversed(true)
+                .splineToSplineHeading(new Pose2d(-33, 36, Math.toRadians(-130)), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-33, 58), Math.toRadians(160))//140
+                .strafeToLinearHeading(new Vector2d(-45, 32), Math.toRadians(-130))//140
+                .strafeToLinearHeading(new Vector2d(-46, 52), Math.toRadians(140))//140
+                .strafeToLinearHeading(new Vector2d(-53, 30), Math.toRadians(-140))//140
+                .strafeToLinearHeading(new Vector2d(-51, 53), Math.toRadians(150))//140
+//
+//                .setReversed(true)
+////                .splineToLinearHeading(new Pose2d(-59, 13.5, Math.toRadians(90)), Math.toRadians(140))
+//                .splineToLinearHeading(new Pose2d(-62.5, 13.5, Math.toRadians(90)), Math.toRadians(140))
+                .strafeToLinearHeading(new Vector2d(-47, 63), Math.toRadians(90))
 //                        .setReversed(true)
-//                        .splineToSplineHeading(new Pose2d(-33, 36, Math.toRadians(-130)), Math.toRadians(180))
-//                        .strafeToLinearHeading(new Vector2d(-33, 58), Math.toRadians(160))//140
-//                        .strafeToLinearHeading(new Vector2d(-45, 32), Math.toRadians(-130))//140
-//                        .strafeToLinearHeading(new Vector2d(-46, 52), Math.toRadians(140))//140
-//                        .strafeToLinearHeading(new Vector2d(-53, 30), Math.toRadians(-140))//140
-//                        .strafeToLinearHeading(new Vector2d(-51, 53), Math.toRadians(150))//140
+//                        .splineTo(new Vector2d(-0, 46), Math.toRadians(0))
+//                        .splineTo(new Pose2d(52.5, 57, Math.toRadians(-135)).component1(), Math.toRadians(45))
+                                .strafeToLinearHeading(new Pose2d(52.5, 55, Math.toRadians(-135)).component1(), Math.toRadians(-135))
+
 ////                        .setReversed(true)
 //                        .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
 //                        .splineToConstantHeading(new Vector2d(-47.5,62.5), Math.toRadians(90))
@@ -67,12 +77,12 @@ public class MeepMeepTesting {
 //                .strafeToSplineHeading(new Vector2d(-47.5,47.5), Math.toRadians(90))
 //                .splineToConstantHeading(new Vector2d(-47.5,63), Math.toRadians(90))
 
-                .setReversed(true)
-//                        .splineToSplineHeading(new Pose2d(36, 8, Math.toRadians(180)), Math.toRadians(0))
-                .splineTo(new Pose2d(52.5, 57.5, Math.toRadians(-135)).component1(), Math.toRadians(45))
-                .waitSeconds(0.2)
-                .splineTo(new Vector2d(32, 8), Math.toRadians(-180))
-                .strafeToConstantHeading(new Pose2d(22, 8, Math.toRadians(180)).component1())
+//                .setReversed(true)
+////                        .splineToSplineHeading(new Pose2d(36, 8, Math.toRadians(180)), Math.toRadians(0))
+//                .splineTo(new Pose2d(52.5, 57.5, Math.toRadians(-135)).component1(), Math.toRadians(45))
+//                .waitSeconds(0.2)
+//                .splineTo(new Vector2d(32, 8), Math.toRadians(-180))
+//                .strafeToConstantHeading(new Pose2d(22, 8, Math.toRadians(180)).component1())
 
 
 //                .splineToConstantHeading(new Vector2d(0,20), Math.toRadians(-90))

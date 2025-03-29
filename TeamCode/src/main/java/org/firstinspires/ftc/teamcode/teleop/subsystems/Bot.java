@@ -83,7 +83,7 @@ public class Bot {
     public static double ySign = -1;
     public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
-    private boolean breakBeamWorking = false;
+    private boolean breakBeamWorking = true;
     public boolean climbing = false;
 
     // Define subsystem objects
@@ -96,8 +96,9 @@ public class Bot {
 
     public static Pose2d storedPosition = null;
     public static Vector2d targetPosition = new Vector2d(0, 5);
-    public Pose2d clipIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
-    public Pose2d chamber = new Pose2d(2, 35, Math.toRadians(90));
+    public Pose2d clipIntake = new Pose2d(-43, 63, Math.toRadians(90));
+    public Pose2d clipStartIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(2, 36.5, Math.toRadians(90));
 
     public Action cycleClip = actionCloseGripper();
 
@@ -144,7 +145,7 @@ public class Bot {
     }
 
     public void initializeAutoClipping() {
-        autoDrive = new MecanumDrive(opMode.hardwareMap, clipIntake);
+        autoDrive = new MecanumDrive(opMode.hardwareMap, clipStartIntake);
         autonomous = true;
     }
 
@@ -1018,7 +1019,7 @@ public class Bot {
     public SequentialAction actionSubPark() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.subPark(true, true)),
-                new InstantAction(() -> pivot.arm.storage())
+                new InstantAction(() -> pivot.arm.bucketDrop())
         );
     }
 
@@ -1318,7 +1319,22 @@ public class Bot {
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
                 new InstantAction(() -> pivot.frontAutoDiagIntake(true, false)),
-                new SleepAction(0.55),
+                new SleepAction(0.45),
+                new InstantAction(() -> pivot.frontAutoDiagIntake(false, true)),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.arm.frontPickup()),
+                new InstantAction(() -> state = BotState.FRONT_INTAKE)
+        );
+    }
+
+    public SequentialAction actionBucketToDiagFrontIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.3),
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.arm.frontPickupToStorage()),
+                new InstantAction(() -> pivot.frontAutoDiagIntake(true, false)),
+                new SleepAction(0.6),
                 new InstantAction(() -> pivot.frontAutoDiagIntake(false, true)),
                 new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.frontPickup()),
