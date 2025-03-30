@@ -98,7 +98,7 @@ public class Bot {
     public static Vector2d targetPosition = new Vector2d(0, 5);
     public Pose2d clipIntake = new Pose2d(-43, 63, Math.toRadians(90));
     public Pose2d clipStartIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
-    public Pose2d chamber = new Pose2d(2, 36.5, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(2, 34.5, Math.toRadians(90));
 
     public Action cycleClip = actionCloseGripper();
 
@@ -568,14 +568,64 @@ public class Bot {
             actions.add(new SleepAction(0.5));
         }
 
-        actions.add(new InstantAction(() -> pivot.arm.bucket()));
-        actions.add(new InstantAction(() -> pivot.prel2Climb(true, false)));
-        actions.add(new SleepAction(0.15));
-        actions.add(new InstantAction(() -> pivot.prel2Climb(false, true)));
-        actions.add(new InstantAction(() -> state = BotState.CLIMBING));
+        if (pivot.slides.state == Slides.SlidesState.HIGH || pivot.slides.state == Slides.SlidesState.LOW) {
+            actions.add(new InstantAction(() -> pivot.arm.bucket()));
+            actions.add(new InstantAction(() -> pivot.prel2Climb(true, false)));
+            actions.add(new SleepAction(0.15));
+            actions.add(new InstantAction(() -> pivot.prel2Climb(false, true)));
+            actions.add(new InstantAction(() -> state = BotState.CLIMBING));
+        }
 
         return new SequentialAction(actions);
     }
+
+
+    public SequentialAction teleopL2Climb() {
+        List<Action> actions = new ArrayList<>();
+        climbing = true;
+
+        actions.add(new InstantAction(() -> pivot.midl2Climb(false, true)));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.postl2Climb(true, false)));
+        actions.add(new SleepAction(0.175));
+        actions.add(new InstantAction(() -> pivot.postl2Climb(false, true)));
+        actions.add(new SleepAction(2));
+        actions.add(new InstantAction(() -> pivot.climbTransfer(true, false)));
+        actions.add(new SleepAction(0.55));
+        climbing = false;
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> pivot.climbTransfer(false, true)));
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopL3Climb() {
+        List<Action> actions = new ArrayList<>();
+        climbing = true;
+
+        actions.add(new InstantAction(() -> pivot.prel3Climb(true, false)));
+        actions.add(new SleepAction(0.2));
+        actions.add(new InstantAction(() -> pivot.prel3Climb(false, true)));
+        actions.add(new SleepAction(1.5));
+        actions.add(new InstantAction(() -> pivot.midl3Climb(true, false)));
+        actions.add(new SleepAction(0.4));
+        actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.midl3Climb(false, true)));
+        actions.add(new SleepAction(0.35));
+        actions.add(new InstantAction(() -> pivot.tiltedl3Climb(true, false)));
+        actions.add(new SleepAction(0.8));
+        actions.add(new InstantAction(() -> pivot.tiltedl3Climb(false, true)));
+        actions.add(new SleepAction(1.7));
+        actions.add(new InstantAction(() -> pivot.backTiltedl3Climb(true, false)));
+        actions.add(new SleepAction(1.05));
+        actions.add(new InstantAction(() -> pivot.postl3Climb(false, true)));
+        actions.add(new SleepAction(1));
+        actions.add(new InstantAction(() -> pivot.postl3Climb(true, false)));
+        climbing = false;
+        return new SequentialAction(actions);
+    }
+
 
     public SequentialAction teleopClipCancel() {
         List<Action> actions = new ArrayList<>();
@@ -647,53 +697,19 @@ public class Bot {
         return new SequentialAction(actions);
     }
 
-    public SequentialAction teleopL2Climb() {
-        List<Action> actions = new ArrayList<>();
-        climbing = true;
-
-        actions.add(new InstantAction(() -> pivot.midl2Climb(false, true)));
-        actions.add(new SleepAction(0.15));
-        actions.add(new InstantAction(() -> pivot.postl2Climb(true, false)));
-        actions.add(new SleepAction(0.175));
-        actions.add(new InstantAction(() -> pivot.postl2Climb(false, true)));
-        actions.add(new SleepAction(2));
-        actions.add(new InstantAction(() -> pivot.climbTransfer(true, false)));
-        actions.add(new SleepAction(0.55));
-        climbing = false;
-        actions.add(new SleepAction(0.2));
-        actions.add(new InstantAction(() -> pivot.climbTransfer(false, true)));
-
-        return new SequentialAction(actions);
-    }
-
-    public SequentialAction teleopL3Climb() {
-        List<Action> actions = new ArrayList<>();
-        climbing = true;
-
-        actions.add(new InstantAction(() -> pivot.prel3Climb(true, false)));
-        actions.add(new SleepAction(0.2));
-        actions.add(new InstantAction(() -> pivot.prel3Climb(false, true)));
-        actions.add(new SleepAction(1.5));
-        actions.add(new InstantAction(() -> pivot.midl3Climb(true, false)));
-        actions.add(new SleepAction(0.4));
-        actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
-        actions.add(new SleepAction(0.15));
-        actions.add(new InstantAction(() -> pivot.midl3Climb(false, true)));
-        actions.add(new SleepAction(0.35));
-        actions.add(new InstantAction(() -> pivot.tiltedl3Climb(true, false)));
-        actions.add(new SleepAction(0.8));
-        actions.add(new InstantAction(() -> pivot.tiltedl3Climb(false, true)));
-        actions.add(new SleepAction(1.7));
-        actions.add(new InstantAction(() -> pivot.backTiltedl3Climb(true, false)));
-        actions.add(new SleepAction(1.05));
-        actions.add(new InstantAction(() -> pivot.postl3Climb(false, true)));
-        actions.add(new SleepAction(1));
-        actions.add(new InstantAction(() -> pivot.postl3Climb(true, false)));
-        climbing = false;
-        return new SequentialAction(actions);
-    }
-
     public SequentialAction teleopBucketDrop() {
+        List<Action> actions = new ArrayList<>();
+
+//        actions.add(new InstantAction(() -> pivot.arm.bucketDrop()));
+//        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> gripper.open()));
+        actions.add(new SleepAction(0.25));
+        actions.add(teleopStorage());
+
+        return new SequentialAction(actions);
+    }
+
+    public SequentialAction teleopBucketThrow() {
         List<Action> actions = new ArrayList<>();
 
         actions.add(new InstantAction(() -> pivot.arm.bucketDrop()));
@@ -759,10 +775,8 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.2));
             actions.add(new InstantAction(() -> pivot.teleopWallIntake(true, false)));
-            actions.add(new InstantAction(() -> pivot.arm.vertical()));
-            actions.add(new SleepAction(0.1));
+            actions.add(new SleepAction(0.2));
             actions.add(new InstantAction(() -> pivot.arm.wallPickup()));
-            actions.add(new SleepAction(0.1));
             actions.add(new InstantAction(() -> pivot.teleopWallIntake(false, true)));
             actions.add(new InstantAction(() -> {
                 state = BotState.WALL_INTAKE;
@@ -876,6 +890,95 @@ public class Bot {
         );
     }
 
+
+    public SequentialAction teleopFrontWallToRearSlidesChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.arm.frontWallUp()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
+                new SleepAction(0.20),
+                new InstantAction(() -> pivot.arm.rearChamber()),
+                new SleepAction(0.15),
+                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction teleopRearSlidesChamber() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
+                new InstantAction(() -> pivot.arm.rearChamber()),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
+                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
+        );
+    }
+
+    public SequentialAction teleopRearSlidesClipDown() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.rearSlidesClipDown(true, true))
+        );
+    }
+
+    public SequentialAction teleopRearSlidesClipCancel() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.rearSlidesClipCancel(true, true))
+        );
+    }
+
+    public SequentialAction teleopRearClipWall() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.frontWallIntake(true, false)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new SleepAction(0.1),
+                new InstantAction(() -> pivot.frontWallIntake(false, true)),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction teleopRearClipStorage() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.storage(false, true)),
+                new SleepAction(0.2),
+                new InstantAction(() -> pivot.storage(true, false)),
+                new InstantAction(() -> pivot.arm.storage()),
+                new InstantAction(() -> state = BotState.STORAGE)
+        );
+    }
+    public SequentialAction teleopFrontWallIntake() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.frontWallIntake(true, true)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction teleopFrontWallIntakeOpen() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.open()),
+                new InstantAction(() -> pivot.frontWallIntake(true, true)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
+    public SequentialAction teleopFrontWallIntakeClosed() {
+        return new SequentialAction(
+                new InstantAction(() -> gripper.close()),
+                new InstantAction(() -> pivot.frontWallIntake(true, true)),
+                new InstantAction(() -> pivot.arm.frontWallPickup()),
+                new InstantAction(() -> state = BotState.WALL_INTAKE)
+        );
+    }
+
     public void goToReset() {
         pivot.goToResetPosition();
         state = BotState.RESETTING;
@@ -907,6 +1010,7 @@ public class Bot {
         );
     }
 
+
     public SequentialAction actionFrontWallIntakeToHighBucket() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.frontWallUp()),
@@ -924,17 +1028,19 @@ public class Bot {
     }
 
     public SequentialAction actionFrontWallToRearSlidesChamber() {
-        return new SequentialAction(
-                new InstantAction(() -> gripper.close()),
-                new InstantAction(() -> pivot.arm.frontWallUp()),
-                new InstantAction(() -> pivot.storage(false, true)),
-                new InstantAction(() -> pivot.rearSlidesChamber(true, false)),
-                new SleepAction(0.20),
-                new InstantAction(() -> pivot.arm.rearChamber()),
-                new SleepAction(0.15),
-                new InstantAction(() -> pivot.rearSlidesChamber(false, true)),
-                new InstantAction(() -> state = BotState.HIGH_CHAMBER)
-        );
+        List<Action> actions = new ArrayList<>();
+        actions.add(new InstantAction(() -> gripper.close()));
+        actions.add(new InstantAction(() -> pivot.arm.frontWallUp()));
+        actions.add(new InstantAction(() -> pivot.storage(false, true)));
+        actions.add(new InstantAction(() -> pivot.rearSlidesChamber(true, false)));
+        actions.add(new SleepAction(0.20));
+        if (isHolding()) {
+            actions.add(new InstantAction(() -> pivot.arm.rearChamber()));
+        }
+        actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> pivot.rearSlidesChamber(false, true)));
+        actions.add(new InstantAction(() -> state = BotState.HIGH_CHAMBER));
+        return new SequentialAction(actions);
     }
 
     public SequentialAction actionRearSlidesChamber() {

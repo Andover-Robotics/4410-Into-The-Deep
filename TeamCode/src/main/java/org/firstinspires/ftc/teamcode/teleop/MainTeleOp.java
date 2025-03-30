@@ -128,10 +128,6 @@ public class MainTeleOp extends LinearOpMode {
                         runningActions.add(bot.teleopWallIntakeOpen());
                     }
                 }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-//                    runningActions.add(bot.teleopLowChamber());
-//                    clipCancel = false;
-//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                     runningActions.add(bot.teleopSlidesHighChamber());
                     clipCancel = false;
@@ -213,18 +209,6 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-//                    // runningActions.add(bot.teleopClipDown()); // Uncomment if needed
-//                }
-//                if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
-//                    runningActions.add(bot.teleopClipStorage());
-//                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
-//                    clipCancel = false;
-//                }
-//                if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
-//                    clipCancel = true;
-//                    runningActions.add(bot.teleopClipCancel());
-//                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     runningActions.add(bot.teleopSlidesClipDown());
                 }
@@ -249,17 +233,20 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             if (bot.state == Bot.BotState.HIGH_BUCKET || bot.state == Bot.BotState.LOW_BUCKET) {
-                bot.pivot.runManualIK(gp2.getLeftY());
 
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                    runningActions.add(new InstantAction(() -> bot.pivot.arm.rollLeft()));
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    runningActions.add(new InstantAction(() -> bot.pivot.arm.rollRight()));
+                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     runningActions.add(bot.teleopBucketDrop());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-//                    runningActions.add(bot.teleopLowChamber());
-//                    clipCancel = false;
+                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                    runningActions.add(bot.teleopBucketThrow());
                 }
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                     runningActions.add(bot.teleopSlidesHighChamber());
@@ -305,7 +292,7 @@ public class MainTeleOp extends LinearOpMode {
 
                                                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y - ((double) clipCounter) * 0.3), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
 
                                                 .stopAndAdd(new SequentialAction(
                                                         bot.actionRearSlidesClipDown(),

@@ -322,6 +322,10 @@ public class Pivot {
         changeXZ(0, -slidesClippingHeightDelta, pivot, slides);
     }
 
+    public void rearSlidesClipCancel(boolean pivot, boolean slides) {
+        changeXZ(0, slidesClippingHeightDelta, pivot, slides);
+    }
+
     public void slidesHighChamber(boolean pivot, boolean slides) {
         targetZ = slidesHighChamberHeight;
         targetX = slidesHighChamberX;

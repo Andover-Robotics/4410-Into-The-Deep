@@ -97,7 +97,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 //
                 .afterTime(0.01, bot.actionFrontWallIntake())
                 .splineToLinearHeading(new Pose2d(-62.5, 12.5, Math.toRadians(90)), Math.toRadians(140))
-                .strafeToConstantHeading(new Vector2d(-60, 62))
+                .strafeToConstantHeading(new Vector2d(-60, 62), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 70))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -161,7 +161,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-7.5,35), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-7.5,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -186,7 +186,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-9.25,35), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-9.25,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -206,7 +206,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                 .waitSeconds(0.01)
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
-                        new SleepAction(0.05)
+                        new SleepAction(0.1)
                 ))
                 .afterTime(0.01, new SequentialAction(
                         new InstantAction(()->bot.pivot.arm.frontWallUp()),
