@@ -24,9 +24,9 @@ public class Arm {
     public final double PITCH_MID = 135;    // Midpoint for vertical pitch angle - straight up through the slides
 
     public static double rollMultiplier = 1.0663; //integrate into code later
-    public static double offset = -5;
+    public static double offset = -8;
 
-    public static double pitchGroundPickup = -93+offset, pitchWallPickup = 189 + offset, pitchFrontPickupToStorage = -55, pitchChamber = 83 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 70,
+    public static double pitchGroundPickup = -93+offset, pitchWallPickup = 189 + offset, pitchFrontPickupToStorage = -55, pitchChamber = 79 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 70,
             pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = 0, pitchOuttakeHoriz = 0, pitchRearChamber = 185;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopRight = ROLL_MID - 45, rollTopLeft = ROLL_MID + 45, rollFlipped = ROLL_MIN;
 
@@ -119,15 +119,15 @@ public class Arm {
     }
 
     public void frontWallPickup() {
-        setRollPitch(rollFlipped, 5);
+        setRollPitch(rollFlipped, 8 + offset);
     }
 
     public void frontWallUp() {
-        setRollPitch(rollFlipped, 40);
+        setRollPitch(rollFlipped, 45 + offset);
     }
 
     public void higherWallPickup() {
-        setRollPitch(rollFlipped, 90);
+        setRollPitch(rollFlipped, 95 + offset);
     }
 
     public void frontPickup() {

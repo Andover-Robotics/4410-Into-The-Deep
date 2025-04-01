@@ -76,15 +76,16 @@ public class Bot {
 
     public SampleDetectionPipeline pipeline;
 
-    double pickDownUpValue = 4.75; //TELEOP ONLY (not auton)
+    double pickDownUpValue = 4; //TELEOP ONLY (not auton)
 
     public static double sampleYPos = 0;
     public static int angleOffset = 0;
     public static double ySign = -1;
     public static double xSign = 1;
     public double refAngle = 0, x = 0, y = 0;
-    private boolean breakBeamWorking = true;
+    public boolean breakBeamWorking = true;
     public boolean climbing = false;
+    public boolean chamberHolding = false;
 
     // Define subsystem objects
     public Gripper gripper;
@@ -98,7 +99,7 @@ public class Bot {
     public static Vector2d targetPosition = new Vector2d(0, 5);
     public Pose2d clipIntake = new Pose2d(-43, 63, Math.toRadians(90));
     public Pose2d clipStartIntake = new Pose2d(-43, 60.5, Math.toRadians(90));
-    public Pose2d chamber = new Pose2d(2, 34.5, Math.toRadians(90));
+    public Pose2d chamber = new Pose2d(4, 35.5, Math.toRadians(90));
 
     public Action cycleClip = actionCloseGripper();
 
@@ -167,8 +168,20 @@ public class Bot {
     }
 
     public boolean isHolding() {
-        return !breakBeam.getState(); //TODO uncomment when bb is fixed
+        if (breakBeamWorking) {
+            return !breakBeam.getState(); //TODO uncomment when bb is fixed
+        } else {
+            return true;
+        }
 //        return true; //hardcoded holding
+    }
+
+    public void saveHolding(){
+        if (breakBeamWorking) {
+            chamberHolding = !breakBeam.getState(); //TODO uncomment when bb is fixed
+        } else {
+            chamberHolding = true;
+        }
     }
 
     public boolean isEmpty() {
@@ -727,12 +740,14 @@ public class Bot {
         actions.add(new SleepAction(0.325));
         if (isHolding() || trigger) {
             actions.add(new SleepAction(0.125));
-            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
             actions.add(new SleepAction(0.075));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.3));
             actions.add(new InstantAction(() -> pivot.storage(true, false)));
-            actions.add(new SleepAction(0.3));
+            actions.add(new SleepAction(0.1));
+            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+            actions.add(new SleepAction(0.2));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
             actions.add(new InstantAction(()-> state = BotState.STORAGE));
         } else {
@@ -747,7 +762,7 @@ public class Bot {
         actions.add(new SleepAction(0.325));
         if (isHolding() || trigger) {
             actions.add(new SleepAction(0.125));
-            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
             actions.add(new SleepAction(0.075));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.3));
@@ -770,10 +785,11 @@ public class Bot {
         actions.add(new SleepAction(0.325));
         if (isHolding() || trigger) {
             actions.add(new SleepAction(0.125));
-            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
             actions.add(new SleepAction(0.075));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.2));
+            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new InstantAction(() -> pivot.teleopWallIntake(true, false)));
             actions.add(new SleepAction(0.2));
             actions.add(new InstantAction(() -> pivot.arm.wallPickup()));
@@ -1036,10 +1052,11 @@ public class Bot {
         actions.add(new SleepAction(0.20));
         if (isHolding()) {
             actions.add(new InstantAction(() -> pivot.arm.rearChamber()));
+            actions.add(new SleepAction(0.15));
+            actions.add(new InstantAction(() -> pivot.rearSlidesChamber(false, true)));
+            actions.add(new InstantAction(() -> state = BotState.HIGH_CHAMBER));
         }
-        actions.add(new SleepAction(0.15));
-        actions.add(new InstantAction(() -> pivot.rearSlidesChamber(false, true)));
-        actions.add(new InstantAction(() -> state = BotState.HIGH_CHAMBER));
+        actions.add(new InstantAction(() -> chamberHolding = true));
         return new SequentialAction(actions);
     }
 

@@ -96,7 +96,12 @@ public class MainTeleOp extends LinearOpMode {
                 runningActions.add(bot.actionCloseGripper());
             }
 
-
+            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                bot.turnOffBreakBeam();
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                bot.fixBreakBeam();
+            }
 
             //STORAGE
             if (bot.state == Bot.BotState.STORAGE) {
@@ -280,35 +285,82 @@ public class MainTeleOp extends LinearOpMode {
                 }
                 runningActions = newActions;
             } else {
+                gp1.readButtons();
+                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                    bot.turnOffBreakBeam();
+                }
+                if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                    bot.fixBreakBeam();
+                }
                 Actions.runBlocking(
                         new ActionHelpersJava.RaceParallelCommand(
                                 bot.actionPeriodic(),
                                 new SequentialAction(
-                                        bot.autoDrive.actionBuilder(bot.clipIntake)
-                                                .stopAndAdd(new SequentialAction(
-                                                        bot.actionCloseGripper(),
-                                                        new SleepAction(0.15)
-                                                ))
-
-                                                .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
-
-                                                .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y - ((double) clipCounter) * 0.3), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
-
-                                                .stopAndAdd(new SequentialAction(
-                                                        bot.actionRearSlidesClipDown(),
-                                                        new SleepAction(0.35),
-                                                        bot.actionOpenGripper()
-                                                ))
-
-                                                .afterTime(0.01, bot.actionRearClipWall())
-
-                                                .strafeToLinearHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
-                                                .build()
+                                        bot.actionCloseGripper(),
+                                        new SleepAction(0.25)
                                 ),
                                 bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
                         )
                 );
-                clipCounter++;
+                if (bot.isHolding() && bot.autonomous) {
+                    gp1.readButtons();
+                    if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                        bot.turnOffBreakBeam();
+                    }
+                    if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                        bot.fixBreakBeam();
+                    }
+                    Actions.runBlocking(
+                        new ActionHelpersJava.RaceParallelCommand(
+                            bot.actionPeriodic(),
+                            new SequentialAction(
+                                    bot.autoDrive.actionBuilder(new com.acmerobotics.roadrunner.Pose2d(bot.clipIntake.component1().x, bot.clipIntake.component1().y, Math.toRadians(90)))
+                                            .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
+
+//                                            .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
+                                            .setReversed(true)
+                                            .splineToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y + 15), Math.toRadians(-90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-60, 60))
+                                            .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-100, 60))
+
+                                            .stopAndAdd(new SequentialAction(
+                                                    bot.actionRearSlidesClipDown(),
+                                                    new SleepAction(0.35),
+                                                    bot.actionOpenGripper()
+                                            ))
+
+                                            .afterTime(0.01, bot.actionRearClipWall())
+
+                                            .strafeToLinearHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-45, 90))
+
+                                            .build()
+                            ),
+                            bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
+                        )
+                    );
+
+                    clipCounter++;
+                } else if (bot.autonomous){
+                    Actions.runBlocking(
+                            new ActionHelpersJava.RaceParallelCommand(
+                                    bot.actionPeriodic(),
+                                    new SequentialAction(
+                                            bot.autoDrive.actionBuilder(new com.acmerobotics.roadrunner.Pose2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y, Math.toRadians(90)))
+
+                                                    .afterTime(0.01, new SequentialAction(
+                                                            bot.actionOpenGripper()
+                                                    ))
+                                                    .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y - 10))
+
+                                                    .afterTime(0.01, bot.actionRearClipWall())
+
+                                                    .strafeToLinearHeading(new com.acmerobotics.roadrunner.Vector2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y), Math.toRadians(90), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-30, 60))
+
+                                                    .build()
+                                    ),
+                                    bot.checkAutoClipping(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
+                            )
+                    );
+                }
 //                );
             }
 
@@ -361,7 +413,7 @@ public class MainTeleOp extends LinearOpMode {
 
     // Driving
     private void drive() { // Robot centric, drive multiplier default 1
-        driveSpeed = driveMultiplier - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        driveSpeed = driveMultiplier - 0.7 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
         bot.fixMotors();
 

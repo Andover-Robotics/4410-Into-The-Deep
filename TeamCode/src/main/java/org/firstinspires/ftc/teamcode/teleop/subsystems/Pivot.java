@@ -64,11 +64,11 @@ public class Pivot {
             lowBucketHeight = 21 * inches2mm,
             highChamberHeight = 15.2 * inches2mm,
             lowChamberHeight = 3 * inches2mm,
-            frontIntakeHeight = 5 * inches2mm,
+            frontIntakeHeight = 3.75 * inches2mm,
             wallIntakeHeight = 3.2 * inches2mm,
 
             frontWallIntakeHeight = 5.5 * inches2mm,
-            rearSlidesClippingHeight = 19.25 * inches2mm,
+            rearSlidesClippingHeight = 18.25 * inches2mm,
 
     slidesHighChamberHeight = 19.75 * inches2mm,
 
@@ -407,13 +407,6 @@ public class Pivot {
     public void lowChamber(boolean pivot, boolean slides) {
         targetZ = lowChamberHeight;
         targetX = chamberX;
-        if (pivot) runPivotToIKPosition();
-        if (slides) runSlidesToIKPosition();
-    }
-
-    public void rearIntake(boolean pivot, boolean slides) {
-        targetZ = frontIntakeHeight;
-        targetX = rearIntakeX;
         if (pivot) runPivotToIKPosition();
         if (slides) runSlidesToIKPosition();
     }
