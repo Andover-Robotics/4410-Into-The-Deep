@@ -745,9 +745,8 @@ public class Bot {
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.3));
             actions.add(new InstantAction(() -> pivot.storage(true, false)));
-            actions.add(new SleepAction(0.1));
-            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new SleepAction(0.2));
+            actions.add(new SleepAction(0.1));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
             actions.add(new InstantAction(()-> state = BotState.STORAGE));
         } else {
@@ -789,11 +788,13 @@ public class Bot {
             actions.add(new SleepAction(0.075));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.2));
-            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
             actions.add(new InstantAction(() -> pivot.teleopWallIntake(true, false)));
-            actions.add(new SleepAction(0.2));
-            actions.add(new InstantAction(() -> pivot.arm.wallPickup()));
+            actions.add(new SleepAction(0.1));
+            actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+            actions.add(new SleepAction(0.1));
             actions.add(new InstantAction(() -> pivot.teleopWallIntake(false, true)));
+            actions.add(new SleepAction(0.1));
+            actions.add(new InstantAction(() -> pivot.arm.wallPickup()));
             actions.add(new InstantAction(() -> {
                 state = BotState.WALL_INTAKE;
             }));

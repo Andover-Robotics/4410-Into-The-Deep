@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -17,20 +16,17 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.pipelines.ActionHelpersJava;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
-import java.lang.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Config
-@TeleOp(name = "MainTeleOp")
-public class MainTeleOp extends LinearOpMode {
+@TeleOp(name = "Solo TeleOp")
+public class SingleMainTeleOp extends LinearOpMode {
 
     private Bot bot;
     private double driveSpeed = 1, driveMultiplier = 1;
@@ -67,25 +63,25 @@ public class MainTeleOp extends LinearOpMode {
             gp2.readButtons();
 
 //
-            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
-                bot.initializeAutoClipping();
-                clipCounter = 0;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-                runningActions.add(bot.actionRearClipStorage());
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                runningActions.add(bot.actionFrontWallIntake());
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                runningActions.add(bot.actionFrontWallToRearSlidesChamber());
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                runningActions.add(bot.actionOpenGripper());
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                runningActions.add(bot.actionCloseGripper());
-            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
+//                bot.initializeAutoClipping();
+//                clipCounter = 0;
+//            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+//                runningActions.add(bot.actionRearClipStorage());
+//            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+//                runningActions.add(bot.actionFrontWallIntake());
+//            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+//                runningActions.add(bot.actionFrontWallToRearSlidesChamber());
+//            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+//                runningActions.add(bot.actionOpenGripper());
+//            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+//                runningActions.add(bot.actionCloseGripper());
+//            }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 bot.turnOffBreakBeam();
@@ -99,176 +95,160 @@ public class MainTeleOp extends LinearOpMode {
 //                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
 //                    bot.teleopGoToReset();
 //                }
-                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
 //                    runningActions.add(bot.teleopShiftUp());
                     bot.shiftUp();
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
 //                    runningActions.add(bot.teleopShiftDown());
                     bot.shiftDown();
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
                     runningActions.add(bot.teleopPrel2Climb());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    runningActions.add(bot.teleopFrontIntake(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+                if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
+                    runningActions.add(bot.teleopFrontIntake(gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
                     intakeCancel = false;
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+                    if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
                         runningActions.add(bot.teleopWallIntakeClosed());
                     } else {
                         runningActions.add(bot.teleopWallIntakeOpen());
                     }
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                     runningActions.add(bot.teleopSlidesHighChamber());
                     clipCancel = false;
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     runningActions.add(bot.teleopHighBucket());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                     runningActions.add(bot.teleopLowBucket());
                 }
             }
 
             if (bot.state == Bot.BotState.CLIMBING && !bot.climbing) {
-                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
                     runningActions.add(bot.teleopL2Climb());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
                     runningActions.add(bot.teleopL3Climb());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
             }
 
             if (bot.state == Bot.BotState.FRONT_INTAKE) {
-                if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A) && !gp1.isDown(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                 }
-                bot.pivot.runManualIK(gp2.getLeftY() / 1.01);
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+//                bot.pivot.runManualIK(gp2.getLeftY() / 1.01);
+                if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopPickDown());
                 }
-                if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-//                    if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
-//                        runningActions.add(bot.teleopPickupFrontIntakeToWallIntake(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
-//                    } else if (gp2.isDown(GamepadKeys.Button.DPAD_UP)){
-//                        runningActions.add(bot.teleopPickupFrontIntakeToHighBucket(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
-//                    } else {
-//                        runningActions.add(bot.teleopPickupFrontIntakeToStorage(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.25));
-//                    }
-                    if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
+                if (gp1.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
+                    if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
                         runningActions.add(bot.teleopPickupFrontIntakeToWallIntake(false));
-                    } else if (gp2.isDown(GamepadKeys.Button.DPAD_UP)){
+                    } else if (gp1.isDown(GamepadKeys.Button.DPAD_UP)){
                         runningActions.add(bot.teleopPickupFrontIntakeToHighBucket(false));
                     } else {
                         runningActions.add(bot.teleopPickupFrontIntakeToStorage(false));
                     }
-                    } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                    } else if (gp1.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A) && gp1.isDown(GamepadKeys.Button.X)) {
                     intakeCancel = true;
                     runningActions.add(bot.teleopPickUp());
                     runningActions.add(bot.teleopOpenGripper());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     runningActions.add(new InstantAction(() -> bot.pivot.arm.rollLeft()));
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                } else if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     runningActions.add(new InstantAction(() -> bot.pivot.arm.rollRight()));
                 }
             }
 
             if (bot.state == Bot.BotState.WALL_INTAKE) {
-                if (gp2.wasJustPressed(GamepadKeys.Button.A) && !gp2.isDown(GamepadKeys.Button.X)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A) && !gp1.isDown(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopStorage());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopCloseGripper());
                 }
-                if (gp2.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
+                if (gp1.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
                     runningActions.add(bot.teleopStorage());
-                } else if (gp2.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
+                } else if (gp1.wasJustReleased(GamepadKeys.Button.X) && intakeCancel) {
                     intakeCancel = false;
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A) && gp2.isDown(GamepadKeys.Button.X)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A) && gp1.isDown(GamepadKeys.Button.X)) {
                     intakeCancel = true;
                     runningActions.add(bot.teleopOpenGripper());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
                     runningActions.add(bot.teleopOpenGripper());
                 }
             }
 
             if (bot.state == Bot.BotState.HIGH_CHAMBER || bot.state == Bot.BotState.LOW_CHAMBER) {
-                bot.pivot.runManualIK(gp2.getLeftY() / 1.15);
-                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+//                bot.pivot.runManualIK(gp1.getLeftY() / 1.15);
+                if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
                     runningActions.add(bot.teleopSlidesClipDown());
                 }
-                if (gp2.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
+                if (gp1.wasJustReleased(GamepadKeys.Button.Y) && !clipCancel) {
                     runningActions.add(bot.teleopSlidesClipStorage());
-                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
+                } else if (gp1.wasJustReleased(GamepadKeys.Button.Y) && clipCancel) {
                     clipCancel = false;
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.B) && gp2.isDown(GamepadKeys.Button.Y)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.B) && gp1.isDown(GamepadKeys.Button.Y)) {
                     clipCancel = true;
                     runningActions.add(bot.teleopSlidesClipCancel());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
                     runningActions.add(bot.teleopOpenGripper());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     runningActions.add(bot.teleopHighBucket());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                     runningActions.add(bot.teleopLowBucket());
                 }
             }
 
             if (bot.state == Bot.BotState.HIGH_BUCKET || bot.state == Bot.BotState.LOW_BUCKET) {
 
-                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     runningActions.add(new InstantAction(() -> bot.pivot.arm.rollLeft()));
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                } else if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     runningActions.add(new InstantAction(() -> bot.pivot.arm.rollRight()));
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(bot.teleopStorage());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
                     runningActions.add(bot.teleopBucketDrop());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
                     runningActions.add(bot.teleopBucketThrow());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                     runningActions.add(bot.teleopSlidesHighChamber());
                     clipCancel = false;
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     runningActions.add(bot.teleopHighBucket());
                 }
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                     runningActions.add(bot.teleopLowBucket());
-                }
-            }
-
-            if (bot.state == Bot.BotState.RESETTING) {
-                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
-                    bot.resetSlides();
-                }
-                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
-                    runningActions.add(new InstantAction(() -> bot.teleopPivotStorage()));
                 }
             }
 
@@ -312,7 +292,7 @@ public class MainTeleOp extends LinearOpMode {
                         new ActionHelpersJava.RaceParallelCommand(
                             bot.actionPeriodic(),
                             new SequentialAction(
-                                    bot.autoDrive.actionBuilder(new com.acmerobotics.roadrunner.Pose2d(bot.clipIntake.component1().x, bot.clipIntake.component1().y, Math.toRadians(90)))
+                                    bot.autoDrive.actionBuilder(new Pose2d(bot.clipIntake.component1().x, bot.clipIntake.component1().y, Math.toRadians(90)))
                                             .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
 //                                            .strafeToConstantHeading(new com.acmerobotics.roadrunner.Vector2d(bot.chamber.component1().x - ((double) clipCounter) * 1.6, bot.chamber.component1().y), bot.autoDrive.defaultVelConstraint, new ProfileAccelConstraint(-120, 145))
@@ -342,7 +322,7 @@ public class MainTeleOp extends LinearOpMode {
                             new ActionHelpersJava.RaceParallelCommand(
                                     bot.actionPeriodic(),
                                     new SequentialAction(
-                                            bot.autoDrive.actionBuilder(new com.acmerobotics.roadrunner.Pose2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y, Math.toRadians(90)))
+                                            bot.autoDrive.actionBuilder(new Pose2d(bot.clipIntake.component1().x - ((double) clipCounter) * 0.5, bot.clipIntake.component1().y, Math.toRadians(90)))
 
                                                     .afterTime(0.01, new SequentialAction(
                                                             bot.actionOpenGripper()
