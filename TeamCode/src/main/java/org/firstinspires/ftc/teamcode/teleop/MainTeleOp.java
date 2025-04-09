@@ -157,7 +157,7 @@ public class MainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                     if (bot.intakeFail) {
                         runningActions.add(bot.pulseLight(bot.Light.DUAL, bot.Color.RED));
-                        gamepad2.rumble(150);
+                        gamepad2.rumble(151);
                     } else {
                         runningActions.add(bot.pulseLight(bot.Light.DUAL, bot.Color.GREEN));
                     }
