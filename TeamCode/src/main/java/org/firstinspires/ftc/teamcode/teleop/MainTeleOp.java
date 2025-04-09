@@ -38,7 +38,6 @@ public class MainTeleOp extends LinearOpMode {
     private Thread thread;
     private List<Action> runningActions = new ArrayList<>();
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -158,6 +157,7 @@ public class MainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopFrontIntakeToStorage());
                     if (bot.intakeFail) {
                         runningActions.add(bot.pulseLight(bot.Light.DUAL, bot.Color.RED));
+                        gamepad2.rumble(150);
                     } else {
                         runningActions.add(bot.pulseLight(bot.Light.DUAL, bot.Color.GREEN));
                     }
