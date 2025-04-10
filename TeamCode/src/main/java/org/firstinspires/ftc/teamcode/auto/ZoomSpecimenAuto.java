@@ -109,7 +109,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-4.5,35.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 110))
+                .strafeToConstantHeading(new Vector2d(-2,35.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 110))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -136,7 +136,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-6,35.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-4.5,35.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -161,7 +161,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-7.5,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-6.5,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),

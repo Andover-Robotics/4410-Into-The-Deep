@@ -72,7 +72,7 @@ public final class MecanumDrive {
 
         public double dispTol = 0.4;
         public double angTol = Math.toRadians(2.5);
-        public double timeTol = 0.5;
+        public double timeTol = 0.01; //0.5;
 
         // feedforward parameters (in tick units)
         public double kS = 1.12;//1.477;
@@ -397,8 +397,6 @@ public final class MecanumDrive {
                 if ((t >= timeTrajectory.duration
                         && error.position.norm() < PARAMS.dispTol
                         && Math.abs(error.heading.toDouble()) < PARAMS.angTol
-//                        && robotVelRobot.angVel < 2
-                        && robotVelRobot.linearVel.norm() < 15
                 )
                         || t >= timeTrajectory.duration + PARAMS.timeTol) {
                     leftFront.setPower(0);

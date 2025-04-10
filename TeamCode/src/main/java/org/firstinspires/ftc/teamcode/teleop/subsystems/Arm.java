@@ -24,10 +24,10 @@ public class Arm {
     public final double PITCH_MID = 135;    // Midpoint for vertical pitch angle - straight up through the slides
 
     public static double rollMultiplier = 1.0663; //integrate into code later
-    public static double offset = -8;
+    public static double offset = -10;
 
-    public static double pitchGroundPickup = -93+offset, pitchWallPickup = 189 + offset, pitchFrontPickupToStorage = -55, pitchChamber = 79 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 70,
-            pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = 0, pitchOuttakeHoriz = 0, pitchRearChamber = 185;
+    public static double pitchGroundPickup = -93+offset, pitchCV = -114, pitchWallPickup = 189 - offset, pitchFrontPickupToStorage = -55, pitchChamber = 79 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 55,
+            pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = 2 + offset, pitchOuttakeHoriz = 0, pitchRearChamber = 180;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopRight = ROLL_MID - 45, rollTopLeft = ROLL_MID + 45, rollFlipped = ROLL_MIN;
 
     // Track the current angles for pitch and roll (accounts for pivot angle) (is the output sent to servos)
@@ -119,7 +119,7 @@ public class Arm {
     }
 
     public void frontWallPickup() {
-        setRollPitch(rollFlipped, 8 + offset);
+        setRollPitch(rollFlipped, 0 + offset);
     }
 
     public void frontWallUp() {
@@ -151,7 +151,7 @@ public class Arm {
     }
 
     public void cv() {
-        setRollPitch(rollVertical, pitchGroundPickup-7);
+        setRollPitch(rollVertical, pitchCV);
     }
 
     public void periodic(double pivotAngleDegrees) {

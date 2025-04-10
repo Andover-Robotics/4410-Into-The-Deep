@@ -31,16 +31,21 @@ public class BucketAuto extends LinearOpMode {
     public static Pose2d initialPose = new Pose2d(33, 63, Math.toRadians(-90)); //ONE TILE OVER
     public static Vector2d preloadDrop = new Vector2d(58.5, 55.5);
 
-    public static Pose2d firstSample = new Pose2d(48.6, 42.5, Math.toRadians(-90));
-    public static Pose2d secondSample = new Pose2d(60.25, 42, Math.toRadians(-90));
-    public static Pose2d thirdSample = new Pose2d(56.2, 39.5, Math.toRadians(-45));
+//    public static Pose2d firstSample = new Pose2d(48.6, 42.5, Math.toRadians(-90));
+//    public static Pose2d secondSample = new Pose2d(60.25, 42, Math.toRadians(-90));
+//    public static Pose2d thirdSample = new Pose2d(56.2, 39.5, Math.toRadians(-45));
+    public static Pose2d firstSample = new Pose2d(48.6, 41.75, Math.toRadians(-90));
+    public static Pose2d secondSample = new Pose2d(60.25, 41, Math.toRadians(-90));
+    public static Pose2d thirdSample = new Pose2d(58, 36.8, Math.toRadians(-45));
 
     public static Pose2d firstBucket = new Pose2d(57, 56.5, Math.toRadians(-135));
     public static Pose2d secondBucket = new Pose2d(57, 57.5, Math.toRadians(-135));
     public static Pose2d thirdBucket = new Pose2d(56.5, 56.5, Math.toRadians(-135));
 
-    public static Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y + 1.5, Math.toRadians(-90));
-    public static Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y + 1.5, Math.toRadians(-90));
+//    public static Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y + 1.5, Math.toRadians(-90));
+//    public static Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y + 1.5, Math.toRadians(-90));
+    public static Pose2d firstCVSample = new Pose2d(firstSample.component1().x, firstSample.component1().y + 5.5, Math.toRadians(-90));
+    public static Pose2d secondCVSample = new Pose2d(secondSample.component1().x, secondSample.component1().y + 5.5, Math.toRadians(-90));
     public static Pose2d thirdCVSample = new Pose2d(54, 24, Math.toRadians(0));
 
     public static Pose2d firstSub = new Pose2d(22, 8, Math.toRadians(180));
@@ -88,12 +93,12 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionBucketToFrontIntake()
                 ))
 
-                .strafeToLinearHeading(firstSample.component1(), firstSample.component2()) //first intake pos
+                .strafeToLinearHeading(firstSample.component1(), firstSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70)) //first intake pos
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.15),
                         bot.actionPickUp(),
-                        new SleepAction(0.1)
+                        new SleepAction(0.05)
                 ))
                 .build();
 
@@ -109,7 +114,7 @@ public class BucketAuto extends LinearOpMode {
 
                 .strafeToLinearHeading(firstBucket.component1(), firstBucket.component2())
 
-                .waitSeconds(0.25)
+                .waitSeconds(0.35)
                 .stopAndAdd(bot.actionBucketDrop())
                 .build();
 
@@ -118,13 +123,13 @@ public class BucketAuto extends LinearOpMode {
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToFrontIntake()
                 ))
-                .strafeToLinearHeading(secondSample.component1(), secondSample.component2())
+                .strafeToLinearHeading(secondSample.component1(), secondSample.component2(), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 70))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionPickDown(),
                         new SleepAction(0.15),
                         bot.actionPickUp(),
-                        new SleepAction(0.1)
+                        new SleepAction(0.05)
                 ))
                 .build();
 
@@ -184,6 +189,7 @@ public class BucketAuto extends LinearOpMode {
 
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),
+                        new SleepAction(0.15),
                         bot.actionSubAutoIntake()
                 ))
                 .splineTo(firstSubInter.component1(), Math.toRadians(180))
@@ -192,13 +198,13 @@ public class BucketAuto extends LinearOpMode {
 
         Action backToSub = drive.actionBuilder(firstSubDrop)
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.12),
+                        new SleepAction(0.05),
                         bot.actionBucketDrop(),
                         bot.actionResetPipeline()
                 ))
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),
-                        new SleepAction(0.05),
+                        new SleepAction(0.15),
                         bot.actionSubAutoIntake()
                 ))
                 .splineTo(secondSubInter.component1(), Math.toRadians(180))
@@ -210,17 +216,16 @@ public class BucketAuto extends LinearOpMode {
 
         Action finalBucket = drive.actionBuilder(secondSubDrop)
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.12),
+                        new SleepAction(0.05),
                         bot.actionBucketDrop()
                 ))
                 .afterTime(0.01, new SequentialAction(
-                        bot.actionBucketSlidesToStorage()
-//                        new SleepAction(0.8),
-//                        bot.actionSubPark()
+                        bot.actionBucketToStorage(),
+                        new SleepAction(0.15),
+                        bot.actionSubPark()
                 ))
-                .afterTime(0.15, bot.actionSubPark())
                 .splineTo(secondSubInter.component1(), Math.toRadians(180))
-                .strafeToConstantHeading(new Vector2d(secondSub.component1().x-2, secondSub.component1().y), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
+                .strafeToConstantHeading(new Vector2d(secondSub.component1().x, secondSub.component1().y), drive.defaultVelConstraint, new ProfileAccelConstraint(-200, 350))
 
                 .waitSeconds(5)
                 .build();
@@ -535,7 +540,7 @@ public class BucketAuto extends LinearOpMode {
         }
 
 
-        if (cv < 1) {
+        if (cv < 2) {
             Actions.runBlocking(
                     new ActionHelpersJava.RaceParallelCommand(
                             bot.actionPeriodic(),
@@ -570,8 +575,7 @@ public class BucketAuto extends LinearOpMode {
                                             ))
                                             .setReversed(true)
                                             .splineTo(secondSubDrop.component1(), Math.toRadians(45))
-                                            .build(),
-                                    finalBucket
+                                            .build()
                             ),
                             telemetryPacket -> {
                                 telemetry.addData("sample y val", Bot.sampleYPos);
@@ -592,11 +596,42 @@ public class BucketAuto extends LinearOpMode {
                                         bot.actionBucketToStorage(),
                                         drive.actionBuilder(bot.storedPosition)
                                                 .stopAndAdd(bot.actionBucketToStorage())
-                                                .strafeTo(new Vector2d(secondSub.component1().x-4, secondSub.component1().y))
+                                                .strafeTo(new Vector2d(secondSub.component1().x-2, secondSub.component1().y))
                                                 .stopAndAdd(bot.actionSubPark())
                                                 .build()
                                 )
                         ));
+            }
+            if (cv == 0) {
+                Actions.runBlocking(
+                        new ActionHelpersJava.RaceParallelCommand(
+                                bot.actionPeriodic(),
+                                new SequentialAction(
+                                        finalBucket
+                                ),
+                                telemetryPacket -> {
+                                    telemetry.addData("sample y val", Bot.sampleYPos);
+                                    telemetry.update();
+                                    return true;
+                                }
+                        )
+                );
+            } else {
+                Actions.runBlocking(
+                        new ActionHelpersJava.RaceParallelCommand(
+                                bot.actionPeriodic(),
+                                new SequentialAction(
+                                        new SleepAction(0.12),
+                                        bot.actionBucketDrop(),
+                                        bot.actionBucketSlidesToStorage()
+                                ),
+                                telemetryPacket -> {
+                                    telemetry.addData("sample y val", Bot.sampleYPos);
+                                    telemetry.update();
+                                    return true;
+                                }
+                        )
+                );
             }
 
         } else {

@@ -337,13 +337,13 @@ public class Bot {
             actions.add(new SleepAction(0.25));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
         } else if (state == BotState.HIGH_BUCKET) {
-            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeDown()));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.45));
             actions.add(new InstantAction(() -> pivot.storage(true, true)));
             actions.add(new InstantAction(() -> pivot.arm.storage()));
         } else if (state == BotState.LOW_BUCKET) {
-            actions.add(new InstantAction(() -> pivot.arm.outtakeUp()));
+            actions.add(new InstantAction(() -> pivot.arm.outtakeDown()));
             actions.add(new InstantAction(() -> pivot.storage(false, true)));
             actions.add(new SleepAction(0.25));
             actions.add(new InstantAction(() -> pivot.storage(true, true)));
@@ -675,6 +675,7 @@ public class Bot {
             actions.add(teleopStorage());
             actions.add(new SleepAction(0.6));
         }
+        actions.add(new InstantAction(()-> gripper.looseClosed()));
 
         actions.add(new InstantAction(() -> pivot.arm.chamberHoriz()));
         actions.add(new InstantAction(() -> pivot.slidesHighChamber(true, false)));
@@ -1046,7 +1047,7 @@ public class Bot {
 
     public SequentialAction actionFrontWallToRearSlidesChamber() {
         List<Action> actions = new ArrayList<>();
-        actions.add(new InstantAction(() -> gripper.close()));
+        actions.add(new InstantAction(() -> gripper.looseClosed()));
         actions.add(new InstantAction(() -> pivot.arm.frontWallUp()));
         actions.add(new InstantAction(() -> pivot.storage(false, true)));
         actions.add(new InstantAction(() -> pivot.rearSlidesChamber(true, false)));
@@ -1113,7 +1114,7 @@ public class Bot {
 
     public SequentialAction actionSubAutoPickDown() {
         return new SequentialAction(
-                new InstantAction(() -> pivot.arm.setPitch(pivot.arm.pitchGroundPickup)),
+                new InstantAction(() -> pivot.arm.pitchPickup()),
                 new InstantAction(() -> pivot.changeXZ(pipeline.getSlidesY(), -13, true, true)),//7.1
                 new SleepAction(0.55),
                 new InstantAction(() -> gripper.close()),
@@ -1579,10 +1580,10 @@ public class Bot {
 
     // DRIVE METHODS
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
-        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.2 : 1.02;
-        if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.06;
+        double frontWheelModifier = (state == BotState.FRONT_INTAKE)? 1.15 : 1.02;
+//        if (state == BotState.HIGH_CHAMBER) frontWheelModifier = 1.0;
         double rearWheelModifier = (state == BotState.HIGH_BUCKET || state == BotState.LOW_BUCKET)? 1.07 : 1;
-        if (state == BotState.WALL_INTAKE) rearWheelModifier = 0.85;
+        if (state == BotState.WALL_INTAKE) rearWheelModifier = 1.1;
         double[] speeds = {
                 (forwardBackSpeed - strafeSpeed - turnSpeed) * frontWheelModifier,
                 (forwardBackSpeed + strafeSpeed + turnSpeed) * frontWheelModifier,

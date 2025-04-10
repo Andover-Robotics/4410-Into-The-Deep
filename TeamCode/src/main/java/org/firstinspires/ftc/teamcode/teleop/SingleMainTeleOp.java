@@ -153,7 +153,7 @@ public class SingleMainTeleOp extends LinearOpMode {
                     runningActions.add(bot.teleopPickDown());
                 }
                 if (gp1.wasJustReleased(GamepadKeys.Button.X) && !intakeCancel) {
-                    if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3) {
+                    if (gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3 && false) {
                         runningActions.add(bot.teleopPickupFrontIntakeToWallIntake(false));
                     } else if (gp1.isDown(GamepadKeys.Button.DPAD_UP)){
                         runningActions.add(bot.teleopPickupFrontIntakeToHighBucket(false));
@@ -362,29 +362,30 @@ public class SingleMainTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Bot State", bot.state);
-            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
-            telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
-            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
-            telemetry.addData("Pivot FF", bot.pivot.calculateFeedForward());
+            telemetry.addData("\n\nBreak Beams on?", bot.breakBeamWorking);
+            telemetry.addData("\n\nHolding Sample:", bot.isHolding());
+//            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
+//            telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
+//            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+//            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+//            telemetry.addData("Pivot FF", bot.pivot.calculateFeedForward());
             //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
             //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
             //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
-            telemetry.addData("Pivot Power", bot.pivot.power);
-
-            telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
-            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getPosition());
-            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getControllerSetpoint());
-            telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
-            telemetry.addData("Slides Current", bot.pivot.slides.getCurrent());
-            telemetry.addData("Slides Power", bot.pivot.slides.power);
-            telemetry.addData("Going Down", bot.pivot.slides.goingDown);
+//            telemetry.addData("Pivot Power", bot.pivot.power);
+//
+//            telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
+//            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getPosition());
+//            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getControllerSetpoint());
+//            telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
+            telemetry.addData("\n\nSlides Current", bot.pivot.slides.getCurrent());
+//            telemetry.addData("Slides Power", bot.pivot.slides.power);
+//            telemetry.addData("Going Down", bot.pivot.slides.goingDown);
             telemetry.addData("Target X", bot.pivot.targetX);
             telemetry.addData("Target Z", bot.pivot.targetZ);
-            telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
-            telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
-            telemetry.addData("\n\nHolding Sample:", bot.isHolding());
-            telemetry.addData("\nBreak Beams?", bot.getBreakBeam());
+//            telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
+//            telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
+//            telemetry.addData("\nBreak Beams?", bot.getBreakBeam());
             telemetry.update();
         }
     }

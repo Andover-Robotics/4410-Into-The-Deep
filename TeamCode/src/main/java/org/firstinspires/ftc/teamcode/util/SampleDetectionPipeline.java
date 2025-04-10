@@ -31,19 +31,19 @@ public class SampleDetectionPipeline
     public int height = 360, width = 640;
     public static int minArea = 5500, maxArea = 19500;
     public int rounds;
-    public static int strafePixelsPerInch = -42;
-    public static int slidesPixelsPerInch = 32;
-    public static int slidesRescaledMax = 270;
-    public static int strafeRescaledMax = 570;
-
-    public static double decel = -25;
-    public static double accel = 55;
+//    public static int strafePixelsPerInch = -42;
+//    public static int slidesPixelsPerInch = 32;
+//    public static int slidesRescaledMax = 270;
+//    public static int strafeRescaledMax = 570;
+//
+//    public static double decel = -25;
+//    public static double accel = 55;
 //
 //    public static double strafeA = -0.00000156672, strafeB = -0.0199432, strafeC = 0/*334958 + 0.1*/, strafeMultiplier = 1.52;
 //    public static double slidesA = 0.0193807, slidesB = 1.3, slidesMultiplier = 1.2, strafingSlidesModifier = -0;
 
 //    public static double strafeA = -0.0, strafeB = -0.0195, strafeC = 0.23/*334958 + 0.1*/, strafeMultiplier = 1.5;
-    public static double slidesA = 0.018, slidesB = 15, slidesC = 0.35, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
+    public static double slidesA = 0.020, slidesB = 78, slidesC = 0.35, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
 
     public static double strafeA = -0, strafeB = -0.0195, strafeC = 32, strafeMultiplier = 1.0;
 //    public static double strafeA = 0.00000156672, strafeB = 0.02, strafeC=-0.004958, strafeMultiplier = 1.0;

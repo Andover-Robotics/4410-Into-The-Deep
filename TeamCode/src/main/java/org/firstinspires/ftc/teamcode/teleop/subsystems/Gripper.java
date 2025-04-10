@@ -13,7 +13,7 @@ public class Gripper {
     public OpMode opMode;
     public final Servo claw;
 
-    public static double closed = 0.675, open = 0.92;
+    public static double closed = 0.68, open = 0.92, looseClosed = 0.698;
 
     public enum GripperState {
         CLOSED,
@@ -33,6 +33,11 @@ public class Gripper {
 
     public void open() {
         claw.setPosition(open);
+        state = GripperState.OPEN;
+    }
+
+    public void looseClosed() {
+        claw.setPosition(looseClosed);
         state = GripperState.OPEN;
     }
 }

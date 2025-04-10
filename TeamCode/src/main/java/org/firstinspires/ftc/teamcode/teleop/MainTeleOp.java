@@ -74,18 +74,18 @@ public class MainTeleOp extends LinearOpMode {
             if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
                 runningActions.add(bot.actionRearClipStorage());
             }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                runningActions.add(bot.actionFrontWallIntake());
-            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+//                runningActions.add(bot.actionFrontWallIntake());
+//            }
             if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 runningActions.add(bot.actionFrontWallToRearSlidesChamber());
             }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                runningActions.add(bot.actionOpenGripper());
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                runningActions.add(bot.actionCloseGripper());
-            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+//                runningActions.add(bot.actionOpenGripper());
+//            }
+//            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+//                runningActions.add(bot.actionCloseGripper());
+//            }
 
             if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                 bot.turnOffBreakBeam();
@@ -382,29 +382,30 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Bot State", bot.state);
-            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
-            telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
-            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
-            telemetry.addData("Pivot FF", bot.pivot.calculateFeedForward());
+            telemetry.addData("\n\nBreak Beams on?", bot.breakBeamWorking);
+            telemetry.addData("\n\nHolding Sample:", bot.isHolding());
+//            telemetry.addData("Pivot Degrees", bot.pivot.getPivotAngleDegrees());
+//            telemetry.addData("Pivot IK Target Angle", bot.pivot.pivotIKTargetDegrees);
+//            telemetry.addData("Pivot Motor Current", bot.pivot.pivotMotor.motorEx.getCurrent(CurrentUnit.MILLIAMPS));
+//            telemetry.addData("Pivot PID", bot.pivot.power - bot.pivot.calculateFeedForward());
+//            telemetry.addData("Pivot FF", bot.pivot.calculateFeedForward());
             //telemetry.addData("Pivot Manual Power Up", bot.pivot.manualPowerUp);
             //telemetry.addData("Pivot Target (ticks)", bot.pivot.getTarget());
             //telemetry.addData("Pivot Profiler", bot.pivot.getProfilerTarget());
-            telemetry.addData("Pivot Power", bot.pivot.power);
-
-            telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
-            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getPosition());
-            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getControllerSetpoint());
-            telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
-            telemetry.addData("Slides Current", bot.pivot.slides.getCurrent());
-            telemetry.addData("Slides Power", bot.pivot.slides.power);
-            telemetry.addData("Going Down", bot.pivot.slides.goingDown);
+//            telemetry.addData("Pivot Power", bot.pivot.power);
+//
+//            telemetry.addData("Slides Position (mm)", bot.pivot.slides.getmmPosition());
+//            telemetry.addData("Slides Position (ticks)", bot.pivot.slides.getPosition());
+//            telemetry.addData("Slides Target (ticks)", bot.pivot.slides.getControllerSetpoint());
+//            telemetry.addData("Slides Target (mm)", (bot.pivot.slides.getTargetMM()));
+            telemetry.addData("\n\nSlides Current", bot.pivot.slides.getCurrent());
+//            telemetry.addData("Slides Power", bot.pivot.slides.power);
+//            telemetry.addData("Going Down", bot.pivot.slides.goingDown);
             telemetry.addData("Target X", bot.pivot.targetX);
             telemetry.addData("Target Z", bot.pivot.targetZ);
-            telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
-            telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
-            telemetry.addData("\n\nHolding Sample:", bot.isHolding());
-            telemetry.addData("\nBreak Beams?", bot.getBreakBeam());
+//            telemetry.addData("Manual IK Piv/Sli", bot.pivot.manualIK);
+//            telemetry.addData( "Slides Manual Power", bot.pivot.slides.manualPower);
+//            telemetry.addData("\nBreak Beams?", bot.getBreakBeam());
             telemetry.update();
         }
     }

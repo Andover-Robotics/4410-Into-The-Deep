@@ -68,9 +68,9 @@ public class Pivot {
             wallIntakeHeight = 3.2 * inches2mm,
 
             frontWallIntakeHeight = 5.25 * inches2mm,
-            rearSlidesClippingHeight = 18.75 * inches2mm,
+            rearSlidesClippingHeight = 19.25 * inches2mm,
 
-    slidesHighChamberHeight = 19.75 * inches2mm,
+    slidesHighChamberHeight = 20.5 * inches2mm,
 
     frontAutoIntakeHeight = 5.5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm, //12
@@ -103,8 +103,8 @@ public class Pivot {
     slidesHighChamberX = 4.5 * inches2mm,
     autoSlidesHighChamberX = 7.5 * inches2mm,
 
-    frontAutoDiagIntakeX = 20 * inches2mm,
-    frontAutoIntakeX = 15 * inches2mm,
+    frontAutoDiagIntakeX = 15 * inches2mm,
+    frontAutoIntakeX = 13 * inches2mm,
     subAutoIntakeX = 14 * inches2mm, //13
     pushIntakeX = 19 * inches2mm,
 
