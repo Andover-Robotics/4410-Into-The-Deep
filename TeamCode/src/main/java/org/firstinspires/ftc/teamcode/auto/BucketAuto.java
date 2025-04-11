@@ -53,7 +53,7 @@ public class BucketAuto extends LinearOpMode {
     public static Pose2d firstSubInter = new Pose2d(33, firstSub.component1().y, Math.toRadians(180));
     public static Pose2d secondSubInter = new Pose2d(33, secondSub.component1().y, Math.toRadians(180));
     public static Pose2d firstSubDrop = new Pose2d(55.75, 55.5, Math.toRadians(-135));
-    public static Pose2d secondSubDrop = new Pose2d(55.75, 55.5, Math.toRadians(-135));
+    public static Pose2d secondSubDrop = new Pose2d(55.25, 56, Math.toRadians(-135));
 
     public static Pose2d subDropRam = new Pose2d(48, 7, Math.toRadians(180));
     public static Pose2d unRam = new Pose2d(23, 7, Math.toRadians(180));
@@ -596,7 +596,7 @@ public class BucketAuto extends LinearOpMode {
                                         bot.actionBucketToStorage(),
                                         drive.actionBuilder(bot.storedPosition)
                                                 .stopAndAdd(bot.actionBucketToStorage())
-                                                .strafeTo(new Vector2d(secondSub.component1().x-2, secondSub.component1().y))
+                                                .strafeTo(new Vector2d(secondSub.component1().x, secondSub.component1().y))
                                                 .stopAndAdd(bot.actionSubPark())
                                                 .build()
                                 )
