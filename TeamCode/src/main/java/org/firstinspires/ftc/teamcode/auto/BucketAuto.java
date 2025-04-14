@@ -142,13 +142,10 @@ public class BucketAuto extends LinearOpMode {
                 .afterTime(0.01, new SequentialAction(
                         bot.actionIntakeToHighBucket()
                 ))
-
                 .strafeToLinearHeading(secondBucket.component1(), secondBucket.component2())
-
-                .waitSeconds(0.25)
+                .waitSeconds(0.2)
                 .stopAndAdd(bot.actionBucketDrop())
-
-                .waitSeconds(0.15)
+                .waitSeconds(0.10)
                 .build();
 
 
@@ -180,7 +177,7 @@ public class BucketAuto extends LinearOpMode {
                         bot.actionIntakeToHighBucket(true)
                 ))
                 .strafeToLinearHeading(thirdBucket.component1(), thirdBucket.component2())
-                .waitSeconds(0.2)
+                .waitSeconds(0.15)
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.15),
                         bot.actionBucketDrop(),
@@ -189,7 +186,7 @@ public class BucketAuto extends LinearOpMode {
 
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),
-                        new SleepAction(0.15),
+                        new SleepAction(0.35),
                         bot.actionSubAutoIntake()
                 ))
                 .splineTo(firstSubInter.component1(), Math.toRadians(180))
@@ -198,13 +195,12 @@ public class BucketAuto extends LinearOpMode {
 
         Action backToSub = drive.actionBuilder(firstSubDrop)
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.05),
                         bot.actionBucketDrop(),
                         bot.actionResetPipeline()
                 ))
                 .afterTime(0.01, new SequentialAction(
                         bot.actionBucketToStorage(),
-                        new SleepAction(0.15),
+                        new SleepAction(0.35),
                         bot.actionSubAutoIntake()
                 ))
                 .splineTo(secondSubInter.component1(), Math.toRadians(180))
@@ -216,7 +212,6 @@ public class BucketAuto extends LinearOpMode {
 
         Action finalBucket = drive.actionBuilder(secondSubDrop)
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.05),
                         bot.actionBucketDrop()
                 ))
                 .afterTime(0.01, new SequentialAction(
@@ -445,7 +440,7 @@ public class BucketAuto extends LinearOpMode {
                 bot.actionPeriodic(),
                 new SequentialAction(
                         bot.actionResetPipeline(),
-                        new SleepAction(0.15),
+                        new SleepAction(0.05),
                         bot.actionDetectWait()
                 )
 
@@ -546,7 +541,7 @@ public class BucketAuto extends LinearOpMode {
                             bot.actionPeriodic(),
                             new SequentialAction(
                                     backToSub,
-                                    new SleepAction(0.15),
+                                    new SleepAction(0.05),
                                     bot.actionResetPipeline(),
                                     bot.actionDetectWait()
                             )

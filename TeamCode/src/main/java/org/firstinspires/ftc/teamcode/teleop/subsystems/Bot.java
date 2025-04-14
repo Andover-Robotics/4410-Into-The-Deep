@@ -827,12 +827,13 @@ public class Bot {
             actions.add(teleopStorage());
             actions.add(new SleepAction(0.225));
         }
-        actions.add(new InstantAction(() -> gripper.open()));
         //actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
+//        actions.add(new InstantAction(() -> gripper.open())); OPENS LATER
         actions.add(new SleepAction(0.1));
         actions.add(new InstantAction(() -> pivot.frontIntake(true, false)));
         actions.add(new InstantAction(() -> pivot.arm.frontPickup(leftTrigger > 0.2, rightTrigger > 0.2)));
         actions.add(new SleepAction(0.15));
+        actions.add(new InstantAction(() -> gripper.open()));
         actions.add(new InstantAction(() -> pivot.frontIntake(false, true)));
         actions.add(new InstantAction(() -> state = BotState.FRONT_INTAKE));
 
@@ -1134,7 +1135,7 @@ public class Bot {
                 new InstantAction(() -> gripper.open()),
                 new InstantAction(() -> pivot.arm.frontPickupToStorage()),
                 new InstantAction(() -> pivot.frontIntakeStorage(true, false)),
-                new SleepAction(0.2),
+                new SleepAction(0.35),
                 new InstantAction(() -> pivot.subAutoIntake(true, true)),
                 new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.cv())
