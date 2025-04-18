@@ -43,9 +43,9 @@ public class SampleDetectionPipeline
 //    public static double slidesA = 0.0193807, slidesB = 1.3, slidesMultiplier = 1.2, strafingSlidesModifier = -0;
 
 //    public static double strafeA = -0.0, strafeB = -0.0195, strafeC = 0.23/*334958 + 0.1*/, strafeMultiplier = 1.5;
-    public static double slidesA = 0.020, slidesB = 78, slidesC = 0.35, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
+    public static double slidesA = 0.023, slidesB = 58, slidesC = -0.1, strafingSlidesModifier = -0.0;//-0.1 and 0.02112524 for A
 
-    public static double strafeA = -0, strafeB = -0.0195, strafeC = 32, strafeMultiplier = 1.0;
+    public static double strafeA = -0, strafeB = -0.02, strafeC = 25, strafeMultiplier = 1.0;
 //    public static double strafeA = 0.00000156672, strafeB = 0.02, strafeC=-0.004958, strafeMultiplier = 1.0;
 
     public static double lowAR = 1, highAR = 3.25, lowD = 0.25, highD = 1, maxSide1 = 220, maxSide2 = 105;

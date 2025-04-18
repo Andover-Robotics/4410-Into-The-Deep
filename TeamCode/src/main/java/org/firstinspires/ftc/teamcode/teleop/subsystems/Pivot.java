@@ -103,7 +103,7 @@ public class Pivot {
     slidesHighChamberX = 4.5 * inches2mm,
     autoSlidesHighChamberX = 7.5 * inches2mm,
 
-    frontAutoDiagIntakeX = 15 * inches2mm,
+    frontAutoDiagIntakeX = 15.9 * inches2mm,
     frontAutoIntakeX = 13 * inches2mm,
     subAutoIntakeX = 14 * inches2mm, //13
     pushIntakeX = 19 * inches2mm,

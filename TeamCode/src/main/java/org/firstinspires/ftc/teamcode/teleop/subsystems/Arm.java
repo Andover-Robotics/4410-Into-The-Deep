@@ -26,7 +26,7 @@ public class Arm {
     public static double rollMultiplier = 1.0663; //integrate into code later
     public static double offset = -10;
 
-    public static double pitchGroundPickup = -93+offset, pitchCV = -114, pitchWallPickup = 189 - offset, pitchFrontPickupToStorage = -55, pitchChamber = 79 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 55,
+    public static double pitchGroundPickup = -93+offset, pitchCV = -114, pitchWallPickup = 174 - offset, pitchFrontPickupToStorage = -55, pitchChamber = 79 + offset, pitchStorage = -100, pitchOuttakeUp = 80, pitchOuttakeDown = 55,
             pitchBucket = 120, pitchBucketDown = 165, pitchChamberHoriz = 2 + offset, pitchOuttakeHoriz = 0, pitchRearChamber = 180;
     public double rollVertical = ROLL_MAX, rollLeft = ROLL_MID, rollTopRight = ROLL_MID - 45, rollTopLeft = ROLL_MID + 45, rollFlipped = ROLL_MIN;
 

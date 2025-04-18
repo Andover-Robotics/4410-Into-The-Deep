@@ -41,18 +41,15 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        Action clipAndPreIntake= drive.actionBuilder(drive.pose)
+        Action auto= drive.actionBuilder(drive.pose)
                 .stopAndAdd(new SequentialAction(
                         bot.actionHighChamber()
                 ))
 
-                .splineTo(new Vector2d(6, 33), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 200))
+                .splineTo(new Vector2d(6, 33), Math.toRadians(-90), drive.defaultVelConstraint, new ProfileAccelConstraint(-80, 220))
                 .stopAndAdd(new SequentialAction(
                         bot.actionOpenGripper()
                 ))
-                .build();
-
-        Action zoom = drive.actionBuilder(new Pose2d(6, 33, Math.toRadians(-90)))
 
                 .afterTime(0.05, new SequentialAction(
                         bot.actionFirstClipStorage(),
@@ -78,7 +75,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                 .stopAndAdd(new SequentialAction(bot.actionDropPush(),
                         new SleepAction(0.15)))
 
-                .strafeToLinearHeading(new Vector2d(-47, 52), Math.toRadians(140), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 105))
+                .strafeToLinearHeading(new Vector2d(-45, 52), Math.toRadians(140), drive.defaultVelConstraint, new ProfileAccelConstraint(-120, 105))
 //
 //                .afterTime(0.01, bot.actionLiftPush())
 ////
@@ -96,16 +93,13 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                 .setReversed(true)
 //
                 .afterTime(0.01, bot.actionFrontWallIntake())
-                .splineToLinearHeading(new Pose2d(-62.5, 12.5, Math.toRadians(90)), Math.toRadians(140))
-                .strafeToConstantHeading(new Vector2d(-60, 62), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 70))
+                .splineToLinearHeading(new Pose2d(-63.5, 12.5, Math.toRadians(90)), Math.toRadians(140))
+                .strafeToConstantHeading(new Vector2d(-61, 62), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 70))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
                         new SleepAction(0.02)
                 ))
-                .build();
-
-        Action fourSpecimens = drive.actionBuilder(new Pose2d(-60, 63, Math.toRadians(90)))
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
@@ -241,9 +235,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                 new ActionHelpersJava.RaceParallelCommand(
                         bot.actionPeriodic(),
                         new SequentialAction(
-                                clipAndPreIntake,
-                                zoom,
-                                fourSpecimens
+                                auto
                         )
                 )
         );

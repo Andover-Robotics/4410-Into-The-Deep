@@ -829,6 +829,7 @@ public class Bot {
         }
         //actions.add(new InstantAction(() -> pivot.arm.frontPickupToStorage()));
 //        actions.add(new InstantAction(() -> gripper.open())); OPENS LATER
+//        actions.add(new InstantAction(() -> gripper.open())); OPENS LATER
         actions.add(new SleepAction(0.1));
         actions.add(new InstantAction(() -> pivot.frontIntake(true, false)));
         actions.add(new InstantAction(() -> pivot.arm.frontPickup(leftTrigger > 0.2, rightTrigger > 0.2)));
@@ -1462,8 +1463,8 @@ public class Bot {
                 new InstantAction(() -> pivot.frontAutoDiagIntake(true, false)),
                 new SleepAction(0.6),
                 new InstantAction(() -> pivot.frontAutoDiagIntake(false, true)),
-                new SleepAction(0.1),
                 new InstantAction(() -> pivot.arm.frontPickup()),
+                new SleepAction(0.1),
                 new InstantAction(() -> state = BotState.FRONT_INTAKE)
         );
     }
@@ -1758,14 +1759,14 @@ public class Bot {
                 Thread.sleep(75);
                 pivot.slides.setPower(0);
                 pivot.slides.low(); //Engage high
-                while (pivot.slides.getCurrent() < 4000) {
+                while (pivot.slides.getCurrent() < 9000) {
                     pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
                 }
                 Thread.sleep(75);
                 pivot.slides.setPower(0.3);
                 Thread.sleep(100);
                 pivot.slides.setPower(-0.6); //run it into the ground
-                Thread.sleep(200);
+                Thread.sleep(300);
                 pivot.slides.setPower(0);
                 pivot.slides.resetEncoders();
                 pivot.slides.setState(Slides.SlidesState.LOW);
