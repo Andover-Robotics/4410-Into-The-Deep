@@ -25,7 +25,7 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(9, 32, Math.toRadians(-90)))
+        redBig.runAction(redBig.getDrive().actionBuilder(new Pose2d(56.5, 56.5, Math.toRadians(-135)))
                 //-23, 46
 //                        .strafeToLinearHeading(new Vector2d(-43,61), Math.toRadians(90))
 
@@ -56,7 +56,7 @@ public class MeepMeepTesting {
 //                .setReversed(true)
 ////                .splineToLinearHeading(new Pose2d(-59, 13.5, Math.toRadians(90)), Math.toRadians(140))
 //                .splineToLinearHeading(new Pose2d(-62.5, 13.5, Math.toRadians(90)), Math.toRadians(140))
-                .strafeToLinearHeading(new Vector2d(-47, 63), Math.toRadians(90))
+//                .strafeToLinearHeading(new Vector2d(-47, 63), Math.toRadians(90))
 //                        .setReversed(true)
 //                        .splineTo(new Vector2d(-0, 46), Math.toRadians(0))
 //                        .splineTo(new Pose2d(52.5, 57, Math.toRadians(-135)).component1(), Math.toRadians(45))
@@ -90,11 +90,9 @@ public class MeepMeepTesting {
 //
 //                .strafeTo(new Vector2d(-43,53))
 //
-//
+                .splineTo(new Pose2d(33, 10, Math.toRadians(180)).component1(), Math.toRadians(180))
+                .strafeToConstantHeading(new Pose2d(21, 10, Math.toRadians(180)).component1())
 
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(0,42), Math.toRadians(-90))
-                                .strafeToConstantHeading(new Vector2d(0, 35))
 //
 ////                .strafeTo(new Vector2d(-50,70)) //PARK
 //

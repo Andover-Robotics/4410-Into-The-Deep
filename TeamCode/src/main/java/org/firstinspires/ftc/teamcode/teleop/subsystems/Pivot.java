@@ -74,7 +74,7 @@ public class Pivot {
 
     frontAutoIntakeHeight = 5.5 * inches2mm,
     subAutoIntakeHeight = 12 * inches2mm, //12
-    pushIntakeHeight = 2 * inches2mm,
+    pushIntakeHeight = 2.1 * inches2mm,
 
     prel2ClimbHeight = 22 * inches2mm,
             midl2ClimbHeight = 19 * inches2mm,

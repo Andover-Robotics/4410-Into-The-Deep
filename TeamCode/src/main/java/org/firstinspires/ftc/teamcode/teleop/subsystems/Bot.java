@@ -623,7 +623,7 @@ public class Bot {
         actions.add(new InstantAction(() -> pivot.midl3Climb(true, false)));
         actions.add(new SleepAction(0.4));
         actions.add(new InstantAction(() -> pivot.arm.outtakeHoriz()));
-        actions.add(new SleepAction(0.15));
+        actions.add(new SleepAction(0.35));
         actions.add(new InstantAction(() -> pivot.midl3Climb(false, true)));
         actions.add(new SleepAction(0.35));
         actions.add(new InstantAction(() -> pivot.tiltedl3Climb(true, false)));
@@ -1297,9 +1297,19 @@ public class Bot {
     public SequentialAction actionBucketDrop() {
         return new SequentialAction(
                 new InstantAction(() -> pivot.arm.bucketDrop()),
-                new SleepAction(0.10),
+                new SleepAction(0.07),
                 new InstantAction(() -> gripper.open()),
-                new SleepAction(0.12),
+                new SleepAction(0.10),
+//                new InstantAction(() -> checkBreakBeam(false)),
+                new InstantAction(() -> pivot.arm.outtakeDown())
+        );
+    }
+
+    public SequentialAction actionBucketThrow() {
+        return new SequentialAction(
+                new InstantAction(() -> pivot.arm.bucketDrop()),
+                new InstantAction(() -> gripper.open()),
+                new SleepAction(0.10),
 //                new InstantAction(() -> checkBreakBeam(false)),
                 new InstantAction(() -> pivot.arm.outtakeDown())
         );

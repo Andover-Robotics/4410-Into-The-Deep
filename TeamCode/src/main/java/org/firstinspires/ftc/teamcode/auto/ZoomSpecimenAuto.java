@@ -60,7 +60,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterDisp(32, new SequentialAction(bot.actionPushIntake()))
 
-                .splineToSplineHeading(new Pose2d(-38.5, 37, Math.toRadians(-120)), Math.toRadians(-170))
+                .splineToSplineHeading(new Pose2d(-38.5, 37, Math.toRadians(-117)), Math.toRadians(-170))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionDropPush(),
@@ -94,7 +94,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 //
                 .afterTime(0.01, bot.actionFrontWallIntake())
                 .splineToLinearHeading(new Pose2d(-63.5, 12.5, Math.toRadians(90)), Math.toRadians(140))
-                .strafeToConstantHeading(new Vector2d(-61, 62), drive.defaultVelConstraint, new ProfileAccelConstraint(-30, 70))
+                .strafeToConstantHeading(new Vector2d(-61, 62), drive.defaultVelConstraint, new ProfileAccelConstraint(-40, 90))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
@@ -103,7 +103,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-2,35.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 110))
+                .strafeToConstantHeading(new Vector2d(-2,34.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-100, 110))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -130,7 +130,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-4.5,35.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-4.5,34.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -155,7 +155,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-6.5,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-6.5,33.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -180,7 +180,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 
                 .afterTime(0.01, bot.actionFrontWallToRearSlidesChamber())
 
-                .strafeToConstantHeading(new Vector2d(-9.25,34), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
+                .strafeToConstantHeading(new Vector2d(-9.25,33.5), drive.defaultVelConstraint, new ProfileAccelConstraint(-130, 145))
 
                 .stopAndAdd(new SequentialAction(
                         bot.actionRearSlidesClipDown(),
@@ -200,7 +200,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                 .waitSeconds(0.01)
                 .stopAndAdd(new SequentialAction(
                         bot.actionCloseGripper(),
-                        new SleepAction(0.1)
+                        new SleepAction(0.05)
                 ))
                 .afterTime(0.01, new SequentialAction(
                         new InstantAction(()->bot.pivot.arm.frontWallUp()),
@@ -209,7 +209,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
                 ))
                 .setReversed(true)
                 .splineTo(new Vector2d(-0, 46), Math.toRadians(0))
-                .splineTo(new Pose2d(52.5, 57, Math.toRadians(-135)).component1(), Math.toRadians(45), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 70))
+                .splineTo(new Pose2d(52.5, 57, Math.toRadians(-135)).component1(), Math.toRadians(45), drive.defaultVelConstraint, new ProfileAccelConstraint(-35, 80))
 //                .stopAndAdd(new SequentialAction(
 //                        bot.actionCloseGripper()
 //                ))
@@ -218,7 +218,7 @@ public class ZoomSpecimenAuto extends LinearOpMode {
 //                .strafeToSplineHeading(new Vector2d(53, 53.5), Math.toRadians(-135), drive.defaultVelConstraint, new ProfileAccelConstraint(-45, 70))
 
                 .stopAndAdd(new SequentialAction(
-                        bot.actionBucketDrop(),
+                        bot.actionBucketThrow(),
                         new SleepAction(0.05),
                         bot.actionBucketToStorage()
                 ))
