@@ -1769,7 +1769,7 @@ public class Bot {
                 Thread.sleep(75);
                 pivot.slides.setPower(0);
                 pivot.slides.low(); //Engage high
-                while (pivot.slides.getCurrent() < 9000) {
+                while (pivot.slides.getCurrent() < 5000) {
                     pivot.slides.setPower(-0.5); //Downwards (for low) to help it engage
                 }
                 Thread.sleep(75);

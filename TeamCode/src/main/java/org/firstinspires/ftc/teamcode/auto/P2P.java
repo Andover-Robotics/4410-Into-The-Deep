@@ -21,6 +21,7 @@ public class P2P {
     public static double dP = -0.15, dD = -0.38;
     public static double sP = -0.46, sD = -0.95;
     public static double dThr = 0.15, sThr = 0.15, tThr = 0.1;
+    public static double bigHP = 3, bigDP = -0.4, bigSP = -0.8;
     public double headingError = 0;
     public double inputTurn = 0, driveCorrection = 0, strafeCorrection = 0;
     public Vector2d driveVector;
@@ -60,6 +61,22 @@ public class P2P {
         double correction = (error * kp) + (derivative * kd);
         correction += signum(error * kf);
         lastErrorStrafe = error;
+        return correction;
+    }
+
+    private double squid(double p, double error) {
+        double correction = Math.sqrt(Math.abs(error)) * Math.signum(error) * p;
+        return correction;
+    }
+
+    private double squidHeading(double p, double current, double target) {
+        headingError = target - current;
+        if (headingError > Math.PI) {
+            headingError -= Math.PI*2;
+        } else if (headingError < -Math.PI){
+            headingError += Math.PI*2;
+        }
+        double correction = Math.sqrt(Math.abs(headingError)) * Math.signum(headingError) * p;
         return correction;
     }
 
@@ -124,6 +141,25 @@ public class P2P {
         inputTurn = pidHeading(targetH, hP, hI, hD, heading);
         driveCorrection = pfdDrive(dP, dD, 0, rotatedVector.x);
         strafeCorrection = pfdStrafe(sP, sD, 0, rotatedVector.y);
+
+        PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
+        boolean stopped = (Math.abs(driveCorrection) < dThr) && (Math.abs(strafeCorrection) < sThr) && (Math.abs(inputTurn) < tThr);
+        boolean atPos = ((Math.abs(driveVector.x)) < 0.35) && (Math.abs(driveVector.y) < 0.35) && (Math.abs(targetH - heading) < Math.toRadians(1.5));
+        drive.setDrivePowers(botVel);
+
+    }
+
+    public void demoSquidGoToPosition(double targetX, double targetY, double targetH, double speed) {
+        drive.updatePoseEstimate();
+        counter++;
+        driveVector = new Vector2d(targetX - drive.pose.component1().x, targetY - drive.pose.component1().y);
+        double heading = drive.pose.heading.toDouble();
+
+        Vector2d rotatedVector = rotate(driveVector, heading);
+
+        inputTurn = squidHeading(bigHP, heading, targetH);
+        driveCorrection = squid(bigDP, rotatedVector.x);
+        strafeCorrection = squid(bigSP, rotatedVector.y);
 
         PoseVelocity2d botVel = new PoseVelocity2d(new Vector2d(driveCorrection, strafeCorrection), inputTurn);
         boolean stopped = (Math.abs(driveCorrection) < dThr) && (Math.abs(strafeCorrection) < sThr) && (Math.abs(inputTurn) < tThr);
